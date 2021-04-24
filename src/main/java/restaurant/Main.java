@@ -1,24 +1,28 @@
 package restaurant;
 
 import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		Directeur p = new Directeur("directeur"); 
-		p.ajouterPersonnel(new Assistant("Florian"), "assistant");
-//		p.ajouterPersonnel(new Serveur("Hervé"), "serveur");
-//		
-		
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+	Directeur p = new Directeur("directeur");
+	Personne pers = new Serveur("Nicolas");
 
-		
-		// Au démarrage de l'application, on charge les données
-		// Chargement des horaires
-		// Instancier le personnel
-		
-		
-	}
+	/*
+	 * p.ajouterPersonnel(new Assistant("Florian"), "directeur");
+	 * p.ajouterPersonnel(new Assistant("Florian"), "assistant");
+	 * p.ajouterPersonnel(new Assistant("Florian"), "serveur");
+	 * p.ajouterPersonnel(new Assistant("Florian"), "maitrehotel");
+	 * p.ajouterPersonnel(new Assistant("Florian"), "cuisinier");
+	 */
+
+	p.ajouterPersonnel(pers, "serveur");
+	pers = p.modifierPersonnel(pers, "cuisinier");
+	// p.supprimerPersonnel(pers);
+	// Au démarrage de l'application, on charge les données
+	// Chargement des horaires
+	// Instancier le personnel
+
+    }
 
 }

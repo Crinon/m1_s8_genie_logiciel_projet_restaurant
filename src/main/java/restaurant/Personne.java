@@ -2,16 +2,32 @@ package restaurant;
 
 public abstract class Personne {
 
-	String identifiant;
+    int	   id;
+    String nom;
+    String identifiant;
 
-	public String getIdentifiant() {
-		return identifiant;
-	}
+    public int getId() {
+	return id;
+    }
 
-	public void setIdentifiant(String identifiant) {
-		this.identifiant = identifiant;
-	}
-	
-	
-	
+    public void setId(int id) {
+	this.id = id;
+    }
+
+    public String getNom() {
+	return nom;
+    }
+
+    public void setNom(String nom) {
+	this.nom = nom;
+    }
+
+    public String getIdentifiant() {
+	return identifiant;
+    }
+
+    public void setIdentifiant(String identifiant) {
+	this.identifiant = identifiant;
+    }
+
 }
