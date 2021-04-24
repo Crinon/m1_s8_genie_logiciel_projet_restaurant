@@ -4,41 +4,42 @@ import java.sql.Date;
 
 public class Restaurant {
 
-	private Date HeureDejeunerOuverture;
-	private Date HeureDejeunerLimite;
-	private Date HeureDinerOuverture;
-	private Date HeureDinerLimite;
+	private Date heureDejeunerOuverture;
+	private Date heureDejeunerLimite;
+	private Date heureDinerOuverture;
+	private Date heureDinerLimite;
+	
+	public Date getHeureDejeunerOuverture() {
+		return heureDejeunerOuverture;
+	}
+	public void setHeureDejeunerOuverture(Date heureDejeunerOuverture) {
+		this.heureDejeunerOuverture = heureDejeunerOuverture;
+	}
+	public Date getHeureDejeunerLimite() {
+		return heureDejeunerLimite;
+	}
+	public void setHeureDejeunerLimite(Date heureDejeunerLimite) {
+		this.heureDejeunerLimite = heureDejeunerLimite;
+	}
+	public Date getHeureDinerOuverture() {
+		return heureDinerOuverture;
+	}
+	public void setHeureDinerOuverture(Date heureDinerOuverture) {
+		this.heureDinerOuverture = heureDinerOuverture;
+	}
+	public Date getHeureDinerLimite() {
+		return heureDinerLimite;
+	}
+	public void setHeureDinerLimite(Date heureDinerLimite) {
+		this.heureDinerLimite = heureDinerLimite;
+	}
 	public Restaurant(Date heureDejeunerOuverture, Date heureDejeunerLimite, Date heureDinerOuverture,
 			Date heureDinerLimite) {
 		super();
-		HeureDejeunerOuverture = heureDejeunerOuverture;
-		HeureDejeunerLimite = heureDejeunerLimite;
-		HeureDinerOuverture = heureDinerOuverture;
-		HeureDinerLimite = heureDinerLimite;
-	}
-	public Date getHeureDejeunerOuverture() {
-		return HeureDejeunerOuverture;
-	}
-	public void setHeureDejeunerOuverture(Date heureDejeunerOuverture) {
-		HeureDejeunerOuverture = heureDejeunerOuverture;
-	}
-	public Date getHeureDejeunerLimite() {
-		return HeureDejeunerLimite;
-	}
-	public void setHeureDejeunerLimite(Date heureDejeunerLimite) {
-		HeureDejeunerLimite = heureDejeunerLimite;
-	}
-	public Date getHeureDinerOuverture() {
-		return HeureDinerOuverture;
-	}
-	public void setHeureDinerOuverture(Date heureDinerOuverture) {
-		HeureDinerOuverture = heureDinerOuverture;
-	}
-	public Date getHeureDinerLimite() {
-		return HeureDinerLimite;
-	}
-	public void setHeureDinerLimite(Date heureDinerLimite) {
-		HeureDinerLimite = heureDinerLimite;
+		this.heureDejeunerOuverture = heureDejeunerOuverture;
+		this.heureDejeunerLimite = heureDejeunerLimite;
+		this.heureDinerOuverture = heureDinerOuverture;
+		this.heureDinerLimite = heureDinerLimite;
 	}
 	
 	

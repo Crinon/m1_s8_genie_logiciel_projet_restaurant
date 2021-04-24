@@ -4,14 +4,6 @@ import java.util.ArrayList;
 
 public class Plat {
 
-	private enum Type {
-	    ENTREE, PLAT, DESSERT  
-	}
-	
-	private enum Categorie {
-	    VEGETARIEN, VIANDE, POISSON, SUCRE, SALE
-	}
-	
 	private double prix;
 	
 	private int dureePreparation;
