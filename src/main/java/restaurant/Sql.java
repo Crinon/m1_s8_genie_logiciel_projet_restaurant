@@ -17,6 +17,19 @@ public class Sql {
 //	public static final String requete_insertion_serveur = "INSERT INTO restaurant.serveur (personne) VALUES ('%s')";
     public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
     public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
+    
+    //Vérifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon (en sachant qu'il n'y a pas de doublons)
+    public static final String requete_login_existe = "SELECT COUNT(p.id) as existe FROM restaurant.personne p WHERE p.login = '%s'";
+    
+    //Connaitre le temps de preparation moyen
+    public static final String requete_temps_prepare_moyen = "SELECT SUM(dureePrep.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n" + 
+    		"FROM(\r\n" + 
+    		"SELECT dureePreparation\r\n" + 
+    		"FROM restaurant.commande c\r\n" + 
+    		"LEFT JOIN restaurant.plat p ON c.plat = p.id)\r\n" + 
+    		"AS dureePrep";
+    
+    
 
     public Sql() throws ClassNotFoundException, SQLException {
 	Class.forName("org.postgresql.Driver");
