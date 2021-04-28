@@ -7,12 +7,26 @@ public class Etage {
 	private int niveau;
 	
 	private ArrayList<Table> tables;
+	
+	private int id;
 
-	public Etage(int niveau) {
+	public Etage(int id, int niveau) {
 		super();
+		this.id = id;
 		this.niveau = niveau;
 		this.tables = new ArrayList<Table>();
 	}
+	
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 
 	public int getNiveau() {
 		return niveau;
