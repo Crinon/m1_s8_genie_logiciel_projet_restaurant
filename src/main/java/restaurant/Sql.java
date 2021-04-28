@@ -23,26 +23,68 @@ public class Sql {
     
     
     //Revenu hebdomadaire
+    /*SELECT SUM(plt.prix)
+    FROM restaurant.commande cmd
+      LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation
+      LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat
+    WHERE YEAR(aff.datefin) = YEAR(NOW())
+      AND MONTH(aff.datefin) = MONTH(NOW())
+      AND WEEK(aff.datefin)) = WEEK(NOW())*/
     
     //Revenu quotidien
+    /*SELECT SUM(plt.prix)
+	FROM restaurant.commande cmd
+	  LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation
+	  LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat
+	WHERE YEAR(aff.datefin) = YEAR(NOW())
+	  AND MONTH(aff.datefin) = MONTH(NOW())
+	  AND DAY(aff.datefin) = DAY(NOW())*/
     
     //Revenu mensuel
+    /*SELECT SUM(plt.prix)
+    FROM restaurant.commande cmd
+      LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation
+      LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat
+    WHERE YEAR(aff.datefin) = YEAR(NOW())
+      AND MONTH(aff.datefin) = MONTH(NOW())*/
 
     //Temps de preparation moyen
-    public static final String requete_temps_prepare_moyen = "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n" + 
-    		"FROM restaurant.commande c\r\n" + 
-    		"LEFT JOIN restaurant.plat p ON c.plat = p.id";
+    /*SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen
+    		FROM restaurant.commande c 
+    		LEFT JOIN restaurant.plat p ON c.plat = p.id*/
     
     //Temps moyen par client
     
     //Profit dejeuner
+    /*SELECT SUM(plt.prix)
+	FROM restaurant.commande cmd
+	  LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation
+	  LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat
+	WHERE YEAR(aff.datefin) = YEAR(NOW())
+	  AND MONTH(aff.datefin) = MONTH(NOW())
+	  AND DAY(aff.datefin) = DAY(NOW())
+	  AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune
+	  AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune*/
     
     //Profit diner
+    /*SELECT SUM(plt.prix)
+	FROM restaurant.commande cmd
+	  LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation
+	  LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat
+	WHERE YEAR(aff.datefin) = YEAR(NOW())
+	  AND MONTH(aff.datefin) = MONTH(NOW())
+	  AND DAY(aff.datefin) = DAY(NOW())
+	  AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner
+	  AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner*/
     
     //Revenu par plat (plat + nbVentes + revenu)
     
     //Popularité plats (plat + nbVentes)
-    
+    /*SELECT p.nom, COUNT(c.id) AS nbVendus
+    FROM restaurant.commande c 
+     LEFT JOIN restaurant.plat p ON c.plat = p.id
+    GROUP BY plat
+    ORDER BY nbVendus*/
     
 
     public Sql() throws ClassNotFoundException, SQLException {
