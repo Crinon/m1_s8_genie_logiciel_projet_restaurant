@@ -21,13 +21,19 @@ public class Sql {
     //Vérifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon (en sachant qu'il n'y a pas de doublons)
     public static final String requete_login_existe = "SELECT COUNT(p.id) as existe FROM restaurant.personne p WHERE p.login = '%s'";
     
-    //Connaitre le temps de preparation moyen
-    public static final String requete_temps_prepare_moyen = "SELECT SUM(dureePrep.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n" + 
-    		"FROM(\r\n" + 
-    		"SELECT dureePreparation\r\n" + 
+    
+    //Revenu hebdomadaire
+    //Revenu quotidien
+    //Revenu mensuel
+
+    //Temps de preparation moyen
+    public static final String requete_temps_prepare_moyen = "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n" + 
     		"FROM restaurant.commande c\r\n" + 
-    		"LEFT JOIN restaurant.plat p ON c.plat = p.id)\r\n" + 
-    		"AS dureePrep";
+    		"LEFT JOIN restaurant.plat p ON c.plat = p.id";
+    
+    //Temps moyen par client
+    //Profit dejeuner
+    //Profit diner
     
     
 
@@ -77,12 +83,14 @@ public class Sql {
     }
 
     public void ajouterPersonne(Personne personne, String role) throws SQLException {
-	personne.setIdentifiant(definirLogin(personne.getNom(), 0));
-	executerInsert(String.format(requete_insertion_personne, personne.getNom(), personne.getIdentifiant()));
-	ResultSet resultSet = executerSelect("Select MAX(id) FROM restaurant.personne");
-	resultSet.next();
-	executerInsert("INSERT INTO restaurant." + role + " (personne) VALUES (" + resultSet.getString("max") + ")");
-	personne.setId(Integer.parseInt(resultSet.getString("max")));
+    	
+		personne.setIdentifiant(definirLogin(personne.getNom(), 0));
+		executerInsert(String.format(requete_insertion_personne, personne.getNom(), personne.getIdentifiant()));
+		ResultSet resultSet = executerSelect("Select MAX(id) FROM restaurant.personne");
+		resultSet.next();
+		executerInsert("INSERT INTO restaurant." + role + " (personne) VALUES (" + resultSet.getString("max") + ")");
+		personne.setId(Integer.parseInt(resultSet.getString("max")));
+		
     }
 
     /**

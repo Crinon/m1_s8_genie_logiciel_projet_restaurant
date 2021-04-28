@@ -2,15 +2,17 @@ package restaurant;
 
 public class Ingredient {
 
+	private int id;
 	private String nom;
 	private int quantite;
 
-	public Ingredient(String nom, int quantite) {
+	
+	public Ingredient(int id, String nom, int quantite) {
 		super();
+		this.id = id;
 		this.nom = nom;
 		this.quantite = quantite;
 	}
-	
 	public String getNom() {
 		return nom;
 	}

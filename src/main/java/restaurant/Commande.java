@@ -4,26 +4,33 @@ import java.sql.Date;
 
 public class Commande {
 
+	private int id;
 	private Date dateDemande;
-	
 	private boolean estEnfant;
-	
 	private int numTable;
-	
 	private Plat plat;
-	
 	private Affectation affectation;
-	
 	private Etat etat;
 
-	public Commande(Date dateDemande, boolean estEnfant, int numTable, Plat plat, Affectation affectation, Etat etat) {
+	
+	public Commande(int id, Date dateDemande, boolean estEnfant, int numTable, Plat plat, Affectation affectation,
+			Etat etat) {
 		super();
+		this.id = id;
 		this.dateDemande = dateDemande;
 		this.estEnfant = estEnfant;
 		this.numTable = numTable;
 		this.plat = plat;
 		this.affectation = affectation;
 		this.etat = etat;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Plat getPlat() {

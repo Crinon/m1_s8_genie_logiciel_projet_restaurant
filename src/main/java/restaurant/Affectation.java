@@ -6,17 +6,11 @@ import java.util.ArrayList;
 public class Affectation {
 	
 	private int id;
-
 	private Date dateDebut;
-	
 	private Date dateFin;
-	
 	private int nbPersonne;
-	
 	private ArrayList<Commande> commandes;
-
 	private Facture facture;
-	
 	private Table table;
 	
 

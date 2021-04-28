@@ -4,28 +4,35 @@ import java.util.ArrayList;
 
 public class Plat {
 
+	private int id;
 	private double prix;
-	
 	private int dureePreparation;
-	
 	private boolean disponibleCarte;
-	
 	private Type type;
-	
 	private Categorie categorie;
-	
 	private ArrayList<Ingredient> ingredients;
-
-	public Plat(double prix, int dureePreparation, boolean disponibleCarte, Type type, Categorie categorie) {
+	
+	
+	public Plat(int id, double prix, int dureePreparation, boolean disponibleCarte, Type type, Categorie categorie,
+			ArrayList<Ingredient> ingredients) {
 		super();
+		this.id = id;
 		this.prix = prix;
 		this.dureePreparation = dureePreparation;
 		this.disponibleCarte = disponibleCarte;
 		this.type = type;
 		this.categorie = categorie;
-		this.ingredients = new ArrayList<Ingredient>();
+		this.ingredients = ingredients;
 	}
-	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public ArrayList<Ingredient> getTables() {
 		return ingredients;
 	}

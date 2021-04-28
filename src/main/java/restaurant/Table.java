@@ -7,13 +7,11 @@ public class Table {
 	}
 	
 	private int numero;
-	
 	private int capacite;
-	
 	private Etat etat;
-	
 	private Reservation reservation;
 
+	
 	public Table(int numero, int capacite, Etat etat) {
 		super();
 		this.numero = numero;
