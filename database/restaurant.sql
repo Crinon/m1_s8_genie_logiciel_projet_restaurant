@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS Plat (
 	typePlat TYPEPLAT NOT NULL,
 	typeIngredient TYPEINGREDIENT NOT NULL,
 	prix FLOAT NOT NULL,
+	dureePreparation INT NOT NULL,
 	disponibleCarte BOOLEAN NOT NULL,
 	PRIMARY KEY (id)
 );

@@ -16,63 +16,75 @@ public class Sql {
 	// Insertion
 //	public static final String requete_insertion_maitredhotel = "INSERT INTO ";
 //	public static final String requete_insertion_serveur = "INSERT INTO restaurant.serveur (personne) VALUES ('%s')";
-	public static final String requete_insertion_personne = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
-	public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
 
-	public Sql() throws ClassNotFoundException, SQLException {
-		Class.forName("org.postgresql.Driver");
-		c = DriverManager.getConnection("jdbc:postgresql://nicolascrinon.ddns.net:5432/restaurant", pg_user, pg_pw);
-		c.setAutoCommit(false);
-	}
+    public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
+    public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
+    
+    //V�rifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon (en sachant qu'il n'y a pas de doublons)
+    public static final String requete_login_existe = "SELECT COUNT(p.id) as existe FROM restaurant.personne p WHERE p.login = '%s'";
+    
+    
+    //Revenu hebdomadaire
+    //Revenu quotidien
+    //Revenu mensuel
 
-	public boolean executerInsert(String requete) {
-		try {
-			this.stmt = c.createStatement();
-			System.out.println("Insert : " + requete);
-			stmt.executeUpdate(requete);
-			c.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
+    //Temps de preparation moyen
+    public static final String requete_temps_prepare_moyen = "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n" + 
+    		"FROM restaurant.commande c\r\n" + 
+    		"LEFT JOIN restaurant.plat p ON c.plat = p.id";
+    
+    //Temps moyen par client
+    //Profit dejeuner
+    //Profit diner
+    
+    
 
-	public boolean executerDelete(String requete) {
-		try {
-			this.stmt = c.createStatement();
-			System.out.println("Delete : " + requete);
-			stmt.executeUpdate(requete);
-			c.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
-	public boolean executerUpdate(String requete) {
-		try {
-			this.stmt = c.createStatement();
-			System.out.println("Update : " + requete);
-			stmt.executeUpdate(requete);
-			c.commit();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return true;
-	}
+    public Sql() throws ClassNotFoundException, SQLException {
+	Class.forName("org.postgresql.Driver");
+	c = DriverManager.getConnection("jdbc:postgresql://nicolascrinon.ddns.net:5432/restaurant", pg_user, pg_pw);
+	c.setAutoCommit(false);
+    }
 
-	public ResultSet executerSelect(String requete) {
-		ResultSet res = null;
-		try {
-			this.stmt = c.createStatement();
-			System.out.println("Select : " + requete);
-			res = stmt.executeQuery(requete);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
+    public boolean executerInsert(String requete) {
+	try {
+	    this.stmt = c.createStatement();
+	    System.out.println("Insert : " + requete);
+	    stmt.executeUpdate(requete);
+	    c.commit();
 	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return true;
+    }
 
+    public boolean executerDelete(String requete) {
+	try {
+	    this.stmt = c.createStatement();
+	    System.out.println("Delete : " + requete);
+	    stmt.executeUpdate(requete);
+	    c.commit();
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return true;
+    }
+
+    public ResultSet executerSelect(String requete) {
+	ResultSet res = null;
+	try {
+	    this.stmt = c.createStatement();
+	    System.out.println("Select : " + requete);
+	    res = stmt.executeQuery(requete);
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return res;
+    }
+ 
+      
 	// Méthode spéciale car lors de l'ajout d'une valeur, il faut l'ajouter dans la
 	// table du rôle associé
 	public void ajouterPersonne(Personne personne, String role) throws SQLException {
@@ -221,8 +233,5 @@ public class Sql {
 			return false;
 		}
 	}
-	
-	
-	
 
 }

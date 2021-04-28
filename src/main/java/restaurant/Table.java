@@ -3,11 +3,8 @@ package restaurant;
 public class Table {
 	
 	private int numero;
-	
 	private int capacite;
-	
 	private Etat etat;
-	
 	private Reservation reservation;
 	
 	private int id;
