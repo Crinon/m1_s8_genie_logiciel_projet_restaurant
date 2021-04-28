@@ -13,9 +13,12 @@ public class Table {
 	private Etat etat;
 	
 	private Reservation reservation;
+	
+	private int id;
 
-	public Table(int numero, int capacite, Etat etat) {
+	public Table(int id, int numero, int capacite, Etat etat) {
 		super();
+		this.id = id;
 		this.numero = numero;
 		this.capacite = capacite;
 		this.etat = etat;
