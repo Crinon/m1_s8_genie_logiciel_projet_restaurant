@@ -2,10 +2,6 @@ package restaurant;
 
 public class Table {
 	
-	private enum Etat {
-	    LIBRE, SALE, OCCUPE, RESERVE  
-	}
-	
 	private int numero;
 	
 	private int capacite;

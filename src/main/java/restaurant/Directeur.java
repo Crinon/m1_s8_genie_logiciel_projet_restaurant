@@ -1,6 +1,7 @@
 package restaurant;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Directeur extends Personne {
 
@@ -79,9 +80,36 @@ public class Directeur extends Personne {
 		sql.supprimerEtage();
 	}
 	
-	public void ajouterTable(int numTable, Etage etage) throws ClassNotFoundException, SQLException {
+	public void ajouterTable(int numero, int capacite, Etage etage) throws ClassNotFoundException, SQLException {
 		Sql sql = new Sql();
-		sql.insererTable();
+		sql.insererTable(numero, capacite, etage);
 	}
+	
+	public void modifierNumeroTable(Table table, int newNumero) throws ClassNotFoundException, SQLException {
+		boolean success;
+		Sql sql = new Sql();
+		success = sql.updateTable(table.getNumero(),newNumero, table);
+		if(success) {
+			table.setNumero(newNumero);
+		}
+	}
+	
+	public void supprimerTable(Table table, ArrayList<Table> tables) throws ClassNotFoundException, SQLException {
+		boolean success;
+		Sql sql = new Sql();
+		success = sql.deleteTable(table);
+		if(success) {
+			tables.remove(table);
+		}
+	}
+	
+	public void commanderIngredient(Ingredient ingredient, int ajout) {
+		boolean success;
+		Sql sql = new Sql();
+		success = sql.commanderIngredient(ingredient, ajout);
+
+	}
+	
+	
 	
 }

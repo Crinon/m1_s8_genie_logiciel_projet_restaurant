@@ -29,6 +29,8 @@ public class Main {
 //	p.ajouterEtage();
 //	p.ajouterEtage();
 //	
+	ArrayList<Etage> etagess = sql.getTousEtages();
+	p.ajouterTable(0, 1, etagess.get(0));
 
 	/*
 	 * p.ajouterPersonnel(new Assistant("Florian"), "directeur");

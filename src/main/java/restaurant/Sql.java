@@ -48,6 +48,18 @@ public class Sql {
 		}
 		return true;
 	}
+	
+	public boolean executerUpdate(String requete) {
+		try {
+			this.stmt = c.createStatement();
+			System.out.println("Update : " + requete);
+			stmt.executeUpdate(requete);
+			c.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
 
 	public ResultSet executerSelect(String requete) {
 		ResultSet res = null;
@@ -118,27 +130,27 @@ public class Sql {
 				+ personne.getId());
 		executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getId());
 	}
-	
+
 	public void insererEtage() throws NumberFormatException, SQLException {
-		ResultSet resultSet = executerSelect(
-				"SELECT MAX(niveau) FROM restaurant.etage");
+		ResultSet resultSet = executerSelect("SELECT MAX(niveau) FROM restaurant.etage");
 		resultSet.next();
 		int prochainNiveau = 0;
-		if(resultSet.getString("max") != null) {
+		if (resultSet.getString("max") != null) {
 			prochainNiveau = Integer.parseInt(resultSet.getString("max")) + 1;
 		}
 		executerInsert("INSERT INTO restaurant.etage (niveau) VALUES (" + prochainNiveau + ")");
 	}
-	
+
 	public ArrayList<Etage> getTousEtages() throws NumberFormatException, SQLException {
 		// Initialisation de la liste d'étages à retrouner
-    	ArrayList<Etage> etages = new ArrayList<>();
-    	// Sélection de tous les étages présents dans la DB
-		ResultSet resultSet = executerSelect(
-				"SELECT * FROM restaurant.etage");
-		// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste retournée
-		while(resultSet.next()) {
-			etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),Integer.parseInt(resultSet.getString("niveau"))));
+		ArrayList<Etage> etages = new ArrayList<>();
+		// Sélection de tous les étages présents dans la DB
+		ResultSet resultSet = executerSelect("SELECT * FROM restaurant.etage");
+		// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste
+		// retournée
+		while (resultSet.next()) {
+			etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
+					Integer.parseInt(resultSet.getString("niveau"))));
 		}
 		return etages;
 	}
@@ -148,30 +160,69 @@ public class Sql {
 				"SELECT id FROM restaurant.etage WHERE niveau = (SELECT MAX(niveau) FROM restaurant.etage)");
 		resultSet.next();
 		int idDernierNiveau = 0;
-		if(resultSet.getString("id") != null) {
+		if (resultSet.getString("id") != null) {
 			idDernierNiveau = Integer.parseInt(resultSet.getString("id"));
 			executerDelete("DELETE FROM restaurant.table WHERE etage = " + idDernierNiveau);
 			executerDelete("DELETE FROM restaurant.etage WHERE id = " + idDernierNiveau);
 		} else {
-			System.out.println("Vous avez tenté de supprimer le dernier étage alors qu'il n'y en a aucun dans la base de données");
+			System.out.println(
+					"Vous avez tenté de supprimer le dernier étage alors qu'il n'y en a aucun dans la base de données");
+		}
+	}
+
+	public void insererTable(int numero, int capacite, Etage etage) throws SQLException {
+		// On vérifie si la capacité donnée est supérieur à 0
+		if (capacite < 1) {
+			System.out.println("Vous avez tenté de créer une table avec une capacité inférieure à 1");
+			return;
+		}
+		// On vérifie si le numéro de table est disponible
+		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.tables WHERE numero = " + numero);
+		resultSet.next();
+		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+			System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
+		} else {
+			executerInsert("INSERT INTO restaurant.tables (numero,capacite,etat,etage) VALUES (" + numero + ","
+					+ capacite + ", 'Libre' ," + etage.getId() + ")");
+		}
+	}
+
+	
+	// Méthode pour mettre à jour le numéro de la table
+	public boolean updateTable(int numero, int newNumero, Table table) throws SQLException {
+		// On vérifie que le nouveau numéro est différent de l'actuel
+		if(numero==newNumero) {
+			System.out.println("Vous avez tenté de mettre à jour le numéro d'une table mais l'ancien numéro est le même que celui spécifié");
+			return false;
+		}
+		// On vérifie si le nouveau numéro est disponible
+		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.tables WHERE numero = " + numero);
+		resultSet.next();
+		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+			System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
+			return false;
+		}
+		return executerUpdate("UPDATE restaurant.tables (numero) VALUES ("+ newNumero +") WHERE id = "+table.getId());
+	}
+
+	public boolean deleteTable(Table table) {
+		return executerDelete("DELETE FROM restaurant.table WHERE id = " + table.getId());
+	}
+
+	public boolean commanderIngredient(Ingredient ingredient, int ajout) {
+		// On récupère le stock actuel pour incrémenter
+		ResultSet resultSet = executerSelect("SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
+		int quantiteActuelle = 0;
+		if (resultSet.getString("quantite") != null) {
+			quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
+			executerUpdate("UPDATE restaurant.ingredient (quantite) VALUES () WHERE id = " + (ingredient.getId()+ajout);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
 	
 	
-	
-//	public void insererTable(int numero) {
-//		// On vérifie si le numéro de table est disponible
-//		ResultSet resultSet = executerSelect(
-//				"SELECT MAX(niveau) FROM restaurant.etage");
-//		resultSet.next();
-//		int prochainNiveau = 0;
-//		if(resultSet.getString("max") != null) {
-//			prochainNiveau = Integer.parseInt(resultSet.getString("max")) + 1;
-//		}
-//		executerInsert("INSERT INTO restaurant.table (niveau) VALUES (" + prochainNiveau + ")");
-//	}
-	
+
 }
-
-
