@@ -23,7 +23,9 @@ public class Sql {
     
     
     //Revenu hebdomadaire
+    
     //Revenu quotidien
+    
     //Revenu mensuel
 
     //Temps de preparation moyen
@@ -32,8 +34,14 @@ public class Sql {
     		"LEFT JOIN restaurant.plat p ON c.plat = p.id";
     
     //Temps moyen par client
+    
     //Profit dejeuner
+    
     //Profit diner
+    
+    //Revenu par plat (plat + nbVentes + revenu)
+    
+    //Popularité plats (plat + nbVentes)
     
     
 
