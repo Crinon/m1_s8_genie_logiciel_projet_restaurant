@@ -16,6 +16,17 @@ public class Etage {
 		this.niveau = niveau;
 		this.tables = new ArrayList<Table>();
 	}
+	
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 
 	public int getNiveau() {
 		return niveau;

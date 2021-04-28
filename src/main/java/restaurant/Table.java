@@ -25,6 +25,14 @@ public class Table {
 		this.reservation=null;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public Reservation getReservation() {
 		return reservation;
 	}

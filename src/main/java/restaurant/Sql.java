@@ -160,10 +160,17 @@ public class Sql {
 	
 	
 	
-	public void insererTable() {
-		// TODO Auto-generated method stub
-		
-	}
+//	public void insererTable(int numero) {
+//		// On vérifie si le numéro de table est disponible
+//		ResultSet resultSet = executerSelect(
+//				"SELECT MAX(niveau) FROM restaurant.etage");
+//		resultSet.next();
+//		int prochainNiveau = 0;
+//		if(resultSet.getString("max") != null) {
+//			prochainNiveau = Integer.parseInt(resultSet.getString("max")) + 1;
+//		}
+//		executerInsert("INSERT INTO restaurant.table (niveau) VALUES (" + prochainNiveau + ")");
+//	}
 	
 }
 
