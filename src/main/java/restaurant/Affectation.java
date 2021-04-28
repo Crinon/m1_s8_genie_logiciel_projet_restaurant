@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 public class Affectation {
+	
+	private int id;
 
 	private Date dateDebut;
 	
@@ -17,15 +19,25 @@ public class Affectation {
 	
 	private Table table;
 	
-	public Affectation(Date dateDebut, Date dateFin, int nbPersonne, ArrayList<Commande> commandes, Facture facture,
-			Table table) {
+
+	public Affectation(int id, Date dateDebut, Date dateFin, int nbPersonne, ArrayList<Commande> commandes,
+			Facture facture, Table table) {
 		super();
+		this.id = id;
 		this.dateDebut = dateDebut;
 		this.dateFin = dateFin;
 		this.nbPersonne = nbPersonne;
-		this.commandes = new ArrayList<Commande>();
-		this.facture = null;
+		this.commandes = commandes;
+		this.facture = facture;
 		this.table = table;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Date getDateDebut() {

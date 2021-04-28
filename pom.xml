@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.ul.miage</groupId>
 	<artifactId>restaurant</artifactId>
-	<name>Projet M1 miage restaurantl</name>
-	<description>Programme de gestion d'un restaurant</description>
+	<name>Projet M1 miage génie logiciel</name>
+	<description>Prgoramme de gestion d'un restaurant</description>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,7 +15,7 @@
 		<project.bindist.dir.unix>${project.basedir}/bindist-unix</project.bindist.dir.unix>
 		<project.bindist.dir.win>${project.basedir}/bindist-win</project.bindist.dir.win>
 		<!-- Nom de la classe principale -->
-		<project.main.classname>${project.groupId}.${project.artifactId}.Main</project.main.classname>
+		<project.main.classname>${project.groupId}.${project.artifactId}.Launcher</project.main.classname>
 		<!-- Nom du binaire -->
 		<project.bin.appname>run</project.bin.appname>
 	</properties>
@@ -56,7 +56,7 @@
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.4</version>
 				<configuration>
-					<mainClass>${project.groupId}.${project.artifactId}.Main</mainClass>
+					<mainClass>fr.ul.miage.baignoire.App</mainClass>
 				</configuration>
 			</plugin>
 
