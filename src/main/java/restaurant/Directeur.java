@@ -70,9 +70,11 @@ public class Directeur extends Personne {
 		sql.supprimerPersonne(personne);
 	}
 		
-	public void ajouterEtage() throws ClassNotFoundException, SQLException {
+	public boolean ajouterEtage() throws ClassNotFoundException, SQLException {
 		Sql sql = new Sql();
 		sql.insererEtage();
+		Restaurant.addEtage(new Etage(sql.demanderDernierId("etage"),sql.demanderDernierEtage()));
+		return true;
 	}
 	
 	public void supprimerDernierEtage() throws ClassNotFoundException, SQLException {
@@ -83,6 +85,7 @@ public class Directeur extends Personne {
 	public void ajouterTable(int numero, int capacite, Etage etage) throws ClassNotFoundException, SQLException {
 		Sql sql = new Sql();
 		sql.insererTable(numero, capacite, etage);
+		etage.addTable(new Table(sql.demanderDernierId("tables"),capacite, numero, EtatTable.Libre));
 	}
 	
 	public void modifierNumeroTable(Table table, int newNumero) throws ClassNotFoundException, SQLException {
@@ -103,7 +106,17 @@ public class Directeur extends Personne {
 		}
 	}
 	
-	public void commanderIngredient(Ingredient ingredient, int ajout) {
+	public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) throws ClassNotFoundException, SQLException {
+		boolean success = false;
+		Sql sql = new Sql();
+		sql.insererIngredient(nom);
+		ingredients.add(new Ingredient(sql.demanderDernierId("ingredient"),nom, 0));
+		return success;
+	}
+	
+	
+	
+	public void commanderIngredient(Ingredient ingredient, int ajout) throws ClassNotFoundException, SQLException {
 		boolean success;
 		Sql sql = new Sql();
 		success = sql.commanderIngredient(ingredient, ajout);

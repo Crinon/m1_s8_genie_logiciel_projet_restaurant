@@ -45,7 +45,7 @@ public class Sql {
 	c.setAutoCommit(false);
     }
 
-    public boolean executerInsert(String requete) {
+    public Statement executerInsert(String requete) {
 	try {
 	    this.stmt = c.createStatement();
 	    System.out.println("Insert : " + requete);
@@ -55,10 +55,10 @@ public class Sql {
 	catch (SQLException e) {
 	    e.printStackTrace();
 	}
-	return true;
-    }
+    return stmt;
+    }    
 
-    public boolean executerDelete(String requete) {
+    private boolean executerDelete(String requete) {
 	try {
 	    this.stmt = c.createStatement();
 	    System.out.println("Delete : " + requete);
@@ -71,7 +71,7 @@ public class Sql {
 	return true;
     }
 
-    public ResultSet executerSelect(String requete) {
+    private ResultSet executerSelect(String requete) {
 	ResultSet res = null;
 	try {
 	    this.stmt = c.createStatement();
@@ -83,6 +83,20 @@ public class Sql {
 	}
 	return res;
     }
+    
+    
+    private ResultSet executerUpdate(String requete) {
+    	ResultSet res = null;
+    	try {
+    	    this.stmt = c.createStatement();
+    	    System.out.println("Update : " + requete);
+    	    res = stmt.executeQuery(requete);
+    	}
+    	catch (SQLException e) {
+    	    e.printStackTrace();
+    	}
+    	return res;
+        }
  
       
 	// Méthode spéciale car lors de l'ajout d'une valeur, il faut l'ajouter dans la
@@ -153,19 +167,7 @@ public class Sql {
 		executerInsert("INSERT INTO restaurant.etage (niveau) VALUES (" + prochainNiveau + ")");
 	}
 
-	public ArrayList<Etage> getTousEtages() throws NumberFormatException, SQLException {
-		// Initialisation de la liste d'étages à retrouner
-		ArrayList<Etage> etages = new ArrayList<>();
-		// Sélection de tous les étages présents dans la DB
-		ResultSet resultSet = executerSelect("SELECT * FROM restaurant.etage");
-		// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste
-		// retournée
-		while (resultSet.next()) {
-			etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
-					Integer.parseInt(resultSet.getString("niveau"))));
-		}
-		return etages;
-	}
+
 
 	public void supprimerEtage() throws SQLException {
 		ResultSet resultSet = executerSelect(
@@ -214,24 +216,104 @@ public class Sql {
 			System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 			return false;
 		}
-		return executerUpdate("UPDATE restaurant.tables (numero) VALUES ("+ newNumero +") WHERE id = "+table.getId());
+		executerUpdate("UPDATE restaurant.tables (numero) VALUES ("+ newNumero +") WHERE id = "+table.getId());
+		return true;
 	}
 
 	public boolean deleteTable(Table table) {
 		return executerDelete("DELETE FROM restaurant.table WHERE id = " + table.getId());
 	}
+	
+	public Ingredient insererIngredient(String nom) throws SQLException {
+		// On vérifie que 2 ingrédient ne peuvent pas avoir le même nom
+		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.ingredient WHERE nom = '" + nom +"'");
+		if(resultSet == null) {
+			System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+			return null;			
+		}
+		resultSet.next();
+		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+			System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+			return null;
+		}
+		
+		// On insère l'ingrédient avec une quantité nulle
+		Statement statement = executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
 
-	public boolean commanderIngredient(Ingredient ingredient, int ajout) {
+        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+        		return new Ingredient((int) generatedKeys.getLong(1), nom, 0);
+            }
+        }
+		return null;
+
+	}
+	
+	public int demanderDernierId(String table) throws SQLException {
+		ResultSet resultSet = executerSelect("SELECT MAX(id) FROM restaurant."+table);
+		// Démarrage du curseur
+		resultSet.next();
+		return Integer.parseInt(resultSet.getString("MAX"));
+	}
+	
+
+	public boolean commanderIngredient(Ingredient ingredient, int ajout) throws NumberFormatException, SQLException {
 		// On récupère le stock actuel pour incrémenter
 		ResultSet resultSet = executerSelect("SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
 		int quantiteActuelle = 0;
+		int nouvelleQuantite = 0;
 		if (resultSet.getString("quantite") != null) {
 			quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
-			executerUpdate("UPDATE restaurant.ingredient (quantite) VALUES () WHERE id = " + (ingredient.getId()+ajout);
+			nouvelleQuantite = quantiteActuelle + ajout;
+			executerUpdate("UPDATE restaurant.ingredient (quantite) VALUES () WHERE id = " + nouvelleQuantite);
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	public void initialiserIngredients() throws SQLException {
+		ArrayList<Ingredient> ingredients= new ArrayList<Ingredient>();
+		ResultSet resultset = executerSelect("SELECT * FROM restaurant.ingredient");
+	     while (resultset.next()) {
+	    	 ingredients.add(new Ingredient(resultset.getInt("id"), resultset.getString("nom"), resultset.getInt("quantite")));
+	       }
+    	 Restaurant.setIngredients(ingredients);
+	}
+	
+	public void initialiserTables(Etage etage) throws NumberFormatException, SQLException {
+		// On récupère toutes les tables affecté à l'étage demandé
+		ResultSet resultSet = executerSelect("SELECT * FROM restaurant.tables WHERE id = "+etage.getId());
+		// Pour chaque table trouvée, on créé un objet table que l'on ajoute à l'étage en cours
+		while (resultSet.next()) {
+			etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
+					Integer.parseInt(resultSet.getString("numero")),
+					Integer.parseInt(resultSet.getString("capacite")),
+					EtatTable.valueOf(resultSet.getString("etat"))
+					));
+		}
+	}
+	
+	
+	public void initialiserEtages() throws NumberFormatException, SQLException {
+		// Initialisation de la liste d'étages à retrouner
+		ArrayList<Etage> etages = new ArrayList<>();
+		// Sélection de tous les étages présents dans la DB
+		ResultSet resultSet = executerSelect("SELECT * FROM restaurant.etage");
+		// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste
+		// retournée
+		while (resultSet.next()) {
+			etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
+					Integer.parseInt(resultSet.getString("niveau"))));
+		}
+		Restaurant.setEtages(etages);
+	}
+	
+	public int demanderDernierEtage() throws SQLException {
+		ResultSet resultSet = executerSelect("SELECT MAX(niveau) FROM restaurant.etage");
+		// Démarrage du curseur
+		resultSet.next();
+		return resultSet.getInt("MAX");
 	}
 
 }

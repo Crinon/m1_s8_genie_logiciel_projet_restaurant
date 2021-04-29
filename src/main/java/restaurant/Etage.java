@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Etage {
@@ -8,6 +9,11 @@ public class Etage {
 	
 	private ArrayList<Table> tables;
 	
+	@Override
+	public String toString() {
+		return "Etage [niveau=" + niveau + ", tables=" + tables + ", id=" + id + "]";
+	}
+
 	private int id;
 
 	public Etage(int id, int niveau) {
@@ -46,6 +52,12 @@ public class Etage {
 	
 	public void addTable(Table table) {
 		this.tables.add(table);
+	}
+
+
+	public void initialiserTables() throws ClassNotFoundException, SQLException {
+		Sql sql = new Sql();
+		sql.initialiserTables(this);
 	}
 	
 	

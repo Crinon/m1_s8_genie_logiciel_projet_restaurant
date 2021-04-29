@@ -4,12 +4,12 @@ public class Table {
 	
 	private int numero;
 	private int capacite;
-	private Etat etat;
+	private EtatTable etat;
 	private Reservation reservation;
 	
 	private int id;
 
-	public Table(int id, int numero, int capacite, Etat etat) {
+	public Table(int id, int numero, int capacite, EtatTable etat) {
 		super();
 		this.id = id;
 		this.numero = numero;
@@ -50,11 +50,11 @@ public class Table {
 		this.capacite = capacite;
 	}
 
-	public Etat getEtat() {
+	public EtatTable getEtat() {
 		return etat;
 	}
 
-	public void setEtat(Etat etat) {
+	public void setEtat(EtatTable etat) {
 		this.etat = etat;
 	}
 	

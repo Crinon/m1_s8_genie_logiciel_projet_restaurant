@@ -6,10 +6,18 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-    	Sql sql = new Sql();
     	// Initialisation du programme
+    	Restaurant.initialisation();
+    	// Problème à résoudre :
+//    	On ajoute une table avec un numéro déjà pris donc ça n'insert pas, mais par contre ça l'ajoute quand même à l'arraylist de tables
+    	
+    	Sql sql = new Sql();
+
+
+    	System.out.println(Restaurant.getIngredients());
+    	System.out.println(Restaurant.getEtages());
+
 //    	Restaurant restaurant = new Restaurant();
-    	ArrayList<Etage> etages = sql.getTousEtages();
 
     		// Charger le personnel
     		
@@ -29,8 +37,10 @@ public class Main {
 //	p.ajouterEtage();
 //	p.ajouterEtage();
 //	
-	ArrayList<Etage> etagess = sql.getTousEtages();
-	p.ajouterTable(0, 1, etagess.get(0));
+//	p.ajouterTable(22, 1, Restaurant.getEtages().get(0));
+
+	p.ajouterIngredient("carotte",Restaurant.getIngredients());
+	p.ajouterIngredient("radis",Restaurant.getIngredients());
 
 	/*
 	 * p.ajouterPersonnel(new Assistant("Florian"), "directeur");
@@ -46,6 +56,7 @@ public class Main {
 	// Au démarrage de l'application, on charge les données
 	// Chargement des horaires
 	// Instancier le personnel
+	System.out.println(Restaurant.getEtages());
 
     }
 
