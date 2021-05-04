@@ -2,22 +2,28 @@ package restaurant;
 
 public class Table {
 	
-	private enum Etat {
-	    LIBRE, SALE, OCCUPE, RESERVE  
-	}
-	
 	private int numero;
 	private int capacite;
-	private Etat etat;
+	private EtatTable etat;
 	private Reservation reservation;
-
 	
-	public Table(int numero, int capacite, Etat etat) {
+	private int id;
+
+	public Table(int id, int numero, int capacite, EtatTable etat) {
 		super();
+		this.id = id;
 		this.numero = numero;
 		this.capacite = capacite;
 		this.etat = etat;
 		this.reservation=null;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Reservation getReservation() {
@@ -44,11 +50,11 @@ public class Table {
 		this.capacite = capacite;
 	}
 
-	public Etat getEtat() {
+	public EtatTable getEtat() {
 		return etat;
 	}
 
-	public void setEtat(Etat etat) {
+	public void setEtat(EtatTable etat) {
 		this.etat = etat;
 	}
 	
