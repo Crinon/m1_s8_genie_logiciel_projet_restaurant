@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -20,14 +21,14 @@ public class Directeur extends Personne {
 		this.identifiant = identifiant;
 	}
 
-	public void ajouterPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException {
+	public void ajouterPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException, IOException {
 		// Object pour intéragir avec la base de données
 		Sql sql = new Sql();
 		// Utilisation de la requête pour insérer un serveur
 		sql.ajouterPersonne(personne, role);
 	}
 
-	public Personne modifierPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException {
+	public Personne modifierPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException, IOException {
 		// Object pour intéragir avec la base de données
 		Sql sql = new Sql();
 		// Utilisation de la requête pour insérer un serveur
@@ -63,32 +64,32 @@ public class Directeur extends Personne {
 		return newPersonne;
 	}
 
-	public void supprimerPersonnel(Personne personne) throws ClassNotFoundException, SQLException {
+	public void supprimerPersonnel(Personne personne) throws ClassNotFoundException, SQLException, IOException {
 		// Object pour intéragir avec la base de données
 		Sql sql = new Sql();
 		// Utilisation de la requête pour insérer un serveur
 		sql.supprimerPersonne(personne);
 	}
 		
-	public boolean ajouterEtage() throws ClassNotFoundException, SQLException {
+	public boolean ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
 		Sql sql = new Sql();
 		sql.insererEtage();
 		Restaurant.addEtage(new Etage(sql.demanderDernierId("etage"),sql.demanderDernierEtage()));
 		return true;
 	}
 	
-	public void supprimerDernierEtage() throws ClassNotFoundException, SQLException {
+	public void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
 		Sql sql = new Sql();
 		sql.supprimerEtage();
 	}
 	
-	public void ajouterTable(int numero, int capacite, Etage etage) throws ClassNotFoundException, SQLException {
+	public void ajouterTable(int numero, int capacite, Etage etage) throws ClassNotFoundException, SQLException, IOException {
 		Sql sql = new Sql();
 		sql.insererTable(numero, capacite, etage);
 		etage.addTable(new Table(sql.demanderDernierId("tables"),capacite, numero, EtatTable.Libre));
 	}
 	
-	public void modifierNumeroTable(Table table, int newNumero) throws ClassNotFoundException, SQLException {
+	public void modifierNumeroTable(Table table, int newNumero) throws ClassNotFoundException, SQLException, IOException {
 		boolean success;
 		Sql sql = new Sql();
 		success = sql.updateTable(table.getNumero(),newNumero, table);
@@ -97,7 +98,7 @@ public class Directeur extends Personne {
 		}
 	}
 	
-	public void supprimerTable(Table table, ArrayList<Table> tables) throws ClassNotFoundException, SQLException {
+	public void supprimerTable(Table table, ArrayList<Table> tables) throws ClassNotFoundException, SQLException, IOException {
 		boolean success;
 		Sql sql = new Sql();
 		success = sql.deleteTable(table);
@@ -106,17 +107,23 @@ public class Directeur extends Personne {
 		}
 	}
 	
-	public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) throws ClassNotFoundException, SQLException {
+	public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) throws ClassNotFoundException, SQLException, IOException {
 		boolean success = false;
 		Sql sql = new Sql();
 		sql.insererIngredient(nom);
+		System.out.println("HENLO 2");
+
 		ingredients.add(new Ingredient(sql.demanderDernierId("ingredient"),nom, 0));
+		System.out.println("HENLO 2");
+
+		System.out.println(sql.demanderDernierId("ingredient"));
+		System.out.println(ingredients);
 		return success;
 	}
 	
 	
 	
-	public void commanderIngredient(Ingredient ingredient, int ajout) throws ClassNotFoundException, SQLException {
+	public void commanderIngredient(Ingredient ingredient, int ajout) throws ClassNotFoundException, SQLException, IOException {
 		boolean success;
 		Sql sql = new Sql();
 		success = sql.commanderIngredient(ingredient, ajout);

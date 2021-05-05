@@ -1,11 +1,12 @@
 package restaurant;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Main {
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
     	// Initialisation du programme
     	Restaurant.initialisation();
     	// Problème à résoudre :

@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public final class Restaurant {
 	private static Date heureDinerLimite;
 	private static int nbTableMax;
 	
-	public static void initialisation() throws ClassNotFoundException, SQLException {
+	public static void initialisation() throws ClassNotFoundException, SQLException, IOException {
     	Sql sql = new Sql();
     	sql.initialiserIngredients();
     	sql.initialiserEtages();

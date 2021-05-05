@@ -1,16 +1,23 @@
 package restaurant;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Sql {
 
 	private Connection c = null;
 	private Statement stmt = null;
+	public final String propertiesFilename = "database.properties";
+
+    private Properties prop = new Properties();
 	private String pg_user = "postgres";
 	private String pg_pw = "postgres";
 	// Insertion
@@ -39,12 +46,28 @@ public class Sql {
     
     
 
-    public Sql() throws ClassNotFoundException, SQLException {
-	Class.forName("org.postgresql.Driver");
-	c = DriverManager.getConnection("jdbc:postgresql://nicolascrinon.ddns.net:5432/restaurant", pg_user, pg_pw);
-	c.setAutoCommit(false);
+    public Sql() throws ClassNotFoundException, SQLException, IOException {
+		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+		prop.load(inputStream);
+		Class.forName("org.postgresql.Driver");
+		c = DriverManager.getConnection(prop.getProperty("datasource.url"), prop.getProperty("datasource.username"), prop.getProperty("datasource.password"));
+		c.setAutoCommit(false);
     }
 
+    public Statement executerTests(String requete) {
+	try {
+	    this.stmt = c.createStatement();
+	    System.out.println("execute : " + requete);
+	    stmt.execute(requete);
+	    c.commit();
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    return stmt;
+    }   
+    
+    
     public Statement executerInsert(String requete) {
 	try {
 	    this.stmt = c.createStatement();
@@ -71,7 +94,7 @@ public class Sql {
 	return true;
     }
 
-    private ResultSet executerSelect(String requete) {
+    public ResultSet executerSelect(String requete) {
 	ResultSet res = null;
 	try {
 	    this.stmt = c.createStatement();
@@ -124,7 +147,17 @@ public class Sql {
 			ResultSet resultSet = executerSelect(
 					"SELECT COUNT(*) FROM restaurant.personne WHERE login = '" + nom + nombre + "'");
 			resultSet.next();
-			int nbLignes = Integer.parseInt(resultSet.getString("count"));
+			
+			String nomColonne;
+	        ResultSetMetaData meta = resultSet.getMetaData();
+	        // Si le SQL est exécuté par la classe de tests
+	        if(meta.getColumnName(1).equals("COUNT(*)")){
+	        	nomColonne = "COUNT(*)";
+	        } else {
+	        	nomColonne = "count";
+	        }
+			
+			int nbLignes = Integer.parseInt(resultSet.getString(nomColonne));
 			// Si le login est deja utilise
 			if (nbLignes > 0) {
 				return definirLogin(nom, nombre + 1);
@@ -193,7 +226,17 @@ public class Sql {
 		// On vérifie si le numéro de table est disponible
 		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.tables WHERE numero = " + numero);
 		resultSet.next();
-		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+		
+		String nomColonne;
+        ResultSetMetaData meta = resultSet.getMetaData();
+        // Si le SQL est exécuté par la classe de tests
+        if(meta.getColumnName(1).equals("COUNT(*)")){
+        	nomColonne = "COUNT(*)";
+        } else {
+        	nomColonne = "count";
+        }
+		
+		if (Integer.parseInt(resultSet.getString(nomColonne))!= 0) {
 			System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 		} else {
 			executerInsert("INSERT INTO restaurant.tables (numero,capacite,etat,etage) VALUES (" + numero + ","
@@ -211,8 +254,18 @@ public class Sql {
 		}
 		// On vérifie si le nouveau numéro est disponible
 		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.tables WHERE numero = " + numero);
+		
+		String nomColonne;
+        ResultSetMetaData meta = resultSet.getMetaData();
+        // Si le SQL est exécuté par la classe de tests
+        if(meta.getColumnName(1).equals("COUNT(*)")){
+        	nomColonne = "COUNT(*)";
+        } else {
+        	nomColonne = "count";
+        }
+		
 		resultSet.next();
-		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+		if (Integer.parseInt(resultSet.getString(nomColonne))!= 0) {
 			System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 			return false;
 		}
@@ -227,16 +280,39 @@ public class Sql {
 	public Ingredient insererIngredient(String nom) throws SQLException {
 		// On vérifie que 2 ingrédient ne peuvent pas avoir le même nom
 		ResultSet resultSet = executerSelect("SELECT count(*) FROM restaurant.ingredient WHERE nom = '" + nom +"'");
+//		ResultSetMetaData rsmd = resultSet.getMetaData();
+//		int columnsNumber = rsmd.getColumnCount();
+//		while (resultSet.next()) {
+//		    for (int i = 1; i <= columnsNumber; i++) {
+//		        if (i > 1) System.out.print(",  ");
+//		        String columnValue = resultSet.getString(i);
+//		        System.out.print(columnValue + " " + rsmd.getColumnName(i));
+//		    }
+//		    System.out.println("");
+//		}
+
+		
 		if(resultSet == null) {
 			System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 			return null;			
 		}
 		resultSet.next();
-		if (Integer.parseInt(resultSet.getString("count"))!= 0) {
+
+		String nomColonne;
+        ResultSetMetaData meta = resultSet.getMetaData();
+        // Si le SQL est exécuté par la classe de tests
+        if(meta.getColumnName(1).equals("COUNT(*)")){
+        	nomColonne = "COUNT(*)";
+        } else {
+        	nomColonne = "count";
+        }
+		
+		if (Integer.parseInt(resultSet.getString(nomColonne))!= 0) {
 			System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 			return null;
 		}
-		
+		System.out.println("222222");
+
 		// On insère l'ingrédient avec une quantité nulle
 		Statement statement = executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
 
@@ -244,6 +320,8 @@ public class Sql {
             if (generatedKeys.next()) {
         		return new Ingredient((int) generatedKeys.getLong(1), nom, 0);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 		return null;
 
@@ -253,7 +331,19 @@ public class Sql {
 		ResultSet resultSet = executerSelect("SELECT MAX(id) FROM restaurant."+table);
 		// Démarrage du curseur
 		resultSet.next();
-		return Integer.parseInt(resultSet.getString("MAX"));
+		String nomColonne;
+        ResultSetMetaData meta = resultSet.getMetaData();
+        System.out.println(meta.getColumnName(1));
+        // Si le SQL est exécuté par la classe de tests
+        if(meta.getColumnName(1).equals("MAX(ID)")){
+        	nomColonne = "MAX(id)";
+        } else {
+        	nomColonne = "MAX";
+        }
+		System.out.println("HENLO5454 1");
+		System.out.println(Integer.parseInt(resultSet.getString(nomColonne)));
+
+		return Integer.parseInt(resultSet.getString(nomColonne));
 	}
 	
 

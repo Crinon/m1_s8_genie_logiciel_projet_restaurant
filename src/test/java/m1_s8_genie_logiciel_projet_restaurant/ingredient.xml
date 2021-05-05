@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <CLIENTS id='1' first_name='Charles' last_name='Xavier'/>
+    <ITEMS id='1' title='Grey T-Shirt' price='17.99' produced='2019-03-20'/>
+</dataset>
