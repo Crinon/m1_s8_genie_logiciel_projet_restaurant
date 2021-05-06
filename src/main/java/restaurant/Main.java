@@ -40,16 +40,17 @@ public class Main {
 //	
 //	p.ajouterTable(22, 1, Restaurant.getEtages().get(0));
 
-	p.ajouterIngredient("carotte",Restaurant.getIngredients());
-	p.ajouterIngredient("radis",Restaurant.getIngredients());
+//	p.ajouterIngredient("carotte",Restaurant.getIngredients());
+//	p.ajouterIngredient("radis",Restaurant.getIngredients());
+//	p.commanderIngredient(Restaurant.getIngredients().get(0), 10);
 
-	/*
-	 * p.ajouterPersonnel(new Assistant("Florian"), "directeur");
-	 * p.ajouterPersonnel(new Assistant("Florian"), "assistant");
-	 * p.ajouterPersonnel(new Assistant("Florian"), "serveur");
-	 * p.ajouterPersonnel(new Assistant("Florian"), "maitrehotel");
-	 * p.ajouterPersonnel(new Assistant("Florian"), "cuisinier");
-	 */
+	
+//	  p.ajouterPersonnel(new Assistant("Florian"), "directeur");
+//	  p.ajouterPersonnel(new Assistant("Florian"), "assistant");
+//	  p.ajouterPersonnel(new Assistant("Florian"), "serveur");
+//	  p.ajouterPersonnel(new Assistant("Florian"), "maitrehotel");
+//	  p.ajouterPersonnel(new Assistant("Florian"), "cuisinier");
+	 
 //
 //	p.ajouterPersonnel(pers, "serveur");
 //	pers = p.modifierPersonnel(pers, "cuisinier");
@@ -58,6 +59,8 @@ public class Main {
 	// Chargement des horaires
 	// Instancier le personnel
 	System.out.println(Restaurant.getEtages());
+	System.out.println(Restaurant.getIngredients());
+	System.out.println(Restaurant.getPersonnel());
 
     }
 

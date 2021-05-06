@@ -21,6 +21,11 @@ public class Directeur extends Personne {
 		this.identifiant = identifiant;
 	}
 
+	@Override
+	public String toString() {
+		return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
+	}
+
 	public void ajouterPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException, IOException {
 		// Object pour intéragir avec la base de données
 		Sql sql = new Sql();
@@ -107,17 +112,26 @@ public class Directeur extends Personne {
 		}
 	}
 	
-	public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) throws ClassNotFoundException, SQLException, IOException {
+	public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) {
 		boolean success = false;
-		Sql sql = new Sql();
-		sql.insererIngredient(nom);
-		System.out.println("HENLO 2");
-
-		ingredients.add(new Ingredient(sql.demanderDernierId("ingredient"),nom, 0));
-		System.out.println("HENLO 2");
-
-		System.out.println(sql.demanderDernierId("ingredient"));
-		System.out.println(ingredients);
+		Sql sql;
+		try {
+			sql = new Sql();
+			success = sql.insererIngredient(nom);
+			if (success) {
+				ingredients.add(new Ingredient(sql.demanderDernierId("ingredient"),nom, 0));
+				return success;
+			} else {
+				System.out.println("L'ajout de l'ingrédient " + nom + " a échoué.");
+				return false;
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return success;
 	}
 	

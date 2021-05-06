@@ -22,7 +22,18 @@ public final class Restaurant {
     	for (Etage etage : etages) {
 			etage.initialiserTables();
 		}
+    	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+    	sql.premierDemarrage();
+    	// Initialisation du personnel
+    	sql.initialiserPersonnel();    	
 	}
+	
+//	public static void premierDemarrage(Sql sql) {
+//		// Regarde si c'est le premier démarrage de l'application
+//		sql.premierDemarrage();
+//			// il faut créer un directeur automatiquement
+//		
+//	}
 	
 	public static ArrayList<Ingredient> getIngredients() {
 		return ingredients;
