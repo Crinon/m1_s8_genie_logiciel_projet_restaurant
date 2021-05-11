@@ -356,4 +356,20 @@ public class TestUnitaire {
 		}
 	}
 	
+	@Test
+	@DisplayName("Ajout d'une table à un étage dans la base de données")
+	public void ajouterTable() {
+		System.out.println("\nTest en cours : Ajout d'une table à un étage dans la base de données");
+		try {
+			directeur.ajouterEtage();
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			directeur.ajouterTable(5, 10, etage);;
+			ResultSet res = sql.executerSelect("SELECT * FROM restaurant.tables WHERE numero=5 AND etage="+etage.getId());
+			// On vérifie que la ligne a été trouvé
+			assertTrue(res.next());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
