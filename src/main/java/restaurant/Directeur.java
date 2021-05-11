@@ -139,11 +139,7 @@ public class Directeur extends Personne {
 				System.out.println("L'ajout de l'ingrédient " + nom + " a échoué.");
 				return false;
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 		return success;

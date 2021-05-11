@@ -169,19 +169,9 @@ public class Sql {
 		try {
 			this.stmt = c.createStatement();
 			ResultSet resultSet = executerSelect(
-					"SELECT COUNT(*) FROM restaurant.personne WHERE login = '" + nom + nombre + "'");
+					"SELECT COUNT(*) as count FROM restaurant.personne WHERE login = '" + nom + nombre + "'");
 			resultSet.next();
-
-			String nomColonne;
-			ResultSetMetaData meta = resultSet.getMetaData();
-			// Si le SQL est exécuté par la classe de tests
-			if (meta.getColumnName(1).equals("COUNT(*)")) {
-				nomColonne = "COUNT(*)";
-			} else {
-				nomColonne = "count";
-			}
-
-			int nbLignes = Integer.parseInt(resultSet.getString(nomColonne));
+			int nbLignes = Integer.parseInt(resultSet.getString("count"));
 			// Si le login est deja utilise
 			if (nbLignes > 0) {
 				return definirLogin(nom, nombre + 1);
@@ -218,7 +208,7 @@ public class Sql {
 	}
 
 	public void insererEtage() {
-		ResultSet resultSet = executerSelect("SELECT MAX(niveau) FROM restaurant.etage");
+		ResultSet resultSet = executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 		try {
 			resultSet.next();
 			int prochainNiveau = 0;
@@ -395,11 +385,11 @@ public class Sql {
 	}
 
 	public int demanderDernierEtage() {
-		ResultSet resultSet = executerSelect("SELECT MAX(niveau) FROM restaurant.etage");
+		ResultSet resultSet = executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 		// Démarrage du curseur
 		try {
 			resultSet.next();
-			return resultSet.getInt("MAX");
+			return resultSet.getInt("max");
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

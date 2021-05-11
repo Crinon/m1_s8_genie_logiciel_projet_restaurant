@@ -236,7 +236,6 @@ public class TestUnitaire {
 			Personne assistant =directeur.ajouterPersonnel("Hervé", "assistant", Restaurant.getPersonnel());
 			Personne herve = directeur.modifierPersonnel(assistant, "serveur");
 			ResultSet resultSet = sql.executerSelect("SELECT id from restaurant.serveur where personne = " + herve.getId());
-			System.out.println("LAAAAA");
 			assertTrue(resultSet.next());
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -249,7 +248,7 @@ public class TestUnitaire {
 	@DisplayName("Suppression d'un personnel dans la base de données")
 	public void suppressionPersonnelDB() {
 		try {
-	        directeur.ajouterPersonnel("NicolasSupprimer", "directeur", Restaurant.getPersonnel());
+	        directeur.ajouterPersonnel("NicolasSupprimer", "cuisinier", Restaurant.getPersonnel());
 
 			System.out.println("\nTest en cours : Suppression d'un personnel dans la base de données");
 			Personne personne = Restaurant.getPersonnel().get(Restaurant.getPersonnel().size()-1);
@@ -290,5 +289,31 @@ public class TestUnitaire {
 		directeur.supprimerPersonnel(personne, Restaurant.getPersonnel());
 		assertEquals(-1,Restaurant.getPersonnel().indexOf(personne));
 	}
+	
+	
+	@Test
+	@DisplayName("Ajout d'un étage dans la base de données")
+	public void ajouterEtageDB() {
+		try {
+			System.out.println("\nTest en cours : Ajout d'un étage dans la base de données");
+			// On regarde les étages déjà existants
+			ResultSet resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
+			int niveauMaxAvantTest = 0;
+			if (resultSet.next()) {
+				if (resultSet.getString("max") != null) {
+					niveauMaxAvantTest = Integer.parseInt(resultSet.getString("max")) + 1;
+				}
+			}
+			directeur.ajouterEtage();
+			int niveauMaxApresTest;
+			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
+			resultSet.next();
+			niveauMaxApresTest = Integer.parseInt(resultSet.getString("max")) + 1;
+			// On vérifie que le nouvel étage et plus haut que l'ancien
+			assertTrue(niveauMaxAvantTest<niveauMaxApresTest);
+		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
 
+	}
 }
