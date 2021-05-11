@@ -272,17 +272,21 @@ public class TestUnitaire {
 			System.out.println("\nTest en cours : Ajout d'un étage dans la base de données");
 			// On regarde les étages déjà existants
 			ResultSet resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
-			int niveauMaxAvantTest = 0;
+			// Le rez-de-chaussé est 0
+			int niveauMaxAvantTest = -1;
 			if (resultSet.next()) {
 				if (resultSet.getString("max") != null) {
 					niveauMaxAvantTest = Integer.parseInt(resultSet.getString("max"));
 				}
 			}
+			System.err.println("niveauMaxAvantTest " + niveauMaxAvantTest );
 			directeur.ajouterEtage();
 			int niveauMaxApresTest;
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 			resultSet.next();
 			niveauMaxApresTest = Integer.parseInt(resultSet.getString("max"));
+			System.err.println("niveauMaxApresTest " + niveauMaxApresTest );
+
 			// On vérifie que le nouvel étage et plus haut que l'ancien
 			assertTrue(niveauMaxAvantTest < niveauMaxApresTest);
 		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
@@ -312,7 +316,8 @@ public class TestUnitaire {
 	public void supprimerEtageDB() {
 		try {
 			System.out.println("\nTest en cours : Suppression d'un étage dans la base de données");
-			// On ajoute un étage
+			// On ajoute plusieurs étages pour éviter le cas du RDC, moins simple à comprendre
+			directeur.ajouterEtage();
 			directeur.ajouterEtage();
 			ResultSet resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 			resultSet.next();
@@ -320,7 +325,7 @@ public class TestUnitaire {
 			directeur.supprimerDernierEtage();
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 			
-			int niveauMaxApresSuppression = 0;
+			int niveauMaxApresSuppression = -1;
 			if (resultSet.next()) {
 				if (resultSet.getString("max") != null) {
 					niveauMaxApresSuppression = Integer.parseInt(resultSet.getString("max"));
@@ -329,6 +334,24 @@ public class TestUnitaire {
 			// On vérifie qu'il y a moins d'étage qu'avant la suppression
 			assertTrue(niveauMaxApresSuppression < niveauMaxAvantSuppression);
 		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Suppression d'un étage dans la mémoire")
+	public void supprimerEtageJava() {
+		System.out.println("\nTest en cours : Suppression d'un étage dans la mémoire");
+		try {
+			directeur.ajouterEtage();
+			directeur.ajouterEtage();
+			// On regarde les étages déjà existants
+			int nbEtageAvantSuppression = Restaurant.getEtages().size();
+			// On vérifie que le nouvel étage et plus haut que l'ancien
+			directeur.supprimerDernierEtage();
+			int nbEtageApresSuppression = Restaurant.getEtages().size();
+			assertTrue("Aucun étage ajouté dans l'arraylist d'étages",nbEtageApresSuppression < nbEtageAvantSuppression);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
