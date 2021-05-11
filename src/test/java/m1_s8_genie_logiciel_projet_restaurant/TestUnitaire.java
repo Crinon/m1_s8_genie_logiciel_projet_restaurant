@@ -1,10 +1,14 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
+import restaurant.Assistant;
 import restaurant.Directeur;
+import restaurant.Personne;
 import restaurant.Restaurant;
+import restaurant.Serveur;
 import restaurant.Sql;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -13,6 +17,7 @@ import java.sql.SQLException;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Tests du projet restaurant")
@@ -149,20 +154,46 @@ public class TestUnitaire {
 
 		Restaurant.initialisation();
 	}
+	
+	@Test
+    @Order(1)
+	@DisplayName("Ajout automatique d'un directeur dans la base de données s'il n'en existe aucun")
+	public void insertionDirecteurPremierDemarrage() {
+		System.out.println("\nTest en cours : création du directeur lorsqu'il n'y en a aucun dans la base de données");
+		ResultSet resultSet = sql.executerSelect("SELECT login from restaurant.personne where login = 'directeur0'");
+		try {
+			resultSet.next();
+			// Le test vient de l'initialisation de la classe statique Restaurant
+			assertEquals("directeur0",resultSet.getString("login"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Test
-	public void insertionIngredient() throws SQLException, ClassNotFoundException, IOException {
+    @Order(2)
+	@DisplayName("Création d'un ingrédient dans la base de donnée")
+	public void insertionIngredientDB() throws SQLException, ClassNotFoundException, IOException {
 		directeur.ajouterIngredient("carotte", Restaurant.getIngredients());
 		ResultSet res = sql.executerSelect("select * from restaurant.ingredient where nom = 'carotte'");
 		assertTrue(res.next());
 	}
+	@Test
+	@Order(3)
+	@DisplayName("Création d'un ingrédient dans la mémoire")
+	public void insertionIngredientJava() throws SQLException, ClassNotFoundException, IOException {
+		directeur.ajouterIngredient("patate", Restaurant.getIngredients());
+		assertEquals("patate",Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1).getNom());
+	}
 
 	@Test
-	public void refuseDoublonIngredient() throws ClassNotFoundException, SQLException, IOException {
+	@Order(4)
+	@DisplayName("Tentative de créer 2 fois le même ingrédient dans la base de données")
+	public void refuseDoublonIngredientDB() throws ClassNotFoundException, SQLException, IOException {
 		System.out.println("\nTest en cours : doublon d'ingrédient");
 		directeur.ajouterIngredient("tomate", Restaurant.getIngredients());
 		directeur.ajouterIngredient("tomate", Restaurant.getIngredients());
-		ResultSet resultSet = sql.executerSelect("SELECT count(*) as count from restaurant.ingredient where nom = 'carotte'");
+		ResultSet resultSet = sql.executerSelect("SELECT count(*) as count from restaurant.ingredient where nom = 'tomate'");
 		resultSet.next();
 		// Il ne doit y avoir qu'un seul ingrédient avec le nom tomate
 		assertEquals("ERREUR : un ingrédient avec le même nom est présent 2 fois en base.",
@@ -171,7 +202,9 @@ public class TestUnitaire {
 	}
 
 	@Test
-	public void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
+	@Order(5)
+	@DisplayName("Commander un ingrédient : modification de la quantité dans la base de données")
+	public void commanderIngredientDB() throws ClassNotFoundException, SQLException, IOException {
 		System.out.println("\nTest en cours : commande d'ingrédient");
 		directeur.commanderIngredient(Restaurant.getIngredients().get(0), 10);
 		ResultSet resultSet = sql.executerSelect("SELECT nom,quantite from restaurant.ingredient where id = " + Restaurant.getIngredients().get(0).getId());
@@ -179,17 +212,83 @@ public class TestUnitaire {
 		assertEquals(10,Integer.parseInt(resultSet.getString("quantite")));
 	}
 	
+
 	@Test
-	public void insertionDirecteurPremierDemarrage() {
-		System.out.println("\nTest en cours : création du directeur lorsqu'il n'y en a aucun dans la base de données");
-		ResultSet resultSet = sql.executerSelect("SELECT login from restaurant.personne where login = 'directeur0'");
+	@Order(6)
+	@DisplayName("Insertion d'un personnel assistant dans la base de données")
+	public void insertionPersonnelDB() {
+		System.out.println("\nTest en cours : Insertion d'un assistant dans la base de données");
+		directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		ResultSet resultSet = sql.executerSelect("SELECT login from restaurant.personne where login = '" + Restaurant.getPersonnel().get(Restaurant.getPersonnel().size()-1).getIdentifiant()  +"'");
 		try {
-			resultSet.next();
-			assertEquals("directeur0",resultSet.getString("login"));
+			assertTrue(resultSet.next());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	@Test
+	@Order(7)
+	@DisplayName("Modification d'un personnel (assistant vers serveur) dans la base de données")
+	public void modificationPersonnelDB() {
+		try {
+			System.out.println("\nTest en cours : Modification d'un personnel (assistant vers serveur) dans la base de données");
+			Personne assistant =directeur.ajouterPersonnel("Hervé", "assistant", Restaurant.getPersonnel());
+			Personne herve = directeur.modifierPersonnel(assistant, "serveur");
+			ResultSet resultSet = sql.executerSelect("SELECT id from restaurant.serveur where personne = " + herve.getId());
+			System.out.println("LAAAAA");
+			assertTrue(resultSet.next());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Test
+	@Order(8)
+	@DisplayName("Suppression d'un personnel dans la base de données")
+	public void suppressionPersonnelDB() {
+		try {
+	        directeur.ajouterPersonnel("NicolasSupprimer", "directeur", Restaurant.getPersonnel());
+
+			System.out.println("\nTest en cours : Suppression d'un personnel dans la base de données");
+			Personne personne = Restaurant.getPersonnel().get(Restaurant.getPersonnel().size()-1);
+	        directeur.supprimerPersonnel(personne, Restaurant.getPersonnel());
+			ResultSet resultSet = sql.executerSelect("SELECT login from restaurant.personne where login = '" + personne.getIdentifiant()  +"'");
+			// Initialisation du curseur
+			resultSet.next();
+			// Il ne doit exister aucune ligne dans le resultSet
+			assertFalse(resultSet.next());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Insertion d'un personnel dans la mémoire")
+	public void insertionPersonnelJava() {
+		System.out.println("\nTest en cours : Insertion d'un personnel dans la mémoire");
+		Personne newPersonne = directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		assertEquals(newPersonne, Restaurant.getPersonnel().get(Restaurant.getPersonnel().size()-1));
+	}
+	
+	@Test
+	@DisplayName("Modification d'un personnel (assistant vers serveur) dans la dans la mémoire")
+	public void modificationPersonnelJava() {
+		System.out.println("\nTest en cours : Modification d'un personnel (assistant vers serveur) dans la base de données");
+		Personne assistant = Restaurant.getPersonnel().get(Restaurant.getPersonnel().size()-1);
+		Personne serveur = directeur.modifierPersonnel(assistant, "serveur");
+		System.out.println(serveur.getClass());
+		assertTrue(serveur instanceof Serveur);
+	}
+	
+	@Test
+	@DisplayName("Suppression d'un personnel dans la mémoire")
+	public void suppressionPersonnelJava() {
+		System.out.println("\nTest en cours : Suppression d'un personnel dans la mémoire");
+		Personne personne = directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		directeur.supprimerPersonnel(personne, Restaurant.getPersonnel());
+		assertEquals(-1,Restaurant.getPersonnel().indexOf(personne));
+	}
 
 }

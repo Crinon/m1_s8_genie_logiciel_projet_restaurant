@@ -42,17 +42,17 @@ public class Sql {
 				prop.getProperty("datasource.password"));
 		c.setAutoCommit(false);
 	}
-	
+
 	// La classe de test doit pouvoir exécuter des requêtes
 	public Statement executerTests(String requete) {
-			try {
-				this.stmt = c.createStatement();
-				System.out.println("execute : " + requete);
-				stmt.execute(requete);
-				c.commit();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		try {
+			this.stmt = c.createStatement();
+			System.out.println("execute : " + requete);
+			stmt.execute(requete);
+			c.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 		return stmt;
 	}
@@ -72,57 +72,89 @@ public class Sql {
 	}
 
 	private boolean executerDelete(String requete) {
-			try {
-				this.stmt = c.createStatement();
-				System.out.println("Delete : " + requete);
-				stmt.executeUpdate(requete);
-				c.commit();
-				return true;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		try {
+			this.stmt = c.createStatement();
+			System.out.println("Delete : " + requete);
+			stmt.executeUpdate(requete);
+			c.commit();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public ResultSet executerSelect(String requete) {
 		ResultSet res = null;
-			try {
-				this.stmt = c.createStatement();
-				System.out.println("Select : " + requete);
-				res = stmt.executeQuery(requete);
+		try {
+			this.stmt = c.createStatement();
+			System.out.println("Select : " + requete);
+			res = stmt.executeQuery(requete);
 			return res;
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
-			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 
 	}
 
 	private void executerUpdate(String requete) {
-			try {
-				this.stmt = c.createStatement();
-				System.out.println("Update : " + requete);
-				stmt.executeUpdate(requete);
-				c.commit();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+		try {
+			this.stmt = c.createStatement();
+			System.out.println("Update : " + requete);
+			stmt.executeUpdate(requete);
+			c.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Méthode spéciale car lors de l'ajout d'une valeur, il faut l'ajouter dans la
 	// table du rôle associé
-	public void ajouterPersonne(Personne personne, String role) {
+	public Personne ajouterPersonne(String nom, String role) {
+		Personne newPersonne = null;
+
 		try {
-			personne.setIdentifiant(definirLogin(personne.getNom(), 0));
-			executerInsert(String.format(requete_insertion_personne, personne.getNom(), personne.getIdentifiant()));
+			String login = definirLogin(nom, 0);
+			executerInsert(String.format(requete_insertion_personne, nom, login));
 			ResultSet resultSet = executerSelect("Select MAX(id) as max FROM restaurant.personne");
 			resultSet.next();
-			executerInsert("INSERT INTO restaurant." + role + " (personne) VALUES (" + resultSet.getString("max") + ")");
-			personne.setId(Integer.parseInt(resultSet.getString("max")));
+			executerInsert(
+					"INSERT INTO restaurant." + role + " (personne) VALUES (" + resultSet.getString("max") + ")");
+			int id = demanderDernierId(role);
+			switch (role) {
+			case "assistant":
+				newPersonne = new Assistant(id, nom, login);
+				break;
+
+			case "serveur":
+				newPersonne = new Serveur(id, nom, login);
+				break;
+
+			case "maitrehotel":
+				newPersonne = new Maitrehotel(id, nom, login);
+				break;
+
+			case "directeur":
+				newPersonne = new Directeur(id, nom, login);
+				break;
+
+			case "cuisinier":
+				newPersonne = new Cuisinier(id, nom, login);
+				break;
+
+			default:
+				newPersonne = null;
+				break;
+
+			}
+			newPersonne.setIdentifiant(login);
+			newPersonne.setId(id);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		return newPersonne;
 	}
 
 	/**
@@ -131,56 +163,56 @@ public class Sql {
 	 * @param nom
 	 * @param nombre
 	 * @return login
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public String definirLogin(String nom, int nombre) {
-			try {
-				this.stmt = c.createStatement();
-				ResultSet resultSet = executerSelect(
-						"SELECT COUNT(*) FROM restaurant.personne WHERE login = '" + nom + nombre + "'");
-				resultSet.next();
+		try {
+			this.stmt = c.createStatement();
+			ResultSet resultSet = executerSelect(
+					"SELECT COUNT(*) FROM restaurant.personne WHERE login = '" + nom + nombre + "'");
+			resultSet.next();
 
-				String nomColonne;
-				ResultSetMetaData meta = resultSet.getMetaData();
-				// Si le SQL est exécuté par la classe de tests
-				if (meta.getColumnName(1).equals("COUNT(*)")) {
-					nomColonne = "COUNT(*)";
-				} else {
-					nomColonne = "count";
-				}
-
-				int nbLignes = Integer.parseInt(resultSet.getString(nomColonne));
-				// Si le login est deja utilise
-				if (nbLignes > 0) {
-					return definirLogin(nom, nombre + 1);
-				} else {
-					// S'il n'y a encore aucun login, le premier est généré avec 0
-					return nom + nombre;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
+			String nomColonne;
+			ResultSetMetaData meta = resultSet.getMetaData();
+			// Si le SQL est exécuté par la classe de tests
+			if (meta.getColumnName(1).equals("COUNT(*)")) {
+				nomColonne = "COUNT(*)";
+			} else {
+				nomColonne = "count";
 			}
+
+			int nbLignes = Integer.parseInt(resultSet.getString(nomColonne));
+			// Si le login est deja utilise
+			if (nbLignes > 0) {
+				return definirLogin(nom, nombre + 1);
+			} else {
+				// S'il n'y a encore aucun login, le premier est généré avec 0
+				return nom + nombre;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 
 	}
 
 	/**
 	 * @param personne
 	 * @param role
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public void modifierPersonne(Personne personne, String role) {
-		executerDelete("DELETE FROM restaurant." + personne.getClass().getName().toLowerCase() + " WHERE personne = "
+		executerDelete("DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = "
 				+ personne.getId());
 		executerInsert("INSERT INTO restaurant." + role + " (personne) VALUES (" + personne.getId() + ")");
 	}
 
 	/**
 	 * @param personne
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public void supprimerPersonne(Personne personne) throws SQLException {
-		executerDelete("DELETE FROM restaurant." + personne.getClass().getName().toLowerCase() + " WHERE personne = "
+		executerDelete("DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = "
 				+ personne.getId());
 		executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getId());
 	}
@@ -203,7 +235,7 @@ public class Sql {
 	public void supprimerEtage() {
 		ResultSet resultSet = executerSelect(
 				"SELECT id FROM restaurant.etage WHERE niveau = (SELECT MAX(niveau) FROM restaurant.etage)");
-		
+
 		try {
 			resultSet.next();
 			int idDernierNiveau = 0;
@@ -228,7 +260,8 @@ public class Sql {
 			return;
 		}
 		// On vérifie si le numéro de table est disponible
-		ResultSet resultSet = executerSelect("SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
+		ResultSet resultSet = executerSelect(
+				"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
 		try {
 			resultSet.next();
 			if (Integer.parseInt(resultSet.getString("count")) != 0) {
@@ -241,7 +274,6 @@ public class Sql {
 			e.printStackTrace();
 		}
 
-
 	}
 
 	// Méthode pour mettre à jour le numéro de la table
@@ -253,7 +285,8 @@ public class Sql {
 			return false;
 		}
 		// On vérifie si le nouveau numéro est disponible
-		ResultSet resultSet = executerSelect("SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
+		ResultSet resultSet = executerSelect(
+				"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
 		try {
 			resultSet.next();
 			if (Integer.parseInt(resultSet.getString("count")) != 0) {
@@ -274,7 +307,8 @@ public class Sql {
 
 	public boolean insererIngredient(String nom) throws SQLException {
 		// On vérifie que 2 ingrédient ne peuvent pas avoir le même nom
-		ResultSet resultSet = executerSelect("SELECT count(*) as count FROM restaurant.ingredient WHERE nom = '" + nom + "'");
+		ResultSet resultSet = executerSelect(
+				"SELECT count(*) as count FROM restaurant.ingredient WHERE nom = '" + nom + "'");
 		if (resultSet == null) {
 			System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 			return false;
@@ -287,8 +321,7 @@ public class Sql {
 		}
 
 		// On insère l'ingrédient avec une quantité nulle
-		executerInsert(
-				"INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
+		executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
 		return true;
 
 	}
@@ -312,7 +345,8 @@ public class Sql {
 			quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
 			nouvelleQuantite = quantiteActuelle + ajout;
 			System.out.println("Quantité nouvelle : " + nouvelleQuantite);
-			executerUpdate("UPDATE restaurant.ingredient SET quantite="+nouvelleQuantite+" WHERE id = " + ingredient.getId());
+			executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
+					+ ingredient.getId());
 			return true;
 		} else {
 			return false;
@@ -324,8 +358,8 @@ public class Sql {
 		ResultSet resultset = executerSelect("SELECT * FROM restaurant.ingredient");
 		try {
 			while (resultset.next()) {
-				ingredients.add(
-						new Ingredient(resultset.getInt("id"), resultset.getString("nom"), resultset.getInt("quantite")));
+				ingredients.add(new Ingredient(resultset.getInt("id"), resultset.getString("nom"),
+						resultset.getInt("quantite")));
 			}
 			Restaurant.setIngredients(ingredients);
 		} catch (SQLException e) {
@@ -373,17 +407,18 @@ public class Sql {
 			return 0;
 		}
 	}
-	
+
 	public void premierDemarrage() {
 		try {
 			// Regarde si c'est le premier démarrage de l'application
 			ResultSet resultSet = executerSelect("SELECT * FROM restaurant.directeur");
-			if(resultSet.next() == false) {
+			if (resultSet.next() == false) {
 				// il faut créer un directeur automatiquement
 				Personne directeur = new Directeur(1, "directeur", "directeur0");
-				ajouterPersonne(directeur, "directeur");
+				ajouterPersonne("directeur", "directeur");
 			} else {
-				// Rien à faire, il y a déjà un directeur, donc l'application peut fonctionner correctement
+				// Rien à faire, il y a déjà un directeur, donc l'application peut fonctionner
+				// correctement
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -399,27 +434,35 @@ public class Sql {
 			ResultSet resultset = executerSelect("SELECT * FROM restaurant.personne");
 			while (resultset.next()) {
 				// Pour chaque personne on essaie de le trouver dans un rôle
-				ResultSet resultsetDirecteur = executerSelect("SELECT * FROM restaurant.directeur WHERE personne = "+Integer.parseInt(resultset.getString("id")));
+				ResultSet resultsetDirecteur = executerSelect("SELECT * FROM restaurant.directeur WHERE personne = "
+						+ Integer.parseInt(resultset.getString("id")));
 				while (resultsetDirecteur.next()) {
-					personnel.add(new Directeur(Integer.parseInt(resultset.getString("id")),resultset.getString("nom"), resultset.getString("login")));
+					personnel.add(new Directeur(Integer.parseInt(resultset.getString("id")), resultset.getString("nom"),
+							resultset.getString("login")));
 				}
-				ResultSet resultsetAssistant = executerSelect("SELECT * FROM restaurant.assistant WHERE personne = "+Integer.parseInt(resultset.getString("id")));
+				ResultSet resultsetAssistant = executerSelect("SELECT * FROM restaurant.assistant WHERE personne = "
+						+ Integer.parseInt(resultset.getString("id")));
 				while (resultsetAssistant.next()) {
-					personnel.add(new Assistant(Integer.parseInt(resultset.getString("id")),resultset.getString("nom"), resultset.getString("login")));
+					personnel.add(new Assistant(Integer.parseInt(resultset.getString("id")), resultset.getString("nom"),
+							resultset.getString("login")));
 				}
-				ResultSet resultsetMaitrehotel = executerSelect("SELECT * FROM restaurant.maitrehotel WHERE personne = "+Integer.parseInt(resultset.getString("id")));
+				ResultSet resultsetMaitrehotel = executerSelect("SELECT * FROM restaurant.maitrehotel WHERE personne = "
+						+ Integer.parseInt(resultset.getString("id")));
 				while (resultsetMaitrehotel.next()) {
-					personnel.add(new Maitrehotel(Integer.parseInt(resultset.getString("id")),resultset.getString("nom"), resultset.getString("login")));
+					personnel.add(new Maitrehotel(Integer.parseInt(resultset.getString("id")),
+							resultset.getString("nom"), resultset.getString("login")));
 				}
-				ResultSet resultsetServeur = executerSelect("SELECT * FROM restaurant.serveur WHERE personne = "+Integer.parseInt(resultset.getString("id")));
+				ResultSet resultsetServeur = executerSelect("SELECT * FROM restaurant.serveur WHERE personne = "
+						+ Integer.parseInt(resultset.getString("id")));
 				while (resultsetServeur.next()) {
-					personnel.add(new Serveur(Integer.parseInt(resultset.getString("id")),resultset.getString("nom"), resultset.getString("login")));
+					personnel.add(new Serveur(Integer.parseInt(resultset.getString("id")), resultset.getString("nom"),
+							resultset.getString("login")));
 				}
 			}
 			Restaurant.setPersonnel(personnel);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 }

@@ -26,54 +26,68 @@ public class Directeur extends Personne {
 		return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
 	}
 
-	public void ajouterPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException, IOException {
-		// Object pour intéragir avec la base de données
-		Sql sql = new Sql();
-		// Utilisation de la requête pour insérer un serveur
-		sql.ajouterPersonne(personne, role);
-	}
-
-	public Personne modifierPersonnel(Personne personne, String role) throws ClassNotFoundException, SQLException, IOException {
-		// Object pour intéragir avec la base de données
-		Sql sql = new Sql();
-		// Utilisation de la requête pour insérer un serveur
-		sql.modifierPersonne(personne, role);
-		Personne newPersonne;
-		switch (role) {
-		case "assistant":
-			newPersonne = new Assistant(personne.getId(), personne.getNom(), personne.getIdentifiant());
-			break;
-
-		case "serveur":
-			newPersonne = new Serveur(personne.getId(), personne.getNom(), personne.getIdentifiant());
-			break;
-
-		case "maitrehotel":
-			newPersonne = new Maitrehotel(personne.getId(), personne.getNom(), personne.getIdentifiant());
-			break;
-
-		case "directeur":
-			newPersonne = new Directeur(personne.getId(), personne.getNom(), personne.getIdentifiant());
-			break;
-
-		case "cuisinier":
-			newPersonne = new Cuisinier(personne.getId(), personne.getNom(), personne.getIdentifiant());
-			break;
-
-		default:
-			newPersonne = null;
-			break;
-
+	public Personne ajouterPersonnel(String nom, String role, ArrayList<Personne> personnel) {
+		Personne personne = null;
+		// Objet pour intéragir avec la base de données
+		try {
+			Sql sql = new Sql();
+			// Utilisation de la requête pour insérer un personnel
+			personne = sql.ajouterPersonne(nom, role);
+			personnel.add(personne);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
 		}
-		personne = null;
-		return newPersonne;
+		return personne;
 	}
 
-	public void supprimerPersonnel(Personne personne) throws ClassNotFoundException, SQLException, IOException {
-		// Object pour intéragir avec la base de données
-		Sql sql = new Sql();
-		// Utilisation de la requête pour insérer un serveur
-		sql.supprimerPersonne(personne);
+	public Personne modifierPersonnel(Personne personne, String role) {
+		// Objet pour intéragir avec la base de données
+		try {
+			Sql sql = new Sql();
+			// Utilisation de la requête pour insérer un serveur
+			sql.modifierPersonne(personne, role);
+			Personne newPersonne;
+			switch (role) {
+			case "assistant":
+				newPersonne = new Assistant(personne.getId(), personne.getNom(), personne.getIdentifiant());
+				break;
+
+			case "serveur":
+				newPersonne = new Serveur(personne.getId(), personne.getNom(), personne.getIdentifiant());
+				break;
+
+			case "maitrehotel":
+				newPersonne = new Maitrehotel(personne.getId(), personne.getNom(), personne.getIdentifiant());
+				break;
+
+			case "directeur":
+				newPersonne = new Directeur(personne.getId(), personne.getNom(), personne.getIdentifiant());
+				break;
+
+			case "cuisinier":
+				newPersonne = new Cuisinier(personne.getId(), personne.getNom(), personne.getIdentifiant());
+				break;
+
+			default:
+				newPersonne = null;
+				break;
+			}
+			personne = newPersonne;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return personne;
+	}
+
+	public void supprimerPersonnel(Personne personne, ArrayList<Personne> personnel) {
+		try {
+			// Objet pour intéragir avec la base de données
+			Sql sql = new Sql();
+			sql.supprimerPersonne(personne);
+			personnel.remove(personne);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 		
 	public boolean ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
