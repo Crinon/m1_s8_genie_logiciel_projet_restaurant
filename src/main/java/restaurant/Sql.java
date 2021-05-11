@@ -291,7 +291,7 @@ public class Sql {
 	}
 
 	public boolean deleteTable(Table table) {
-		return executerDelete("DELETE FROM restaurant.table WHERE id = " + table.getId());
+		return executerDelete("DELETE FROM restaurant.tables WHERE id = " + table.getId());
 	}
 
 	public boolean insererIngredient(String nom) throws SQLException {
@@ -389,9 +389,7 @@ public class Sql {
 		try {
 			resultSet.next();
 			return resultSet.getInt("max");
-
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return 0;
 		}

@@ -430,4 +430,56 @@ public class TestUnitaire {
 		}
 	}
 	
+	
+	@Test
+	@DisplayName("Suppression d'une table dans la base de donées")
+	public void supprimerTableDB() {
+		System.out.println("\nTest en cours : Suppression d'une table dans la base de donées");
+		try {
+			// Numéro de la table que l'on créé puis supprime pour le test
+			int numeroTable = 5;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table pour être supprimée
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée et a supprimée
+			Table tableActuelle = etage.getTables().get(0);
+			// On supprime la table
+			directeur.supprimerTable(0, etage.getTables());
+			ResultSet resultSet = sql.executerSelect("SELECT numero FROM restaurant.tables WHERE id="+tableActuelle.getId());
+			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
+			assertFalse(resultSet.next());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Test
+	@DisplayName("Suppression d'une table dans la mémoire")
+	public void supprimerTableJava() {
+		System.out.println("\nTest en cours : Suppression d'une table dans la mémoire");
+		try {
+			// Numéro de la table que l'on créé puis supprime pour le test
+			int numeroTable = 6;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table pour être supprimée
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			int totalTablesAvantSuppression = etage.getTables().size();
+			// La table créée et a supprimée
+			Table tableActuelle = etage.getTables().get(0);
+			// On supprime la table
+			directeur.supprimerTable(0, etage.getTables());
+			int totalTablesApresSuppression = etage.getTables().size();
+			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
+			assertTrue(totalTablesApresSuppression < totalTablesAvantSuppression);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

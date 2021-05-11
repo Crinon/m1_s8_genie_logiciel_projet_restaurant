@@ -118,12 +118,12 @@ public class Directeur extends Personne {
 		}
 	}
 	
-	public void supprimerTable(Table table, ArrayList<Table> tables) throws ClassNotFoundException, SQLException, IOException {
+	public void supprimerTable(int indexToRemove, ArrayList<Table> tables) throws ClassNotFoundException, SQLException, IOException {
 		boolean success;
 		Sql sql = new Sql();
-		success = sql.deleteTable(table);
+		success = sql.deleteTable(tables.get(indexToRemove));
 		if(success) {
-			tables.remove(table);
+			tables.remove(indexToRemove);
 		}
 	}
 	
