@@ -283,11 +283,10 @@ public class Sql {
 				System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 				return false;
 			}
-			executerUpdate("UPDATE restaurant.tables (numero) VALUES (" + newNumero + ") WHERE id = " + table.getId());
+			executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE id = " + table.getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return true;
 	}
 

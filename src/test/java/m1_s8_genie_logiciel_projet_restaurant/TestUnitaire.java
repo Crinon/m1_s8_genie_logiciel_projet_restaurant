@@ -7,6 +7,7 @@ import restaurant.Personne;
 import restaurant.Restaurant;
 import restaurant.Serveur;
 import restaurant.Sql;
+import restaurant.Table;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -279,14 +280,11 @@ public class TestUnitaire {
 					niveauMaxAvantTest = Integer.parseInt(resultSet.getString("max"));
 				}
 			}
-			System.err.println("niveauMaxAvantTest " + niveauMaxAvantTest );
 			directeur.ajouterEtage();
 			int niveauMaxApresTest;
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 			resultSet.next();
 			niveauMaxApresTest = Integer.parseInt(resultSet.getString("max"));
-			System.err.println("niveauMaxApresTest " + niveauMaxApresTest );
-
 			// On vérifie que le nouvel étage et plus haut que l'ancien
 			assertTrue(niveauMaxAvantTest < niveauMaxApresTest);
 		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
@@ -358,15 +356,75 @@ public class TestUnitaire {
 	
 	@Test
 	@DisplayName("Ajout d'une table à un étage dans la base de données")
-	public void ajouterTable() {
+	public void ajouterTableDB() {
 		System.out.println("\nTest en cours : Ajout d'une table à un étage dans la base de données");
 		try {
+			int numero = 1;
 			directeur.ajouterEtage();
 			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
-			directeur.ajouterTable(5, 10, etage);;
-			ResultSet res = sql.executerSelect("SELECT * FROM restaurant.tables WHERE numero=5 AND etage="+etage.getId());
+			directeur.ajouterTable(numero, 10, etage);;
+			ResultSet res = sql.executerSelect("SELECT * FROM restaurant.tables WHERE numero="+numero+" AND etage="+etage.getId());
 			// On vérifie que la ligne a été trouvé
 			assertTrue(res.next());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Ajout d'une table à un étage dans la mémoire")
+	public void ajouterTableJava() {
+		System.out.println("\nTest en cours : Ajout d'une table à un étage dans la mémoire");
+		try {
+			directeur.ajouterEtage();
+			int numero = 2;
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			int nbTableAvant = etage.getTables().size();
+			directeur.ajouterTable(numero, 10, etage);
+			int nbTableApres = etage.getTables().size();
+			assertTrue(nbTableAvant<nbTableApres);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Modificiation du numéro d'une table dans la base de donées")
+	public void modifierNumeroTableDB() {
+		System.out.println("\nTest en cours : Modificiation du numéro d'une table dans la base de donées");
+		try {
+			int numeroAvant = 3;
+			int numeroApres = 4;
+			int numeroTrouve = -1;
+			directeur.ajouterEtage();
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			directeur.ajouterTable(numeroAvant, 10, etage);
+			Table tableActuelle = etage.getTables().get(0);
+			directeur.modifierNumeroTable(tableActuelle, numeroApres);
+			ResultSet resultSet = sql.executerSelect("SELECT numero FROM restaurant.tables WHERE id="+tableActuelle.getId());
+			if (resultSet.next()) {
+					numeroTrouve = Integer.parseInt(resultSet.getString("numero"));
+			}
+			// On vérifie que la ligne a été trouvé
+			assertEquals("Le numéro de table n'a pas été mis à jour", numeroApres, numeroTrouve);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Modificiation du numéro d'une table dans la mémoire")
+	public void modifierNumeroTableJava() {
+		System.out.println("\nTest en cours : Modificiation du numéro d'une table dans la mémoire");
+		try {
+			int numeroAvant = 3;
+			int numeroApres = 4;
+			directeur.ajouterEtage();
+			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			directeur.ajouterTable(numeroAvant, 10, etage);
+			Table tableActuelle = etage.getTables().get(0);
+			directeur.modifierNumeroTable(tableActuelle, numeroApres);
+			assertEquals("Le numéro de table n'a pas été mis à jour",numeroApres, etage.getTables().get(0).getNumero());
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
