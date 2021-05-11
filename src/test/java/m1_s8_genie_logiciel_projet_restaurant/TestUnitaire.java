@@ -100,6 +100,27 @@ public class TestUnitaire {
 				+ "    CONSTRAINT maitrehotel_personne_fkey FOREIGN KEY (personne)\r\n"
 				+ "        REFERENCES restaurant.personne (id) \r\n" + "        ON UPDATE NO ACTION\r\n"
 				+ "        ON DELETE NO ACTION\r\n" + ")");
+		// Tables
+		sql.executerTests("CREATE SEQUENCE restaurant.tables_id_seq\r\n"
+				+ "    INCREMENT 1\r\n"
+				+ "    START 1\r\n"
+				+ "    MINVALUE 1\r\n"
+				+ "    MAXVALUE 2147483647\r\n"
+				+ "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.tables\r\n"
+				+ "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.tables_id_seq'),\r\n"
+				+ "    capacite integer NOT NULL,\r\n"
+				+ "    etat character varying NOT NULL,\r\n"
+				+ "    etage integer NOT NULL,\r\n"
+				+ "    numero integer NOT NULL,\r\n"
+				+ "    check (etat in ('Libre', 'Sale', 'Occupe', 'Reserve')),\r\n"
+				+ "    CONSTRAINT tables_pkey PRIMARY KEY (id),\r\n"
+				+ "    CONSTRAINT tables_etage_fkey FOREIGN KEY (etage)\r\n"
+				+ "        REFERENCES restaurant.etage (id)\r\n"
+				+ "        ON UPDATE NO ACTION\r\n"
+				+ "        ON DELETE NO ACTION\r\n"
+				+ ")");
 
 		Restaurant.initialisation();
 	}
@@ -254,14 +275,14 @@ public class TestUnitaire {
 			int niveauMaxAvantTest = 0;
 			if (resultSet.next()) {
 				if (resultSet.getString("max") != null) {
-					niveauMaxAvantTest = Integer.parseInt(resultSet.getString("max")) + 1;
+					niveauMaxAvantTest = Integer.parseInt(resultSet.getString("max"));
 				}
 			}
 			directeur.ajouterEtage();
 			int niveauMaxApresTest;
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
 			resultSet.next();
-			niveauMaxApresTest = Integer.parseInt(resultSet.getString("max")) + 1;
+			niveauMaxApresTest = Integer.parseInt(resultSet.getString("max"));
 			// On vérifie que le nouvel étage et plus haut que l'ancien
 			assertTrue(niveauMaxAvantTest < niveauMaxApresTest);
 		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
@@ -283,6 +304,33 @@ public class TestUnitaire {
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
-
 	}
+	
+	
+	@Test
+	@DisplayName("Suppression d'un étage dans la base de données")
+	public void supprimerEtageDB() {
+		try {
+			System.out.println("\nTest en cours : Suppression d'un étage dans la base de données");
+			// On ajoute un étage
+			directeur.ajouterEtage();
+			ResultSet resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
+			resultSet.next();
+			int niveauMaxAvantSuppression = Integer.parseInt(resultSet.getString("max"));
+			directeur.supprimerDernierEtage();
+			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
+			
+			int niveauMaxApresSuppression = 0;
+			if (resultSet.next()) {
+				if (resultSet.getString("max") != null) {
+					niveauMaxApresSuppression = Integer.parseInt(resultSet.getString("max"));
+				}
+			}
+			// On vérifie qu'il y a moins d'étage qu'avant la suppression
+			assertTrue(niveauMaxApresSuppression < niveauMaxAvantSuppression);
+		} catch (NumberFormatException | SQLException | ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

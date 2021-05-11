@@ -100,6 +100,7 @@ public class Directeur extends Personne {
 	public void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
 		Sql sql = new Sql();
 		sql.supprimerEtage();
+		Restaurant.getEtages().remove(Restaurant.getEtages().size()-1);
 	}
 	
 	public void ajouterTable(int numero, int capacite, Etage etage) throws ClassNotFoundException, SQLException, IOException {

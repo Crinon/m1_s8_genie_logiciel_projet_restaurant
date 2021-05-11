@@ -231,7 +231,7 @@ public class Sql {
 			int idDernierNiveau = 0;
 			if (resultSet.getString("id") != null) {
 				idDernierNiveau = Integer.parseInt(resultSet.getString("id"));
-				executerDelete("DELETE FROM restaurant.table WHERE etage = " + idDernierNiveau);
+				executerDelete("DELETE FROM restaurant.tables WHERE etage = " + idDernierNiveau);
 				executerDelete("DELETE FROM restaurant.etage WHERE id = " + idDernierNiveau);
 			} else {
 				System.out.println(
