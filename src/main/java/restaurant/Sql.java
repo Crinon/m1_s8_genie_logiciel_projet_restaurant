@@ -9,6 +9,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 public class Sql {
@@ -71,7 +74,7 @@ public class Sql {
 		}
 	}
 
-	private boolean executerDelete(String requete) {
+	public boolean executerDelete(String requete) {
 		try {
 			this.stmt = c.createStatement();
 			System.out.println("Delete : " + requete);
@@ -451,5 +454,78 @@ public class Sql {
 			e.printStackTrace();
 		}
 	}
+
+
+	
+
+	public Plat insererPlat(String nomPlat, Double prixPlat, int dureePreparation, boolean disponibleCarte,
+			Type type, Categorie categorie, HashMap<Ingredient, Integer> recetteAcreer) {
+		// Pour un plat il faut
+//		Nom du plat
+//		Prix du plat
+//		Durée de préparation du plat
+//		Sa disponibilité sur la carte
+//		Son type
+//		Sa catégorie
+		String typeConverted = type.toString().toLowerCase().substring(0, 1).toUpperCase() + type.toString().toLowerCase().substring(1);
+		String categorieConverted = categorie.toString().toLowerCase().toString().toLowerCase().substring(0, 1).toUpperCase() + categorie.toString().toLowerCase().toString().toLowerCase().substring(1);
+		executerInsert("INSERT INTO restaurant.plat (nom,typePlat,typeIngredient,prix,dureePreparation,disponibleCarte) VALUES ('"
+				+ nomPlat + "','"	+ typeConverted + "','"	+ categorieConverted + "', "+ prixPlat +"," +
+		+ dureePreparation + ","+ disponibleCarte + ")");
+		try {
+			int idPlat = demanderDernierId("plat");
+//			Ensuite il faut sa recette
+//			id ingrédient
+//			id du plat fraichelent créé
+//			quantité ingrédient
+		    Iterator it = recetteAcreer.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        Ingredient ingredient = (Ingredient) pair.getKey();
+		        int quantite = (int) pair.getValue();
+				executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES ("
+						+ quantite + "," + ingredient.getId() + "," + idPlat + ")");
+		    }
+		    return new Plat(idPlat, nomPlat, prixPlat, dureePreparation, disponibleCarte, type, categorie, recetteAcreer);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}	
+	
+	
+	
+	
+	
+	
+	
+	// WORK IN PROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESS
+	public void initialiserPlats() {
+		// Initialisation de la liste d'étages à retrouner
+		ArrayList<Plat> plats = new ArrayList<>();
+		// Sélection de tous les étages présents dans la DB
+		ResultSet resultSet = executerSelect("SELECT * FROM restaurant.plat");
+		// Pour chaque plat existant, on créé un objet Plat et on l'ajoute à la liste retournée
+		try {
+			while (resultSet.next()) {
+						HashMap<Ingredient, Integer> recetter=new HashMap<>();
+						ResultSet resultSetIngredients = executerSelect("SELECT * FROM restaurant.ingredient WHERE ");
+
+				plats.add(new Plat(
+						Integer.parseInt(resultSet.getString("id")),
+						resultSet.getString("nom"),
+						Double.parseDouble(resultSet.getString("prix")),
+						Integer.parseInt(resultSet.getString("dureePreparation")),
+						resultSet.getBoolean("disponibleCarte"),
+						Type.valueOf(resultSet.getString("typePlat")),
+						Categorie.valueOf(resultSet.getString("typeIngredient")),
+						recetter));
+			}
+		} catch (NumberFormatException | SQLException e) {
+			e.printStackTrace();
+		}
+		Restaurant.setPlats(plats);		
+	}
+
 
 }

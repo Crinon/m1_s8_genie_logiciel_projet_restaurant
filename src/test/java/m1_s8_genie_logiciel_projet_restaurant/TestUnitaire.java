@@ -1,13 +1,17 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
 import restaurant.Assistant;
+import restaurant.Categorie;
 import restaurant.Directeur;
 import restaurant.Etage;
+import restaurant.Ingredient;
 import restaurant.Personne;
+import restaurant.Plat;
 import restaurant.Restaurant;
 import restaurant.Serveur;
 import restaurant.Sql;
 import restaurant.Table;
+import restaurant.Type;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -122,7 +127,47 @@ public class TestUnitaire {
 				+ "        ON UPDATE NO ACTION\r\n"
 				+ "        ON DELETE NO ACTION\r\n"
 				+ ")");
-
+		// Plat
+		sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n"
+				+ "    INCREMENT 1\r\n"
+				+ "    START 1\r\n"
+				+ "    MINVALUE 1\r\n"
+				+ "    MAXVALUE 2147483647\r\n"
+				+ "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.plat\r\n"
+				+ "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.plat_id_seq'),\r\n"
+				+ "    nom character varying NOT NULL,\r\n"
+				+ "    typeplat character varying NOT NULL,\r\n"
+				+ "    typeingredient character varying NOT NULL,\r\n"
+				+ "    prix double precision NOT NULL,\r\n"
+				+ "    disponiblecarte boolean NOT NULL,\r\n"
+				+ "    dureepreparation integer NOT NULL,\r\n"
+				+ "    CONSTRAINT plat_pkey PRIMARY KEY (id),\r\n"
+				+ "    check (typeplat in ('Entree', 'Plat', 'Dessert')),\r\n"
+				+ "    check (typeingredient in ('Vegetarien', 'Viande', 'Poisson', 'Sucre', 'Sale'))\r\n"
+				+ ")");
+		// Recette de plat
+		sql.executerTests("CREATE SEQUENCE restaurant.recette_id_seq\r\n"
+				+ "    INCREMENT 1\r\n"
+				+ "    START 1\r\n"
+				+ "    MINVALUE 1\r\n"
+				+ "    MAXVALUE 2147483647\r\n"
+				+ "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.recette\r\n"
+				+ "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.recette_id_seq'),\r\n"
+				+ "    quantite double precision NOT NULL,\r\n"
+				+ "    ingredient integer NOT NULL,\r\n"
+				+ "    plat integer NOT NULL,\r\n"
+				+ "    CONSTRAINT recette_pkey PRIMARY KEY (id),\r\n"
+				+ "    CONSTRAINT recette_ingredient_fkey FOREIGN KEY (ingredient)\r\n"
+				+ "        REFERENCES restaurant.ingredient (id)\r\n"
+				+ "        ON UPDATE NO ACTION\r\n"
+				+ "        ON DELETE NO ACTION,\r\n"
+				+ "    CONSTRAINT recette_plat_fkey FOREIGN KEY (plat)\r\n"
+				+ "        REFERENCES restaurant.plat (id)\r\n"
+				+ ")");
 		Restaurant.initialisation();
 	}
 
@@ -479,6 +524,65 @@ public class TestUnitaire {
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	@DisplayName("Création d'un plat dans la base de données")
+	public void creationPlatDB() {
+		try {
+			System.out.println("\nTest en cours : Création d'un plat dans la base de données");
+			String nomPlat = "Toast au saumon";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			String nomIngredientSaumon = "saumon";
+			String nomIngredientToast = "tartine";
+			int quantiteSaumon = 2;
+			int quantiteTartine = 2;
+			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(saumon, quantiteSaumon);
+			recette.put(tartine, quantiteTartine);
+			Plat plat = directeur.creerPlat(nomPlat,prixPlat,tempsPrepa,surCarte,type,categorie, recette);
+			ResultSet resultSet = sql.executerSelect("SELECT id FROM restaurant.plat WHERE id="+plat.getId());
+			// On vérifie qu'une ligne a bien été créé avec l'id du plat généré
+			assertTrue(resultSet.next());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@Test
+	@DisplayName("Création d'un plat dans la mémoire")
+	public void creationPlatJava() {
+			System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+			int nbPlatAvant = Restaurant.getPlats().size();
+			String nomPlat = "Toast au saumon";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			String nomIngredientSaumon = "saumon";
+			String nomIngredientToast = "tartine";
+			int quantiteSaumon = 2;
+			int quantiteTartine = 2;
+			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(saumon, quantiteSaumon);
+			recette.put(tartine, quantiteTartine);
+			directeur.creerPlat(nomPlat,prixPlat,tempsPrepa,surCarte,type,categorie, recette);
+			int nbPlatApres = Restaurant.getPlats().size();
+			assertTrue(nbPlatAvant<nbPlatApres);
 	}
 	
 	

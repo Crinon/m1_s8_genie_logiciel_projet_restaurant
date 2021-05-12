@@ -9,6 +9,7 @@ public final class Restaurant {
 	private static ArrayList<Etage> etages;
 	private static ArrayList<Personne> personnel;
 	private static ArrayList<Ingredient> ingredients;
+	private static ArrayList<Plat> plats;
 	private static Date heureDejeunerOuverture;
 	private static Date heureDejeunerLimite;
 	private static Date heureDinerOuverture;
@@ -25,7 +26,8 @@ public final class Restaurant {
     	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
     	sql.premierDemarrage();
     	// Initialisation du personnel
-    	sql.initialiserPersonnel();    	
+    	sql.initialiserPersonnel();  
+    	sql.initialiserPlats();
 	}
 	
 //	public static void premierDemarrage(Sql sql) {
@@ -104,5 +106,13 @@ public final class Restaurant {
 	}
 
 	private Restaurant() {}
+
+	public static ArrayList<Plat> getPlats() {
+		return plats;
+	}
+
+	public static void setPlats(ArrayList<Plat> plats) {
+		Restaurant.plats = plats;
+	}
 	
 }

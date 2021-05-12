@@ -3,6 +3,7 @@ package restaurant;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Directeur extends Personne {
 
@@ -146,13 +147,23 @@ public class Directeur extends Personne {
 		return success;
 	}
 	
-	
-	
 	public void commanderIngredient(Ingredient ingredient, int ajout) throws ClassNotFoundException, SQLException, IOException {
 		boolean success;
 		Sql sql = new Sql();
 		success = sql.commanderIngredient(ingredient, ajout);
+	}
 
+	public Plat creerPlat(String nom, Double prixPlat, int tempsPrepa, boolean surCarte, Type type, Categorie categorie, HashMap<Ingredient, Integer> ingredientQuantite) {
+		Sql sql;
+		try {
+			sql = new Sql();
+			Plat plat = sql.insererPlat(nom, prixPlat, tempsPrepa, surCarte, type, categorie, ingredientQuantite);
+			Restaurant.getPlats().add(plat);
+			return plat;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	
