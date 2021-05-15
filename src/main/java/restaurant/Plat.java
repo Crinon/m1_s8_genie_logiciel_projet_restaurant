@@ -1,41 +1,46 @@
 package restaurant;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Plat {
 
+	private int id;
+	private String nom;
 	private double prix;
-	
 	private int dureePreparation;
-	
 	private boolean disponibleCarte;
-	
 	private Type type;
-	
 	private Categorie categorie;
+	private HashMap<Ingredient, Integer> recette;
 	
-	private ArrayList<Ingredient> ingredients;
+	
+	@Override
+	public String toString() {
+		return "Plat [id=" + id + ", nom=" + nom + ", prix=" + prix + ", dureePreparation=" + dureePreparation
+				+ ", disponibleCarte=" + disponibleCarte + ", type=" + type + ", categorie=" + categorie + ", recette="
+				+ recette + "]";
+	}
 
-	public Plat(double prix, int dureePreparation, boolean disponibleCarte, Type type, Categorie categorie) {
+	public Plat(int id, String nom, double prix, int dureePreparation, boolean disponibleCarte, Type type, Categorie categorie,
+			HashMap<Ingredient, Integer> recetteAcreer) {
 		super();
+		this.nom=nom;
+		this.id = id;
 		this.prix = prix;
 		this.dureePreparation = dureePreparation;
 		this.disponibleCarte = disponibleCarte;
 		this.type = type;
 		this.categorie = categorie;
-		this.ingredients = new ArrayList<Ingredient>();
-	}
-	
-	public ArrayList<Ingredient> getTables() {
-		return ingredients;
+		this.setRecette(recetteAcreer);
 	}
 
-	public void setTables(ArrayList<Ingredient> ingredients) {
-		this.ingredients = ingredients;
+	public int getId() {
+		return id;
 	}
-	
-	public void addTable(Ingredient ingredient) {
-		this.ingredients.add(ingredient);
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public double getPrix() {
@@ -77,6 +82,23 @@ public class Plat {
 	public void setCategorie(Categorie categorie) {
 		this.categorie = categorie;
 	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public HashMap<Ingredient, Integer> getRecette() {
+		return recette;
+	}
+
+	public void setRecette(HashMap<Ingredient, Integer> recette) {
+		this.recette = recette;
+	}
+
 	
 	
 	

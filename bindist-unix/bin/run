@@ -97,7 +97,11 @@ then
   REPO="$BASEDIR"/repo
 fi
 
+<<<<<<< HEAD
 CLASSPATH="$BASEDIR"/etc:"$REPO"/postgresql-42.2.19.jar:"$REPO"/checker-qual-3.5.0.jar:"$REPO"/javafx-controls-13.jar:"$REPO"/javafx-controls-13-win.jar:"$REPO"/javafx-graphics-13.jar:"$REPO"/javafx-graphics-13-win.jar:"$REPO"/javafx-base-13.jar:"$REPO"/javafx-base-13-win.jar:"$REPO"/javafx-fxml-13.jar:"$REPO"/javafx-fxml-13-win.jar:"$REPO"/restaurant-0.0.1-SNAPSHOT.jar
+=======
+CLASSPATH="$BASEDIR"/etc:"$REPO"/postgresql-42.2.19.jar:"$REPO"/checker-qual-3.5.0.jar:"$REPO"/h2-1.4.199.jar:"$REPO"/restaurant-0.0.1-SNAPSHOT.jar
+>>>>>>> branch 'main' of https://github.com/Crinon/m1_s8_genie_logiciel_projet_restaurant.git
 
 ENDORSED_DIR=
 if [ -n "$ENDORSED_DIR" ] ; then
