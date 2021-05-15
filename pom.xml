@@ -61,17 +61,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- OPENJFX -->
-				<groupId>org.openjfx</groupId>
-				<artifactId>javafx-maven-plugin</artifactId>
-				<version>0.0.4</version>
-				<configuration>
-					<mainClass>fr.ul.miage.baignoire.App</mainClass>
-				</configuration>
-			</plugin>
-
-
-			<plugin>
 				<!-- create run scripts for apps (.bat and .sh) -->
 				<!-- mvn package | appassembler:assemble -->
 				<groupId>org.codehaus.mojo</groupId>
