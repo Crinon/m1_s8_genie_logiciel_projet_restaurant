@@ -171,16 +171,16 @@ public class Directeur extends Personne {
 	return null;
     }
 
-    public Plat supprimerPlat(Plat plat) {
+    public void supprimerPlat(Plat plat) {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    return plat;
+	    sql.supprimerPlat(plat);
+	    Restaurant.getPlats().remove(plat);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
 	}
-	return null;
     }
 
 }

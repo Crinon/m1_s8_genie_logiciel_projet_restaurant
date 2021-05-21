@@ -604,4 +604,22 @@ public class Sql {
 	Restaurant.setPlats(plats);
     }
 
+    /**
+     * @param plat
+     */
+    public void supprimerPlat(Plat plat) {
+	plat.getRecette().forEach((ing, qtt) -> supprimerRecette(plat, ing));
+	executerDelete("DELETE FROM restaurant.plat WHERE id = " + plat.getId());
+    }
+
+    /**
+     * @param plat
+     * @param ing
+     * @return
+     */
+    private void supprimerRecette(Plat plat, Ingredient ing) {
+	executerDelete(
+		"DELETE FROM restaurant.recette WHERE plat = " + plat.getId() + " AND ingredient = " + ing.getId());
+    }
+
 }
