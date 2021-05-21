@@ -622,4 +622,24 @@ public class Sql {
 		"DELETE FROM restaurant.recette WHERE plat = " + plat.getId() + " AND ingredient = " + ing.getId());
     }
 
+    /**
+     * @param plat
+     */
+    public void modifierPlat(Plat plat) {
+	// TODO
+	// executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE
+	// id = " + table.getId());
+    }
+
+    /**
+     * @param plat
+     * @param ing
+     * @return
+     */
+    private void modifierRecette(Plat plat, Ingredient ing) {
+	// TODO
+	// executerDelete("DELETE FROM restaurant.recette WHERE plat = " + plat.getId()
+	// + " AND ingredient = " + ing.getId());
+    }
+
 }

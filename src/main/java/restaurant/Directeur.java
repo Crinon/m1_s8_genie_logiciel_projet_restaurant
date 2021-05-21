@@ -151,9 +151,8 @@ public class Directeur extends Personne {
 
     public void commanderIngredient(Ingredient ingredient, int ajout)
 	    throws ClassNotFoundException, SQLException, IOException {
-	boolean success;
 	Sql sql = new Sql();
-	success = sql.commanderIngredient(ingredient, ajout);
+	sql.commanderIngredient(ingredient, ajout);
     }
 
     public Plat creerPlat(String nom, Double prixPlat, int tempsPrepa, boolean surCarte, Type type, Categorie categorie,
@@ -169,6 +168,17 @@ public class Directeur extends Personne {
 	    e.printStackTrace();
 	}
 	return null;
+    }
+
+    public void modifierPlat(Plat plat) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    sql.modifierPlat(plat);
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
     }
 
     public void supprimerPlat(Plat plat) {
