@@ -468,10 +468,9 @@ public class Sql {
 				// il faut créer un directeur automatiquement
 				Personne directeur = new Directeur(1, "directeur", "directeur0");
 				ajouterPersonne("directeur", "directeur");
-			} else {
-				// Rien à faire, il y a déjà un directeur, donc l'application peut fonctionner
-				// correctement
 			}
+			// Rien à faire, il y a déjà un directeur, donc l'application peut fonctionner
+			// correctement
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
