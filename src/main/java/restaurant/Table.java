@@ -1,65 +1,60 @@
 package restaurant;
 
 public class Table {
-	
-	private int numero;
-	private int capacite;
-	private EtatTable etat;
-	private Reservation reservation;
-	
-	private int id;
 
-	public Table(int id, int numero, int capacite, EtatTable etat) {
-		super();
-		this.id = id;
-		this.numero = numero;
-		this.capacite = capacite;
-		this.etat = etat;
-		this.reservation=null;
-	}
+    private int		numero;
+    private int		capacite;
+    private EtatTable	etat;
+    private Reservation	reservation;
+    private int		id;
 
-	public int getId() {
-		return id;
-	}
+    public Table(int id, int numero, int capacite, EtatTable etat) {
+	super();
+	this.id = id;
+	this.numero = numero;
+	this.capacite = capacite;
+	this.etat = etat;
+	this.reservation = null;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+	return id;
+    }
 
-	public Reservation getReservation() {
-		return reservation;
-	}
+    public void setId(int id) {
+	this.id = id;
+    }
 
-	public void setReservation(Reservation reservation) {
-		this.reservation = reservation;
-	}
+    public Reservation getReservation() {
+	return reservation;
+    }
 
-	public int getNumero() {
-		return numero;
-	}
+    public void setReservation(Reservation reservation) {
+	this.reservation = reservation;
+    }
 
-	public void setNumero(int numero) {
-		this.numero = numero;
-	}
+    public int getNumero() {
+	return numero;
+    }
 
-	public int getCapacite() {
-		return capacite;
-	}
+    public void setNumero(int numero) {
+	this.numero = numero;
+    }
 
-	public void setCapacite(int capacite) {
-		this.capacite = capacite;
-	}
+    public int getCapacite() {
+	return capacite;
+    }
 
-	public EtatTable getEtat() {
-		return etat;
-	}
+    public void setCapacite(int capacite) {
+	this.capacite = capacite;
+    }
 
-	public void setEtat(EtatTable etat) {
-		this.etat = etat;
-	}
-	
-	
-	
-	
+    public EtatTable getEtat() {
+	return etat;
+    }
+
+    public void setEtat(EtatTable etat) {
+	this.etat = etat;
+    }
 
 }
