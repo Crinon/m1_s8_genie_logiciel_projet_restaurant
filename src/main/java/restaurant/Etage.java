@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class Etage {
 	}
 
 
-	public void initialiserTables() throws ClassNotFoundException, SQLException {
+	public void initialiserTables() throws ClassNotFoundException, SQLException, IOException {
 		Sql sql = new Sql();
 		sql.initialiserTables(this);
 	}

@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,20 +9,33 @@ public final class Restaurant {
 	private static ArrayList<Etage> etages;
 	private static ArrayList<Personne> personnel;
 	private static ArrayList<Ingredient> ingredients;
+	private static ArrayList<Plat> plats;
 	private static Date heureDejeunerOuverture;
 	private static Date heureDejeunerLimite;
 	private static Date heureDinerOuverture;
 	private static Date heureDinerLimite;
 	private static int nbTableMax;
 	
-	public static void initialisation() throws ClassNotFoundException, SQLException {
+	public static void initialisation() throws ClassNotFoundException, SQLException, IOException {
     	Sql sql = new Sql();
     	sql.initialiserIngredients();
     	sql.initialiserEtages();
     	for (Etage etage : etages) {
 			etage.initialiserTables();
 		}
+    	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+    	sql.premierDemarrage();
+    	// Initialisation du personnel
+    	sql.initialiserPersonnel();  
+    	sql.initialiserPlats();
 	}
+	
+//	public static void premierDemarrage(Sql sql) {
+//		// Regarde si c'est le premier démarrage de l'application
+//		sql.premierDemarrage();
+//			// il faut créer un directeur automatiquement
+//		
+//	}
 	
 	public static ArrayList<Ingredient> getIngredients() {
 		return ingredients;
@@ -92,5 +106,13 @@ public final class Restaurant {
 	}
 
 	private Restaurant() {}
+
+	public static ArrayList<Plat> getPlats() {
+		return plats;
+	}
+
+	public static void setPlats(ArrayList<Plat> plats) {
+		Restaurant.plats = plats;
+	}
 	
 }
