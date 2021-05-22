@@ -2,6 +2,16 @@ package m1_s8_genie_logiciel_projet_restaurant;
 
 import restaurant.Affectation;
 import restaurant.Assistant;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import restaurant.Categorie;
 import restaurant.Directeur;
 import restaurant.Etage;
@@ -14,26 +24,16 @@ import restaurant.Sql;
 import restaurant.Table;
 import restaurant.Type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 
 @DisplayName("Tests du projet restaurant")
 public class TestUnitaire {
+
 	private static Sql sql;
 	Directeur directeur = new Directeur(0, "directeur", "directeur0");
 
@@ -159,7 +159,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(1)
 	@DisplayName("Ajout automatique d'un directeur dans la base de données s'il n'en existe aucun")
 	public void insertionDirecteurPremierDemarrage() {
 		System.out.println("\nTest en cours : création du directeur lorsqu'il n'y en a aucun dans la base de données");
@@ -174,7 +173,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(2)
 	@DisplayName("Création d'un ingrédient dans la base de donnée")
 	public void insertionIngredientDB() throws SQLException, ClassNotFoundException, IOException {
 		directeur.ajouterIngredient("carotte", Restaurant.getIngredients());
@@ -183,7 +181,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(3)
 	@DisplayName("Création d'un ingrédient dans la mémoire")
 	public void insertionIngredientJava() throws SQLException, ClassNotFoundException, IOException {
 		directeur.ajouterIngredient("patate", Restaurant.getIngredients());
@@ -191,7 +188,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(4)
 	@DisplayName("Tentative de créer 2 fois le même ingrédient dans la base de données")
 	public void refuseDoublonIngredientDB() throws ClassNotFoundException, SQLException, IOException {
 		System.out.println("\nTest en cours : doublon d'ingrédient");
@@ -206,7 +202,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(5)
 	@DisplayName("Commander un ingrédient : modification de la quantité dans la base de données")
 	public void commanderIngredientDB() throws ClassNotFoundException, SQLException, IOException {
 		System.out.println("\nTest en cours : commande d'ingrédient");
@@ -218,7 +213,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(6)
 	@DisplayName("Insertion d'un personnel assistant dans la base de données")
 	public void insertionPersonnelDB() {
 		System.out.println("\nTest en cours : Insertion d'un assistant dans la base de données");
@@ -233,7 +227,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(7)
 	@DisplayName("Modification d'un personnel (assistant vers serveur) dans la base de données")
 	public void modificationPersonnelDB() {
 		try {
@@ -250,7 +243,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@Order(8)
 	@DisplayName("Suppression d'un personnel dans la base de données")
 	public void suppressionPersonnelDB() {
 		try {
@@ -354,7 +346,6 @@ public class TestUnitaire {
 			int niveauMaxAvantSuppression = Integer.parseInt(resultSet.getString("max"));
 			directeur.supprimerDernierEtage();
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
-
 			int niveauMaxApresSuppression = -1;
 			if (resultSet.next()) {
 				if (resultSet.getString("max") != null) {
@@ -370,6 +361,7 @@ public class TestUnitaire {
 
 	@Test
 	@DisplayName("Suppression d'un étage dans la mémoire")
+
 	public void supprimerEtageJava() {
 		System.out.println("\nTest en cours : Suppression d'un étage dans la mémoire");
 		try {
@@ -549,6 +541,39 @@ public class TestUnitaire {
 	}
 
 	@Test
+	@DisplayName("Modification du prix d'un plat dans la base de données")
+	public void modificationPrixPlatDB() {
+		try {
+			System.out.println("\nTest en cours : Création d'un plat dans la base de données");
+			String nomPlat = "Toast au saumon";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			String nomIngredientSaumon = "saumon";
+			String nomIngredientToast = "tartine";
+			int quantiteSaumon = 2;
+			int quantiteTartine = 2;
+			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(saumon, quantiteSaumon);
+			recette.put(tartine, quantiteTartine);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			directeur.modifierPrixPlat(plat, 10);
+			ResultSet resultSet = sql.executerSelect("SELECT prix FROM restaurant.plat WHERE id=" + plat.getId());
+			resultSet.next();
+			// On vérifie qu'une ligne a bien été créé avec l'id du plat généré
+			assertEquals(10, resultSet.getDouble("prix"), 0);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	@DisplayName("Création d'un plat dans la mémoire")
 	public void creationPlatJava() {
 		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
@@ -628,6 +653,152 @@ public class TestUnitaire {
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	@DisplayName("Modification du prix d'un plat dans la mémoire")
+	public void modificationPrixPlatJava() {
+		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+		String nomPlat = "Toast au saumon";
+		Double prixPlat = 9.5;
+		int tempsPrepa = 5;
+		boolean surCarte = true;
+		Type type = Type.ENTREE;
+		Categorie categorie = Categorie.POISSON;
+		String nomIngredientSaumon = "saumon";
+		String nomIngredientToast = "tartine";
+		int quantiteSaumon = 2;
+		int quantiteTartine = 2;
+		directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+		Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+		Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		HashMap<Ingredient, Integer> recette = new HashMap<>();
+		recette.put(saumon, quantiteSaumon);
+		recette.put(tartine, quantiteTartine);
+		Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+		directeur.modifierPrixPlat(plat, 10);
+		assertEquals(10, plat.getPrix(), 0);
+	}
+
+	@Test
+	@DisplayName("Modification de la disponibilité d'un plat dans la base de données")
+	public void modificationCartePlatDB() {
+		try {
+			System.out.println("\nTest en cours : Création d'un plat dans la base de données");
+			String nomPlat = "Toast au saumon";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			String nomIngredientSaumon = "saumon";
+			String nomIngredientToast = "tartine";
+			int quantiteSaumon = 2;
+			int quantiteTartine = 2;
+			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(saumon, quantiteSaumon);
+			recette.put(tartine, quantiteTartine);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			directeur.modifierCartePlat(plat, false);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT disponiblecarte FROM restaurant.plat WHERE id=" + plat.getId());
+			resultSet.next();
+			// On vérifie qu'une ligne a bien été créé avec l'id du plat généré
+			assertFalse(resultSet.getBoolean("disponiblecarte"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Modification de la disponibilité d'un plat dans la mémoire")
+	public void modificationCartePlatJava() {
+		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+		String nomPlat = "Toast au saumon";
+		Double prixPlat = 9.5;
+		int tempsPrepa = 5;
+		boolean surCarte = true;
+		Type type = Type.ENTREE;
+		Categorie categorie = Categorie.POISSON;
+		String nomIngredientSaumon = "saumon";
+		String nomIngredientToast = "tartine";
+		int quantiteSaumon = 2;
+		int quantiteTartine = 2;
+		directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+		Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+		Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		HashMap<Ingredient, Integer> recette = new HashMap<>();
+		recette.put(saumon, quantiteSaumon);
+		recette.put(tartine, quantiteTartine);
+		Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+		directeur.modifierCartePlat(plat, false);
+		assertFalse(plat.isDisponibleCarte());
+	}
+
+	@Test
+	@DisplayName("Modification de la durée d'un plat dans la base de données")
+	public void modificationDureePlatDB() {
+		try {
+			System.out.println("\nTest en cours : Création d'un plat dans la base de données");
+			String nomPlat = "Toast au saumon";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			String nomIngredientSaumon = "saumon";
+			String nomIngredientToast = "tartine";
+			int quantiteSaumon = 2;
+			int quantiteTartine = 2;
+			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(saumon, quantiteSaumon);
+			recette.put(tartine, quantiteTartine);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			directeur.modifierDureePlat(plat, 10);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT dureepreparation FROM restaurant.plat WHERE id=" + plat.getId());
+			resultSet.next();
+			// On vérifie qu'une ligne a bien été créé avec l'id du plat généré
+			assertEquals(10, resultSet.getInt("dureepreparation"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Modification de la durée d'un plat dans la mémoire")
+	public void modificationDureePlatJava() {
+		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+		String nomPlat = "Toast au saumon";
+		Double prixPlat = 9.5;
+		int tempsPrepa = 5;
+		boolean surCarte = true;
+		Type type = Type.ENTREE;
+		Categorie categorie = Categorie.POISSON;
+		String nomIngredientSaumon = "saumon";
+		String nomIngredientToast = "tartine";
+		int quantiteSaumon = 2;
+		int quantiteTartine = 2;
+		directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+		Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+		Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		HashMap<Ingredient, Integer> recette = new HashMap<>();
+		recette.put(saumon, quantiteSaumon);
+		recette.put(tartine, quantiteTartine);
+		Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+		directeur.modifierDureePlat(plat, 10);
+		assertEquals(10, plat.getDureePreparation());
 	}
 
 }

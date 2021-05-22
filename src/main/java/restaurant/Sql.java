@@ -634,4 +634,27 @@ public class Sql {
 		return null;
 	}
 
+	/**
+	 * @param plat
+	 * @param duree
+	 */
+	public void modifierPrixPlat(Plat plat, double prix) {
+		executerUpdate("UPDATE restaurant.plat SET prix = " + prix);
+	}
+
+	/**
+	 * @param plat
+	 */
+	public void modifierCartePlat(Plat plat, boolean estCarte) {
+		executerUpdate("UPDATE restaurant.plat SET disponiblecarte = " + estCarte);
+	}
+
+	/**
+	 * @param plat
+	 * @param duree
+	 */
+	public void modifierDureePlat(Plat plat, int duree) {
+		executerUpdate("UPDATE restaurant.plat SET dureepreparation = " + duree);
+	}
+
 }
