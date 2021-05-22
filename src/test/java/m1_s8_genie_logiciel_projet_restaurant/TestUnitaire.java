@@ -466,7 +466,7 @@ public class TestUnitaire {
 	    // La table créée et a supprimée
 	    Table tableActuelle = etage.getTables().get(0);
 	    // On supprime la table
-	    directeur.supprimerTable(0, etage.getTables());
+	    directeur.supprimerTable(tableActuelle, etage.getTables());
 	    ResultSet resultSet = sql
 		    .executerSelect("SELECT numero FROM restaurant.tables WHERE id=" + tableActuelle.getId());
 	    // On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
@@ -493,7 +493,7 @@ public class TestUnitaire {
 	    // La table créée et a supprimée
 	    Table tableActuelle = etage.getTables().get(0);
 	    // On supprime la table
-	    directeur.supprimerTable(0, etage.getTables());
+	    directeur.supprimerTable(tableActuelle, etage.getTables());
 	    int totalTablesApresSuppression = etage.getTables().size();
 	    // On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
 	    assertTrue(totalTablesApresSuppression < totalTablesAvantSuppression);

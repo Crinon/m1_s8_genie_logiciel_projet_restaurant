@@ -118,13 +118,13 @@ public class Directeur extends Personne {
 	}
     }
 
-    public void supprimerTable(int indexToRemove, ArrayList<Table> tables)
+    public void supprimerTable(Table tableToremove, ArrayList<Table> tables)
 	    throws ClassNotFoundException, SQLException, IOException {
 	boolean success;
 	Sql sql = new Sql();
-	success = sql.deleteTable(tables.get(indexToRemove));
+	success = sql.deleteTable(tableToremove);
 	if (success) {
-	    tables.remove(indexToRemove);
+	    tables.remove(tableToremove);
 	}
     }
 
@@ -199,7 +199,7 @@ public class Directeur extends Personne {
 	try {
 	    sql = new Sql();
 	    sql.modifierPrixPlat(plat, prix);
-	    plat.setPrix(prix);
+	    plat.setPrix(plat, prix);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
