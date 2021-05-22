@@ -47,6 +47,13 @@
 		    <version>1.4.199</version>
 		    <scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+		  <groupId>org.codehaus.mojo</groupId>
+		  <artifactId>sonar-maven-plugin</artifactId>
+		  <version>3.6.1.1688</version>
+		  <type>pom</type>
+		</dependency>
 
 	</dependencies>
 	<build>

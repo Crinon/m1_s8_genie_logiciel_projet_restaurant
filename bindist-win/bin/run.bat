@@ -72,7 +72,7 @@ if "%JAVACMD%"=="" set JAVACMD=java
 
 if "%REPO%"=="" set REPO=%BASEDIR%\repo
 
-set CLASSPATH="%BASEDIR%"\etc;"%REPO%"\postgresql-42.2.19.jar;"%REPO%"\checker-qual-3.5.0.jar;"%REPO%"\h2-1.4.199.jar;"%REPO%"\restaurant-0.0.1-SNAPSHOT.jar
+set CLASSPATH="%BASEDIR%"\etc;"%REPO%"\postgresql-42.2.19.jar;"%REPO%"\checker-qual-3.5.0.jar;"%REPO%"\h2-1.4.199.jar;"%REPO%"\plexus-sec-dispatcher-1.4.jar;"%REPO%"\plexus-cipher-1.4.jar;"%REPO%"\plexus-utils-3.2.1.jar;"%REPO%"\sonar-scanner-api-2.12.0.1661.jar;"%REPO%"\commons-lang-2.6.jar;"%REPO%"\restaurant-0.0.1-SNAPSHOT.jar
 
 set ENDORSED_DIR=
 if NOT "%ENDORSED_DIR%" == "" set CLASSPATH="%BASEDIR%"\%ENDORSED_DIR%\*;%CLASSPATH%
