@@ -170,11 +170,36 @@ public class Directeur extends Personne {
 	return null;
     }
 
-    public void modifierPlat(Plat plat) {
+    public void modifierDureePlat(Plat plat, int duree) {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    sql.modifierPlat(plat);
+	    sql.modifierDureePlat(plat, duree);
+	    plat.setDureePreparation(duree);
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void modifierCartePlat(Plat plat, boolean estCarte) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    sql.modifierCartePlat(plat, estCarte);
+	    plat.setDisponibleCarte(estCarte);
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void modifierPrixPlat(Plat plat, double prix) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    sql.modifierPrixPlat(plat, prix);
+	    plat.setPrix(prix);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();

@@ -624,22 +624,25 @@ public class Sql {
 
     /**
      * @param plat
+     * @param duree
      */
-    public void modifierPlat(Plat plat) {
-	// TODO
-	// executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE
-	// id = " + table.getId());
+    public void modifierPrixPlat(Plat plat, double prix) {
+	executerUpdate("UPDATE restaurant.plat SET prix = " + prix);
     }
 
     /**
      * @param plat
-     * @param ing
-     * @return
      */
-    private void modifierRecette(Plat plat, Ingredient ing) {
-	// TODO
-	// executerDelete("DELETE FROM restaurant.recette WHERE plat = " + plat.getId()
-	// + " AND ingredient = " + ing.getId());
+    public void modifierCartePlat(Plat plat, boolean estCarte) {
+	executerUpdate("UPDATE restaurant.plat SET disponiblecarte = " + estCarte);
+    }
+
+    /**
+     * @param plat
+     * @param duree
+     */
+    public void modifierDureePlat(Plat plat, int duree) {
+	executerUpdate("UPDATE restaurant.plat SET dureepreparation = " + duree);
     }
 
 }
