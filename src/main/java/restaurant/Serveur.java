@@ -6,19 +6,13 @@ public class Serveur extends Personne {
 
     private ArrayList<Table> tablesAffectees;
 
-    public Serveur(String string) {
-	this.nom = string;
-    }
-
     /**
      * @param id
      * @param nom
      * @param identifiant
      */
     public Serveur(int id, String nom, String identifiant) {
-	this.id = id;
-	this.nom = nom;
-	this.identifiant = identifiant;
+	super(id, nom, identifiant);
     }
 
     public ArrayList<Table> getTablesAffectees() {

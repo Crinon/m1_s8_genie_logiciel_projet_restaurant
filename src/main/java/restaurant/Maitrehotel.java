@@ -4,19 +4,13 @@ import java.util.ArrayList;
 
 public class Maitrehotel extends Personne {
 
-    public Maitrehotel(String string) {
-	this.nom = string;
-    }
-
     /**
      * @param id
      * @param nom
      * @param identifiant
      */
     public Maitrehotel(int id, String nom, String identifiant) {
-	this.id = id;
-	this.nom = nom;
-	this.identifiant = identifiant;
+	super(id, nom, identifiant);
     }
 
     // On affecte à un serveur une ou plusieurs tables

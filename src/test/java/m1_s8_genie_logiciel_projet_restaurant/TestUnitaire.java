@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Tests du projet restaurant")
 public class TestUnitaire {
 	private static Sql sql;
-	Directeur directeur = new Directeur("directeur");
+	Directeur directeur = new Directeur(0, "directeur", "directeur0");
 
 //  @Test(expected=IllegalArgumentException.class)
 //  public void testIsMotDePasseValideNull() {

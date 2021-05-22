@@ -4,86 +4,84 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 public class Affectation {
-	
-	private int id;
-	private Date dateDebut;
-	private Date dateFin;
-	private int nbPersonne;
-	private ArrayList<Commande> commandes;
-	private Facture facture;
-	private Table table;
-	
 
-	public Affectation(int id, Date dateDebut, Date dateFin, int nbPersonne, ArrayList<Commande> commandes,
-			Facture facture, Table table) {
-		super();
-		this.id = id;
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		this.nbPersonne = nbPersonne;
-		this.commandes = commandes;
-		this.facture = facture;
-		this.table = table;
-	}
+    private int			id;
+    private Date		dateDebut;
+    private Date		dateFin;
+    private int			nbPersonne;
+    private ArrayList<Commande>	commandes;
+    private Facture		facture;
+    private Table		table;
 
-	public int getId() {
-		return id;
-	}
+    public Affectation(int id, Date dateDebut, Date dateFin, int nbPersonne, ArrayList<Commande> commandes,
+	    Facture facture, Table table) {
+	this.id = id;
+	this.dateDebut = dateDebut;
+	this.dateFin = dateFin;
+	this.nbPersonne = nbPersonne;
+	this.commandes = commandes;
+	this.facture = facture;
+	this.table = table;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+	return id;
+    }
 
-	public Date getDateDebut() {
-		return dateDebut;
-	}
+    public void setId(int id) {
+	this.id = id;
+    }
 
-	public void setDateDebut(Date dateDebut) {
-		this.dateDebut = dateDebut;
-	}
+    public Date getDateDebut() {
+	return dateDebut;
+    }
 
-	public Date getDateFin() {
-		return dateFin;
-	}
+    public void setDateDebut(Date dateDebut) {
+	this.dateDebut = dateDebut;
+    }
 
-	public void setDateFin(Date dateFin) {
-		this.dateFin = dateFin;
-	}
+    public Date getDateFin() {
+	return dateFin;
+    }
 
-	public int getNbPersonne() {
-		return nbPersonne;
-	}
+    public void setDateFin(Date dateFin) {
+	this.dateFin = dateFin;
+    }
 
-	public void setNbPersonne(int nbPersonne) {
-		this.nbPersonne = nbPersonne;
-	}
+    public int getNbPersonne() {
+	return nbPersonne;
+    }
 
-	public ArrayList<Commande> getCommandes() {
-		return commandes;
-	}
+    public void setNbPersonne(int nbPersonne) {
+	this.nbPersonne = nbPersonne;
+    }
 
-	public void setCommandes(ArrayList<Commande> commandes) {
-		this.commandes = commandes;
-	}
-	
-	public void addCommande(Commande commande) {
-		this.commandes.add(commande);
-	}
+    public ArrayList<Commande> getCommandes() {
+	return commandes;
+    }
 
-	public Facture getFacture() {
-		return facture;
-	}
+    public void setCommandes(ArrayList<Commande> commandes) {
+	this.commandes = commandes;
+    }
 
-	public void setFacture(Facture facture) {
-		this.facture = facture;
-	}
+    public void addCommande(Commande commande) {
+	this.commandes.add(commande);
+    }
 
-	public Table getTable() {
-		return table;
-	}
+    public Facture getFacture() {
+	return facture;
+    }
 
-	public void setTable(Table table) {
-		this.table = table;
-	}
-	
+    public void setFacture(Facture facture) {
+	this.facture = facture;
+    }
+
+    public Table getTable() {
+	return table;
+    }
+
+    public void setTable(Table table) {
+	this.table = table;
+    }
+
 }

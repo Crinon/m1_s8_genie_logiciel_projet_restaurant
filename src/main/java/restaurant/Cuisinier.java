@@ -2,19 +2,13 @@ package restaurant;
 
 public class Cuisinier extends Personne {
 
-    public Cuisinier(String string) {
-	this.nom = string;
-    }
-
     /**
      * @param id
      * @param nom
      * @param identifiant
      */
     public Cuisinier(int id, String nom, String identifiant) {
-	this.id = id;
-	this.nom = nom;
-	this.identifiant = identifiant;
+	super(id, nom, identifiant);
     }
 
     // Il choisit parmis les plats pas encore en carte
