@@ -647,10 +647,10 @@ public class TestUnitaire {
 	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
 	    directeur.modifierCartePlat(plat, false);
 	    ResultSet resultSet = sql
-		    .executerSelect("SELECT disponibilitecarte FROM restaurant.plat WHERE id=" + plat.getId());
+		    .executerSelect("SELECT disponiblecarte FROM restaurant.plat WHERE id=" + plat.getId());
 	    resultSet.next();
 	    // On vérifie qu'une ligne a bien été créé avec l'id du plat généré
-	    assertFalse(resultSet.getBoolean("disponibilitecarte"));
+	    assertFalse(resultSet.getBoolean("disponiblecarte"));
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -708,10 +708,10 @@ public class TestUnitaire {
 	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
 	    directeur.modifierDureePlat(plat, 10);
 	    ResultSet resultSet = sql
-		    .executerSelect("SELECT dureeparation FROM restaurant.plat WHERE id=" + plat.getId());
+		    .executerSelect("SELECT dureepreparation FROM restaurant.plat WHERE id=" + plat.getId());
 	    resultSet.next();
 	    // On vérifie qu'une ligne a bien été créé avec l'id du plat généré
-	    assertEquals(10, resultSet.getInt("dureeparation"));
+	    assertEquals(10, resultSet.getInt("dureepreparation"));
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
