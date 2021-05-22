@@ -1,5 +1,6 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
+import restaurant.Affectation;
 import restaurant.Assistant;
 import restaurant.Categorie;
 import restaurant.Directeur;
@@ -20,6 +21,10 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -107,67 +112,49 @@ public class TestUnitaire {
 				+ "        REFERENCES restaurant.personne (id) \r\n" + "        ON UPDATE NO ACTION\r\n"
 				+ "        ON DELETE NO ACTION\r\n" + ")");
 		// Tables
-		sql.executerTests("CREATE SEQUENCE restaurant.tables_id_seq\r\n"
-				+ "    INCREMENT 1\r\n"
-				+ "    START 1\r\n"
-				+ "    MINVALUE 1\r\n"
-				+ "    MAXVALUE 2147483647\r\n"
-				+ "    CACHE 1;");
-		sql.executerTests("CREATE TABLE restaurant.tables\r\n"
-				+ "(\r\n"
+		sql.executerTests("CREATE SEQUENCE restaurant.tables_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
+				+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.tables\r\n" + "(\r\n"
 				+ "    id integer NOT NULL DEFAULT nextval('restaurant.tables_id_seq'),\r\n"
-				+ "    capacite integer NOT NULL,\r\n"
-				+ "    etat character varying NOT NULL,\r\n"
-				+ "    etage integer NOT NULL,\r\n"
-				+ "    numero integer NOT NULL,\r\n"
+				+ "    capacite integer NOT NULL,\r\n" + "    etat character varying NOT NULL,\r\n"
+				+ "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
 				+ "    check (etat in ('Libre', 'Sale', 'Occupe', 'Reserve')),\r\n"
 				+ "    CONSTRAINT tables_pkey PRIMARY KEY (id),\r\n"
 				+ "    CONSTRAINT tables_etage_fkey FOREIGN KEY (etage)\r\n"
-				+ "        REFERENCES restaurant.etage (id)\r\n"
-				+ "        ON UPDATE NO ACTION\r\n"
-				+ "        ON DELETE NO ACTION\r\n"
-				+ ")");
+				+ "        REFERENCES restaurant.etage (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
+				+ "        ON DELETE NO ACTION\r\n" + ")");
 		// Plat
-		sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n"
-				+ "    INCREMENT 1\r\n"
-				+ "    START 1\r\n"
-				+ "    MINVALUE 1\r\n"
-				+ "    MAXVALUE 2147483647\r\n"
-				+ "    CACHE 1;");
-		sql.executerTests("CREATE TABLE restaurant.plat\r\n"
-				+ "(\r\n"
+		sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
+				+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.plat\r\n" + "(\r\n"
 				+ "    id integer NOT NULL DEFAULT nextval('restaurant.plat_id_seq'),\r\n"
-				+ "    nom character varying NOT NULL,\r\n"
-				+ "    typeplat character varying NOT NULL,\r\n"
-				+ "    typeingredient character varying NOT NULL,\r\n"
-				+ "    prix double precision NOT NULL,\r\n"
-				+ "    disponiblecarte boolean NOT NULL,\r\n"
-				+ "    dureepreparation integer NOT NULL,\r\n"
+				+ "    nom character varying NOT NULL,\r\n" + "    typeplat character varying NOT NULL,\r\n"
+				+ "    typeingredient character varying NOT NULL,\r\n" + "    prix double precision NOT NULL,\r\n"
+				+ "    disponiblecarte boolean NOT NULL,\r\n" + "    dureepreparation integer NOT NULL,\r\n"
 				+ "    CONSTRAINT plat_pkey PRIMARY KEY (id),\r\n"
 				+ "    check (typeplat in ('Entree', 'Plat', 'Dessert')),\r\n"
-				+ "    check (typeingredient in ('Vegetarien', 'Viande', 'Poisson', 'Sucre', 'Sale'))\r\n"
-				+ ")");
+				+ "    check (typeingredient in ('Vegetarien', 'Viande', 'Poisson', 'Sucre', 'Sale'))\r\n" + ")");
 		// Recette de plat
-		sql.executerTests("CREATE SEQUENCE restaurant.recette_id_seq\r\n"
-				+ "    INCREMENT 1\r\n"
-				+ "    START 1\r\n"
-				+ "    MINVALUE 1\r\n"
-				+ "    MAXVALUE 2147483647\r\n"
-				+ "    CACHE 1;");
-		sql.executerTests("CREATE TABLE restaurant.recette\r\n"
-				+ "(\r\n"
+		sql.executerTests("CREATE SEQUENCE restaurant.recette_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
+				+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.recette\r\n" + "(\r\n"
 				+ "    id integer NOT NULL DEFAULT nextval('restaurant.recette_id_seq'),\r\n"
-				+ "    quantite double precision NOT NULL,\r\n"
-				+ "    ingredient integer NOT NULL,\r\n"
-				+ "    plat integer NOT NULL,\r\n"
-				+ "    CONSTRAINT recette_pkey PRIMARY KEY (id),\r\n"
+				+ "    quantite double precision NOT NULL,\r\n" + "    ingredient integer NOT NULL,\r\n"
+				+ "    plat integer NOT NULL,\r\n" + "    CONSTRAINT recette_pkey PRIMARY KEY (id),\r\n"
 				+ "    CONSTRAINT recette_ingredient_fkey FOREIGN KEY (ingredient)\r\n"
-				+ "        REFERENCES restaurant.ingredient (id)\r\n"
-				+ "        ON UPDATE NO ACTION\r\n"
-				+ "        ON DELETE NO ACTION,\r\n"
-				+ "    CONSTRAINT recette_plat_fkey FOREIGN KEY (plat)\r\n"
-				+ "        REFERENCES restaurant.plat (id)\r\n"
-				+ ")");
+				+ "        REFERENCES restaurant.ingredient (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
+				+ "        ON DELETE NO ACTION,\r\n" + "    CONSTRAINT recette_plat_fkey FOREIGN KEY (plat)\r\n"
+				+ "        REFERENCES restaurant.plat (id)\r\n" + ")");
+		// Affectation
+		sql.executerTests("CREATE SEQUENCE restaurant.affectation_id_seq\r\n" + "    INCREMENT 1\r\n"
+				+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.affectation\r\n" + "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.affectation_id_seq'),\r\n"
+				+ "    datedebut TIMESTAMP NOT NULL,\r\n" + "    datefin TIMESTAMP,\r\n"
+				+ "    nombrepersonne integer NOT NULL,\r\n" + "    tableoccupe integer NOT NULL,\r\n"
+				+ "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
+				+ "    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)\r\n"
+				+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
 		Restaurant.initialisation();
 	}
 
@@ -347,19 +334,19 @@ public class TestUnitaire {
 			// On vérifie que le nouvel étage et plus haut que l'ancien
 			directeur.ajouterEtage();
 			int nbEtageApres = Restaurant.getEtages().size();
-			assertTrue("Aucun étage ajouté dans l'arraylist d'étages",nbEtageAvant < nbEtageApres);
+			assertTrue("Aucun étage ajouté dans l'arraylist d'étages", nbEtageAvant < nbEtageApres);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Test
 	@DisplayName("Suppression d'un étage dans la base de données")
 	public void supprimerEtageDB() {
 		try {
 			System.out.println("\nTest en cours : Suppression d'un étage dans la base de données");
-			// On ajoute plusieurs étages pour éviter le cas du RDC, moins simple à comprendre
+			// On ajoute plusieurs étages pour éviter le cas du RDC, moins simple à
+			// comprendre
 			directeur.ajouterEtage();
 			directeur.ajouterEtage();
 			ResultSet resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
@@ -367,7 +354,7 @@ public class TestUnitaire {
 			int niveauMaxAvantSuppression = Integer.parseInt(resultSet.getString("max"));
 			directeur.supprimerDernierEtage();
 			resultSet = sql.executerSelect("SELECT MAX(niveau) as max FROM restaurant.etage");
-			
+
 			int niveauMaxApresSuppression = -1;
 			if (resultSet.next()) {
 				if (resultSet.getString("max") != null) {
@@ -380,7 +367,7 @@ public class TestUnitaire {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	@DisplayName("Suppression d'un étage dans la mémoire")
 	public void supprimerEtageJava() {
@@ -393,12 +380,13 @@ public class TestUnitaire {
 			// On vérifie que le nouvel étage et plus haut que l'ancien
 			directeur.supprimerDernierEtage();
 			int nbEtageApresSuppression = Restaurant.getEtages().size();
-			assertTrue("Aucun étage ajouté dans l'arraylist d'étages",nbEtageApresSuppression < nbEtageAvantSuppression);
+			assertTrue("Aucun étage ajouté dans l'arraylist d'étages",
+					nbEtageApresSuppression < nbEtageAvantSuppression);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	@DisplayName("Ajout d'une table à un étage dans la base de données")
 	public void ajouterTableDB() {
@@ -406,16 +394,18 @@ public class TestUnitaire {
 		try {
 			int numero = 1;
 			directeur.ajouterEtage();
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
-			directeur.ajouterTable(numero, 10, etage);;
-			ResultSet res = sql.executerSelect("SELECT * FROM restaurant.tables WHERE numero="+numero+" AND etage="+etage.getId());
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			directeur.ajouterTable(numero, 10, etage);
+			;
+			ResultSet res = sql.executerSelect(
+					"SELECT * FROM restaurant.tables WHERE numero=" + numero + " AND etage=" + etage.getId());
 			// On vérifie que la ligne a été trouvé
 			assertTrue(res.next());
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	@DisplayName("Ajout d'une table à un étage dans la mémoire")
 	public void ajouterTableJava() {
@@ -423,11 +413,11 @@ public class TestUnitaire {
 		try {
 			directeur.ajouterEtage();
 			int numero = 2;
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 			int nbTableAvant = etage.getTables().size();
 			directeur.ajouterTable(numero, 10, etage);
 			int nbTableApres = etage.getTables().size();
-			assertTrue(nbTableAvant<nbTableApres);
+			assertTrue(nbTableAvant < nbTableApres);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
@@ -442,13 +432,14 @@ public class TestUnitaire {
 			int numeroApres = 4;
 			int numeroTrouve = -1;
 			directeur.ajouterEtage();
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 			directeur.ajouterTable(numeroAvant, 10, etage);
 			Table tableActuelle = etage.getTables().get(0);
 			directeur.modifierNumeroTable(tableActuelle, numeroApres);
-			ResultSet resultSet = sql.executerSelect("SELECT numero FROM restaurant.tables WHERE id="+tableActuelle.getId());
+			ResultSet resultSet = sql
+					.executerSelect("SELECT numero FROM restaurant.tables WHERE id=" + tableActuelle.getId());
 			if (resultSet.next()) {
-					numeroTrouve = Integer.parseInt(resultSet.getString("numero"));
+				numeroTrouve = Integer.parseInt(resultSet.getString("numero"));
 			}
 			// On vérifie que la ligne a été trouvé
 			assertEquals("Le numéro de table n'a pas été mis à jour", numeroApres, numeroTrouve);
@@ -456,7 +447,7 @@ public class TestUnitaire {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	@DisplayName("Modificiation du numéro d'une table dans la mémoire")
 	public void modifierNumeroTableJava() {
@@ -465,17 +456,17 @@ public class TestUnitaire {
 			int numeroAvant = 3;
 			int numeroApres = 4;
 			directeur.ajouterEtage();
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 			directeur.ajouterTable(numeroAvant, 10, etage);
 			Table tableActuelle = etage.getTables().get(0);
 			directeur.modifierNumeroTable(tableActuelle, numeroApres);
-			assertEquals("Le numéro de table n'a pas été mis à jour",numeroApres, etage.getTables().get(0).getNumero());
+			assertEquals("Le numéro de table n'a pas été mis à jour", numeroApres,
+					etage.getTables().get(0).getNumero());
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Test
 	@DisplayName("Suppression d'une table dans la base de donées")
 	public void supprimerTableDB() {
@@ -485,22 +476,22 @@ public class TestUnitaire {
 			int numeroTable = 5;
 			directeur.ajouterEtage();
 			// Etage qui va recevoir une table pour être supprimée
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 			// On ajoute la table
 			directeur.ajouterTable(numeroTable, 10, etage);
 			// La table créée et a supprimée
 			Table tableActuelle = etage.getTables().get(0);
 			// On supprime la table
 			directeur.supprimerTable(tableActuelle, etage.getTables());
-			ResultSet resultSet = sql.executerSelect("SELECT numero FROM restaurant.tables WHERE id="+tableActuelle.getId());
+			ResultSet resultSet = sql
+					.executerSelect("SELECT numero FROM restaurant.tables WHERE id=" + tableActuelle.getId());
 			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
 			assertFalse(resultSet.next());
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Test
 	@DisplayName("Suppression d'une table dans la mémoire")
 	public void supprimerTableJava() {
@@ -510,7 +501,7 @@ public class TestUnitaire {
 			int numeroTable = 6;
 			directeur.ajouterEtage();
 			// Etage qui va recevoir une table pour être supprimée
-			Etage etage= Restaurant.getEtages().get(Restaurant.getEtages().size()-1);
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 			// On ajoute la table
 			directeur.ajouterTable(numeroTable, 10, etage);
 			int totalTablesAvantSuppression = etage.getTables().size();
@@ -542,48 +533,101 @@ public class TestUnitaire {
 			int quantiteSaumon = 2;
 			int quantiteTartine = 2;
 			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
 			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
+			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
 			HashMap<Ingredient, Integer> recette = new HashMap<>();
 			recette.put(saumon, quantiteSaumon);
 			recette.put(tartine, quantiteTartine);
-			Plat plat = directeur.creerPlat(nomPlat,prixPlat,tempsPrepa,surCarte,type,categorie, recette);
-			ResultSet resultSet = sql.executerSelect("SELECT id FROM restaurant.plat WHERE id="+plat.getId());
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			ResultSet resultSet = sql.executerSelect("SELECT id FROM restaurant.plat WHERE id=" + plat.getId());
 			// On vérifie qu'une ligne a bien été créé avec l'id du plat généré
 			assertTrue(resultSet.next());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	@Test
 	@DisplayName("Création d'un plat dans la mémoire")
 	public void creationPlatJava() {
-			System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-			int nbPlatAvant = Restaurant.getPlats().size();
-			String nomPlat = "Toast au saumon";
-			Double prixPlat = 9.5;
-			int tempsPrepa = 5;
-			boolean surCarte = true;
-			Type type = Type.ENTREE;
-			Categorie categorie = Categorie.POISSON;
-			String nomIngredientSaumon = "saumon";
-			String nomIngredientToast = "tartine";
-			int quantiteSaumon = 2;
-			int quantiteTartine = 2;
-			directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
-			directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1);
-			HashMap<Ingredient, Integer> recette = new HashMap<>();
-			recette.put(saumon, quantiteSaumon);
-			recette.put(tartine, quantiteTartine);
-			directeur.creerPlat(nomPlat,prixPlat,tempsPrepa,surCarte,type,categorie, recette);
-			int nbPlatApres = Restaurant.getPlats().size();
-			assertTrue(nbPlatAvant<nbPlatApres);
+		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+		int nbPlatAvant = Restaurant.getPlats().size();
+		String nomPlat = "Toast au saumon";
+		Double prixPlat = 9.5;
+		int tempsPrepa = 5;
+		boolean surCarte = true;
+		Type type = Type.ENTREE;
+		Categorie categorie = Categorie.POISSON;
+		String nomIngredientSaumon = "saumon";
+		String nomIngredientToast = "tartine";
+		int quantiteSaumon = 2;
+		int quantiteTartine = 2;
+		directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+		Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+		Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		HashMap<Ingredient, Integer> recette = new HashMap<>();
+		recette.put(saumon, quantiteSaumon);
+		recette.put(tartine, quantiteTartine);
+		directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+		int nbPlatApres = Restaurant.getPlats().size();
+		assertTrue(nbPlatAvant < nbPlatApres);
 	}
-	
-	
+
+	@Test
+	@DisplayName("Création d'une affectation dans la base de données")
+	public void creationAffectationDB() {
+		System.out.println("\nTest en cours : Création d'une affectation dans la base de données");
+		try {
+			// Prérequis du test : mise en place d'un étage et d'une table
+			// Numéro de la table que l'on créé
+			int numeroTable = 7;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+
+			// Création de l'affectation (date immédiate)
+			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
+					tableActuelle);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT id FROM restaurant.affectation WHERE id=" + affectation.getId());
+			// On vérifie qu'une ligne a bien été créé
+			assertTrue(resultSet.next());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Création d'une affectation dans la mémoire")
+	public void creationAffectationJava() {
+		System.out.println("\nTest en cours : Création d'une affectation dans la mémoire");
+		try {
+			// Prérequis du test : mise en place d'un étage et d'une table
+			// Numéro de la table que l'on créé
+			int numeroTable = 8;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+
+			int tailleAvant = Restaurant.getAffectations().size();
+			// Création de l'affectation (date immédiate)
+			directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
+			int tailleApres = Restaurant.getAffectations().size();
+			// On vérifie qu'une ligne a bien été créé
+			assertTrue(tailleAvant < tailleApres);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

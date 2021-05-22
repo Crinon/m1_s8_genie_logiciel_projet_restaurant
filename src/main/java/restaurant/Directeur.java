@@ -3,6 +3,7 @@ package restaurant;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Directeur extends Personne {
@@ -183,6 +184,19 @@ public class Directeur extends Personne {
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
+		Sql sql;
+		try {
+			sql = new Sql();
+			Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
+			Restaurant.getAffectations().add(affectation);
+			return affectation;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
