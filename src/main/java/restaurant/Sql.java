@@ -634,6 +634,27 @@ public class Sql {
 		return null;
 	}
 
+	// Le montant de la facture est égale à la somme de toutes les commandes de
+	// l'affectation
+	public Affectation updateFactureAffectation(Affectation affectation) {
+//		try {
+//			executerUpdate("INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe) VALUES ('"
+//					+ dateDebut + "',null," + nbPersonne + "," + table.getId() + ")");
+//			executerUpdate("UPDATE restaurant.affectation SET facture=" + nouvelleQuantite + " WHERE id = "
+//
+//			int idAffectation = demanderDernierId("affectation");
+//			Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, null, 0.00, table);
+//			return affectation;
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+		return null;
+	}
+
+	public void dateFinAffectation(Affectation affectation, Date dateFin) {
+		executerUpdate("UPDATE restaurant.affectation SET datefin='" + dateFin + "' WHERE id = " + affectation.getId());
+	}
+
 	/**
 	 * @param plat
 	 * @param duree

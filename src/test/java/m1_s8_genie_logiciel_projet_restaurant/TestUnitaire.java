@@ -4,6 +4,7 @@ import restaurant.Affectation;
 import restaurant.Assistant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -721,30 +722,30 @@ public class TestUnitaire {
 	}
 
 	@Test
-    @DisplayName("Modification de la durée d'un plat dans la mémoire")
-    public void modificationDureePlatJava() {
-	System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-	String nomPlat = "Toast au saumon";
-	Double prixPlat = 9.5;
-	int tempsPrepa = 5;
-	boolean surCarte = true;
-	Type type = Type.ENTREE;
-	Categorie categorie = Categorie.POISSON;
-	String nomIngredientSaumon = "saumon";
-	String nomIngredientToast = "tartine";
-	int quantiteSaumon = 2;
-	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	HashMap<Ingredient, Integer> recette = new HashMap<>();
-	recette.put(saumon, quantiteSaumon);
-	recette.put(tartine, quantiteTartine);
-	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	directeur.modifierDureePlat(plat, 10);
-	assertEquals(10, plat.getDureePreparation());
-    }
+	@DisplayName("Modification de la durée d'un plat dans la mémoire")
+	public void modificationDureePlatJava() {
+		System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
+		String nomPlat = "Toast au saumon";
+		Double prixPlat = 9.5;
+		int tempsPrepa = 5;
+		boolean surCarte = true;
+		Type type = Type.ENTREE;
+		Categorie categorie = Categorie.POISSON;
+		String nomIngredientSaumon = "saumon";
+		String nomIngredientToast = "tartine";
+		int quantiteSaumon = 2;
+		int quantiteTartine = 2;
+		directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+		Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+		Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+		HashMap<Ingredient, Integer> recette = new HashMap<>();
+		recette.put(saumon, quantiteSaumon);
+		recette.put(tartine, quantiteTartine);
+		Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+		directeur.modifierDureePlat(plat, 10);
+		assertEquals(10, plat.getDureePreparation());
+	}
 
 	@Test
 	@DisplayName("Création d'une affectation dans la base de données")
@@ -761,7 +762,7 @@ public class TestUnitaire {
 			directeur.ajouterTable(numeroTable, 10, etage);
 			// La table créée
 			Table tableActuelle = etage.getTables().get(0);
-	
+
 			// Création de l'affectation (date immédiate)
 			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
 					tableActuelle);
@@ -789,7 +790,7 @@ public class TestUnitaire {
 			directeur.ajouterTable(numeroTable, 10, etage);
 			// La table créée
 			Table tableActuelle = etage.getTables().get(0);
-	
+
 			int tailleAvant = Restaurant.getAffectations().size();
 			// Création de l'affectation (date immédiate)
 			directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
@@ -797,6 +798,84 @@ public class TestUnitaire {
 			// On vérifie qu'une ligne a bien été créé
 			assertTrue(tailleAvant < tailleApres);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Calcul d'une facture dans la base de données")
+	public void updateFactureDB() {
+		System.out.println("\nTest en cours : Calcul d'une facture dans la base de données");
+		assertTrue(false);
+	}
+
+	@Test
+	@DisplayName("Calcul d'une facture dans la mémoire")
+	public void updateFactureJava() {
+		System.out.println("\nTest en cours : Calcul d'une facture dans la mémoire");
+		assertTrue(false);
+	}
+
+	@Test
+	@DisplayName("Ajout date de fin d'une affectation dans la base de donnée")
+	public void dateFinAffectationDB() {
+		System.out.println("\nTest en cours : Ajout date de fin d'une affectation dans la base de donnée");
+		// Prérequis du test : mise en place d'un étage et d'une table et d'une
+		// affectation
+		// Numéro de la table que l'on créé
+		try {
+			int numeroTable = 9;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+			// Création de l'affectation (date immédiate)
+			Date debut = new Timestamp(new Date().getTime());
+			Affectation affectation = directeur.creationAffectation(debut, 2, tableActuelle);
+
+			// Attente de 0.5 secondes
+			Thread.sleep(500);
+			Date dateFin = new Timestamp(new Date().getTime());
+			directeur.dateFinAffectation(affectation, dateFin);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT datefin FROM restaurant.affectation WHERE id=" + affectation.getId());
+			// check datefin not null
+			resultSet.next();
+			assertNotNull(resultSet.getDate("datefin"));
+		} catch (ClassNotFoundException | SQLException | IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Ajout date de fin d'une affectation dans la mémoire")
+	public void dateFinAffectationJava() {
+		System.out.println("\nTest en cours : Calcul d'une facture la mémoire");
+		// Prérequis du test : mise en place d'un étage et d'une table et d'une
+		// affectation
+		// Numéro de la table que l'on créé
+		try {
+			int numeroTable = 9;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+			// Création de l'affectation (date immédiate)
+			Date debut = new Timestamp(new Date().getTime());
+			Affectation affectation = directeur.creationAffectation(debut, 2, tableActuelle);
+
+			// Attente de 0.5 secondes
+			Thread.sleep(500);
+			Date dateFin = new Timestamp(new Date().getTime());
+			directeur.dateFinAffectation(affectation, dateFin);
+			assertNotNull(affectation.getDateFin());
+		} catch (ClassNotFoundException | SQLException | IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

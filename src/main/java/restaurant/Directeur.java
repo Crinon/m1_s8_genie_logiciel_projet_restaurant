@@ -222,4 +222,32 @@ public class Directeur extends Personne {
 		return null;
 	}
 
+	public Boolean dateFinAffectation(Affectation affectation, Date dateFin) {
+		Sql sql;
+		try {
+			sql = new Sql();
+			sql.dateFinAffectation(affectation, dateFin);
+			affectation.setDateFin(dateFin);
+			return true;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+//	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
+//		Sql sql;
+//		try {
+//			sql = new Sql();
+//			affectation.setFacture(nouveauPrix);
+//			sql.
+//			Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
+//			Restaurant.getAffectations().add(affectation);
+//			return affectation;
+//		} catch (ClassNotFoundException | SQLException | IOException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+
 }
