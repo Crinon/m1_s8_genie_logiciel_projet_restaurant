@@ -248,6 +248,19 @@ public class Directeur extends Personne {
 		return null;
 	}
 
+	public void supprimerReservation(Reservation asuppr) {
+		try {
+			Sql sql = new Sql();
+			sql.supprimerReservation(asuppr);
+			int index = Restaurant.getReservationsJour().indexOf(asuppr);
+			Restaurant.getReservationsJour().remove(index);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 //	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
 //		Sql sql;
 //		try {

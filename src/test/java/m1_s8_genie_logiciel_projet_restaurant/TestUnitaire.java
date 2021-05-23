@@ -944,9 +944,77 @@ public class TestUnitaire {
 			Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
 			Date dateReservationSQL = new Timestamp(date1.getTime());
 			// Création de la réservation
-			Reservation reservation = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+			directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
 			int nombreReservationsApres = Restaurant.getReservationsJour().size();
 			assertTrue(nombreReservationsAvant < nombreReservationsApres);
+		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Suppression d'une réservation dans la base de donées")
+	public void supprimerReservationDB() {
+		System.out.println("\nTest en cours : Suppression d'une réservation dans la base de donées");
+		try {
+			int numeroTable = 12;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+			// La date de l'appel est immédiate
+			Date dateAppel = new Timestamp(new Date().getTime());
+			// Date demandée par le client
+			String dateReservation = "27/12/1992 22:55:00";
+			Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+			Date dateReservationSQL = new Timestamp(date1.getTime());
+			// Création de la réservation
+			Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+
+			// On supprime la table
+			directeur.supprimerReservation(asuppr);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + asuppr.getId());
+			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
+			assertFalse(resultSet.next());
+		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Suppression d'une réservation dans la mémoire")
+	public void supprimerReservationJava() {
+		System.out.println("\nTest en cours : Suppression d'une réservation dans la mémoire");
+		try {
+			int numeroTable = 12;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+			// La date de l'appel est immédiate
+			Date dateAppel = new Timestamp(new Date().getTime());
+			// Date demandée par le client
+			String dateReservation = "27/12/1992 22:55:00";
+			Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+			Date dateReservationSQL = new Timestamp(date1.getTime());
+			// Création de la réservation
+			Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+			int nbReservationAvant = Restaurant.getReservationsJour().size();
+			// On supprime la table
+			directeur.supprimerReservation(asuppr);
+			int nbReservationApres = Restaurant.getReservationsJour().size();
+
+			ResultSet resultSet = sql
+					.executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + asuppr.getId());
+			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
+			assertTrue(nbReservationApres < nbReservationAvant);
 		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
 			e.printStackTrace();
 		}

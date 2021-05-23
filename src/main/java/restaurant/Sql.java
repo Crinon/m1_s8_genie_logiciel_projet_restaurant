@@ -694,4 +694,24 @@ public class Sql {
 		return null;
 	}
 
+	public void supprimerReservation(Reservation asuppr) {
+		executerDelete("DELETE FROM restaurant.reservation WHERE id =" + asuppr.getId());
+	}
+
+//	// On veut avoir la plus petite table disponible pouvant contenir tous les
+//	// participants d'un repas
+//	public Table getMiniTable(int nombreParticipants, Date dateReservation) {
+//		// On regarde dans la base de données le jour donné toutes les tables de
+//		// réservation
+//		executerSelect(
+//				"SELECT tables.id FROM restaurant.tables as tables, restaurant.reservation as reservation, restaurant.affectation as affectation "
+//						+ "WHERE tables.capacite >= " + nombreParticipants + "ORDER BY tables.capacite ASC");
+//
+//		// On récupère les non réservée
+//
+//		// On essaie d'en récupérer une assez grande
+//
+//		return null;
+//	}
+
 }

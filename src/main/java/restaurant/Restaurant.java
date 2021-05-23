@@ -13,6 +13,8 @@ public final class Restaurant {
 	private static ArrayList<Plat> plats;
 	private static ArrayList<Affectation> affectationsJour;
 	private static ArrayList<Reservation> reservationsJour;
+	private static ArrayList<Table> toutesLesTables;
+
 	private static Date heureDejeunerOuverture;
 	private static Date heureDejeunerLimite;
 	private static Date heureDinerOuverture;
@@ -27,6 +29,7 @@ public final class Restaurant {
 			sql.initialiserEtages();
 			for (Etage etage : etages) {
 				etage.initialiserTables();
+				toutesLesTables.addAll(etage.getTables());
 			}
 			// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
 			sql.premierDemarrage();
@@ -49,6 +52,14 @@ public final class Restaurant {
 //			// il faut créer un directeur automatiquement
 //		
 //	}
+
+	public static ArrayList<Table> getToutesLesTables() {
+		return toutesLesTables;
+	}
+
+	public static void setToutesLesTables(ArrayList<Table> toutesLesTables) {
+		Restaurant.toutesLesTables = toutesLesTables;
+	}
 
 	public static ArrayList<Ingredient> getIngredients() {
 		return ingredients;
