@@ -22,14 +22,14 @@ public class Directeur extends Personne {
 	return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
     }
 
-    public Personne ajouterPersonnel(String nom, String role, ArrayList<Personne> personnel) {
+    public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
 	// Objet pour intéragir avec la base de données
 	try {
 	    Sql sql = new Sql();
 	    // Utilisation de la requête pour insérer un personnel
 	    personne = sql.ajouterPersonne(nom, role);
-	    personnel.add(personne);
+	    Restaurant.getPersonnel().add(personne);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -268,6 +268,22 @@ public class Directeur extends Personne {
 	    sql = new Sql();
 	    sql.modifierEtatTable(table, etat);
 	    table.setEtat(etat);
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void affecterTableServeur(Serveur serveur, Table table) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    sql.affecterTableServeur(serveur, table);
+	    if (table.getServeur() != null) {
+		table.getServeur().getTablesAffectees().remove(table);
+	    }
+	    serveur.getTablesAffectees().add(table);
+	    table.setServeur(serveur);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();

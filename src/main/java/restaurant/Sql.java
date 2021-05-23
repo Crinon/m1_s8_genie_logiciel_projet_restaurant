@@ -689,4 +689,12 @@ public class Sql {
 	executerUpdate("UPDATE restaurant.tables SET etat = '" + etat.name() + "' WHERE id = " + table.getId());
     }
 
+    /**
+     * @param serveur
+     * @param table
+     */
+    public void affecterTableServeur(Serveur serveur, Table table) {
+	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+    }
+
 }
