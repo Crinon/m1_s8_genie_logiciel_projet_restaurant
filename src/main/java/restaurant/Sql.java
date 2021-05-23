@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -696,6 +698,40 @@ public class Sql {
 
 	public void supprimerReservation(Reservation asuppr) {
 		executerDelete("DELETE FROM restaurant.reservation WHERE id =" + asuppr.getId());
+	}
+
+	public void insertionHorairesDefaut() {
+		try {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+			prop.load(inputStream);
+			executerInsert(
+					"INSERT INTO restaurant.restaurant (heurelimitediner,heureouverturediner,heurelimitedejeune,heureouverturedejeune) VALUES ("
+							+ prop.getProperty("default.heureDinerLimite") + ","
+							+ prop.getProperty("default.heureDinerOuverture") + ","
+							+ prop.getProperty("default.heureDejeunerLimite") + ","
+							+ prop.getProperty("default.heureDejeunerOuverture") + ")");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void initialiserHoraires() {
+		try {
+			ResultSet resultset = executerSelect("SELECT * FROM restaurant.restaurant");
+			if (!resultset.next()) {
+				// Initialisation des horaires de la base de données
+				insertionHorairesDefaut();
+				// Rechargement
+				resultset = executerSelect("SELECT * FROM restaurant.restaurant");
+				resultset.next();
+			}
+			Restaurant.setHeureDejeunerOuverture(LocalTime.ofSecondOfDay(resultset.getInt("heureouverturedejeune")));
+			Restaurant.setHeureDejeunerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitedejeune"))));
+			Restaurant.setHeureDinerOuverture((LocalTime.ofSecondOfDay(resultset.getInt("heureouverturediner"))));
+			Restaurant.setHeureDinerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitediner"))));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 //	// On veut avoir la plus petite table disponible pouvant contenir tous les

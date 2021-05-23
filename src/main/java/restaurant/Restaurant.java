@@ -3,6 +3,7 @@ package restaurant;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public final class Restaurant {
@@ -15,21 +16,22 @@ public final class Restaurant {
 	private static ArrayList<Reservation> reservationsJour;
 	private static ArrayList<Table> toutesLesTables;
 
-	private static Date heureDejeunerOuverture;
-	private static Date heureDejeunerLimite;
-	private static Date heureDinerOuverture;
-	private static Date heureDinerLimite;
+	private static LocalTime heureDejeunerOuverture;
+	private static LocalTime heureDejeunerLimite;
+	private static LocalTime heureDinerOuverture;
+	private static LocalTime heureDinerLimite;
 	private static int nbTableMax;
 
 	public static void initialisation() {
 		Sql sql;
 		try {
 			sql = new Sql();
+			sql.initialiserHoraires();
 			sql.initialiserIngredients();
 			sql.initialiserEtages();
 			for (Etage etage : etages) {
 				etage.initialiserTables();
-				toutesLesTables.addAll(etage.getTables());
+//				toutesLesTables.addAll(etage.getTables());
 			}
 			// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
 			sql.premierDemarrage();
@@ -89,35 +91,35 @@ public final class Restaurant {
 		Restaurant.personnel = personnel;
 	}
 
-	public static Date getHeureDejeunerOuverture() {
+	public static LocalTime getHeureDejeunerOuverture() {
 		return heureDejeunerOuverture;
 	}
 
-	public static void setHeureDejeunerOuverture(Date heureDejeunerOuverture) {
+	public static void setHeureDejeunerOuverture(LocalTime heureDejeunerOuverture) {
 		Restaurant.heureDejeunerOuverture = heureDejeunerOuverture;
 	}
 
-	public static Date getHeureDejeunerLimite() {
+	public static LocalTime getHeureDejeunerLimite() {
 		return heureDejeunerLimite;
 	}
 
-	public static void setHeureDejeunerLimite(Date heureDejeunerLimite) {
+	public static void setHeureDejeunerLimite(LocalTime heureDejeunerLimite) {
 		Restaurant.heureDejeunerLimite = heureDejeunerLimite;
 	}
 
-	public static Date getHeureDinerOuverture() {
+	public static LocalTime getHeureDinerOuverture() {
 		return heureDinerOuverture;
 	}
 
-	public static void setHeureDinerOuverture(Date heureDinerOuverture) {
+	public static void setHeureDinerOuverture(LocalTime heureDinerOuverture) {
 		Restaurant.heureDinerOuverture = heureDinerOuverture;
 	}
 
-	public static Date getHeureDinerLimite() {
+	public static LocalTime getHeureDinerLimite() {
 		return heureDinerLimite;
 	}
 
-	public static void setHeureDinerLimite(Date heureDinerLimite) {
+	public static void setHeureDinerLimite(LocalTime heureDinerLimite) {
 		Restaurant.heureDinerLimite = heureDinerLimite;
 	}
 

@@ -8,9 +8,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Properties;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,12 +34,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import org.junit.jupiter.api.Order;
 
 @DisplayName("Tests du projet restaurant")
 public class TestUnitaire {
-
+	public final String propertiesFilename = "database.properties";
 	private static Sql sql;
 	Directeur directeur = new Directeur(0, "directeur", "directeur0");
 
@@ -168,6 +172,14 @@ public class TestUnitaire {
 				+ "    tablereserve integer NOT NULL,\r\n" + "    CONSTRAINT reservation_pkey PRIMARY KEY (id),\r\n"
 				+ "    CONSTRAINT reservation_tablereserve_fkey FOREIGN KEY (tablereserve)\r\n"
 				+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
+		// Restaurant
+		sql.executerTests("CREATE SEQUENCE restaurant.restaurant_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
+				+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.restaurant\r\n" + "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.restaurant_id_seq'),\r\n"
+				+ "    heurelimitediner integer NOT NULL,\r\n" + "    heureouverturediner integer NOT NULL,\r\n"
+				+ "    heurelimitedejeune integer NOT NULL,\r\n" + "    heureouverturedejeune integer NOT NULL,\r\n"
+				+ "    CONSTRAINT restaurant_pkey PRIMARY KEY (id)\r\n" + ")");
 		Restaurant.initialisation();
 	}
 
@@ -1016,6 +1028,45 @@ public class TestUnitaire {
 			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
 			assertTrue(nbReservationApres < nbReservationAvant);
 		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Vérification de l'initialisation des horaires dans la base de données")
+	public void verifierInitialisationHorairesDB() {
+		System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la base de données");
+		try {
+			directeur.ajouterEtage();
+			ResultSet resultSet = sql.executerSelect("SELECT * FROM restaurant.restaurant");
+			resultSet.next();
+			// Récupération des valeurs par défaut
+			Properties prop = new Properties();
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+			prop.load(inputStream);
+			int heureDejeunerOuverture = Integer.parseInt(prop.getProperty("default.heureDejeunerOuverture"));
+//			int heureDejeunerLimite = Integer.parseInt(prop.getProperty("default.heureDejeunerLimite"));
+//			int heureDinerOuverture = Integer.parseInt(prop.getProperty("default.heureDinerOuverture"));
+//			int heureDinerLimite = Integer.parseInt(prop.getProperty("default.heureDinerLimite"));
+			assertEquals(heureDejeunerOuverture, resultSet.getInt("heureouverturedejeune"));
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Vérification de l'initialisation des horaires dans la mémoire")
+	public void verifierInitialisationHorairesJava() {
+		System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la mémoire");
+		try {
+			directeur.ajouterEtage();
+			// Récupération des valeurs par défaut
+			Properties prop = new Properties();
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+			prop.load(inputStream);
+			int heureDejeunerOuverture = Integer.parseInt(prop.getProperty("default.heureDejeunerOuverture"));
+			assertEquals(LocalTime.ofSecondOfDay(heureDejeunerOuverture), Restaurant.getHeureDejeunerOuverture());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
 	}
