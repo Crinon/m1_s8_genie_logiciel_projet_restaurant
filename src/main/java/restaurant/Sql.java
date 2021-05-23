@@ -678,4 +678,20 @@ public class Sql {
 		executerUpdate("UPDATE restaurant.plat SET dureepreparation = " + duree);
 	}
 
+	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+
+		try {
+			executerInsert(
+					"INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
+							+ dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
+							+ ")");
+			int id = demanderDernierId("reservation");
+			Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
+			return reservation;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

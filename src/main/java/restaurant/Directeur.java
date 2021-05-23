@@ -214,7 +214,7 @@ public class Directeur extends Personne {
 		try {
 			sql = new Sql();
 			Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
-			Restaurant.getAffectations().add(affectation);
+			Restaurant.getAffectationsJour().add(affectation);
 			return affectation;
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
@@ -233,6 +233,19 @@ public class Directeur extends Personne {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+		Sql sql;
+		try {
+			sql = new Sql();
+			Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
+			Restaurant.getReservationsJour().add(reservation);
+			return reservation;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 //	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {

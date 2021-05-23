@@ -4,6 +4,7 @@ import restaurant.Affectation;
 import restaurant.Assistant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import restaurant.Etage;
 import restaurant.Ingredient;
 import restaurant.Personne;
 import restaurant.Plat;
+import restaurant.Reservation;
 import restaurant.Restaurant;
 import restaurant.Serveur;
 import restaurant.Sql;
@@ -155,6 +157,16 @@ public class TestUnitaire {
 				+ "    nombrepersonne integer NOT NULL,\r\n" + "    tableoccupe integer NOT NULL,\r\n"
 				+ "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
 				+ "    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)\r\n"
+				+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
+		// Reservation
+		sql.executerTests("CREATE SEQUENCE restaurant.reservation_id_seq\r\n" + "    INCREMENT 1\r\n"
+				+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+		sql.executerTests("CREATE TABLE restaurant.reservation\r\n" + "(\r\n"
+				+ "    id integer NOT NULL DEFAULT nextval('restaurant.reservation_id_seq'),\r\n"
+				+ "    dateappel TIMESTAMP NOT NULL,\r\n" + "    datereservation TIMESTAMP NOT NULL,\r\n"
+				+ "    nombrepersonne integer NOT NULL,\r\n" + "    valide boolean NOT NULL,\r\n"
+				+ "    tablereserve integer NOT NULL,\r\n" + "    CONSTRAINT reservation_pkey PRIMARY KEY (id),\r\n"
+				+ "    CONSTRAINT reservation_tablereserve_fkey FOREIGN KEY (tablereserve)\r\n"
 				+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
 		Restaurant.initialisation();
 	}
@@ -764,8 +776,8 @@ public class TestUnitaire {
 			Table tableActuelle = etage.getTables().get(0);
 
 			// Création de l'affectation (date immédiate)
-			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
-					tableActuelle);
+			Date dateNow = new Timestamp(new Date().getTime());
+			Affectation affectation = directeur.creationAffectation(dateNow, 2, tableActuelle);
 			ResultSet resultSet = sql
 					.executerSelect("SELECT id FROM restaurant.affectation WHERE id=" + affectation.getId());
 			// On vérifie qu'une ligne a bien été créé
@@ -791,10 +803,10 @@ public class TestUnitaire {
 			// La table créée
 			Table tableActuelle = etage.getTables().get(0);
 
-			int tailleAvant = Restaurant.getAffectations().size();
+			int tailleAvant = Restaurant.getAffectationsJour().size();
 			// Création de l'affectation (date immédiate)
 			directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
-			int tailleApres = Restaurant.getAffectations().size();
+			int tailleApres = Restaurant.getAffectationsJour().size();
 			// On vérifie qu'une ligne a bien été créé
 			assertTrue(tailleAvant < tailleApres);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
@@ -870,12 +882,72 @@ public class TestUnitaire {
 			Date debut = new Timestamp(new Date().getTime());
 			Affectation affectation = directeur.creationAffectation(debut, 2, tableActuelle);
 
-			// Attente de 0.5 secondes
-			Thread.sleep(500);
 			Date dateFin = new Timestamp(new Date().getTime());
 			directeur.dateFinAffectation(affectation, dateFin);
 			assertNotNull(affectation.getDateFin());
-		} catch (ClassNotFoundException | SQLException | IOException | InterruptedException e) {
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Création d'une affectation dans la base de données")
+	public void creationReservationDB() {
+		System.out.println("\nTest en cours : Création d'une affectation dans la base de données");
+		try {
+			// Prérequis du test : mise en place d'un étage et d'une table
+			int numeroTable = 10;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+
+			// La date de l'appel est immédiate
+			Date dateAppel = new Timestamp(new Date().getTime());
+			// Date demandée par le client
+			String dateReservation = "27/12/1995 22:55:00";
+			Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+			Date dateReservationSQL = new Timestamp(date1.getTime());
+			// Création de la réservation
+			Reservation reservation = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+			ResultSet resultSet = sql
+					.executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + reservation.getId());
+			assertTrue(resultSet.next());
+		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@DisplayName("Création d'une affectation dans la mémoire")
+	public void creationReservationJava() {
+		System.out.println("\nTest en cours : Création d'une affectation dans la mémoire");
+		try {
+			// Prérequis du test : mise en place d'un étage et d'une table
+			int numeroTable = 11;
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			directeur.ajouterTable(numeroTable, 10, etage);
+			// La table créée
+			Table tableActuelle = etage.getTables().get(0);
+			int nombreReservationsAvant = Restaurant.getReservationsJour().size();
+
+			// La date de l'appel est immédiate
+			Date dateAppel = new Timestamp(new Date().getTime());
+			// Date demandée par le client
+			String dateReservation = "27/12/1992 22:55:00";
+			Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+			Date dateReservationSQL = new Timestamp(date1.getTime());
+			// Création de la réservation
+			Reservation reservation = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+			int nombreReservationsApres = Restaurant.getReservationsJour().size();
+			assertTrue(nombreReservationsAvant < nombreReservationsApres);
+		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
 			e.printStackTrace();
 		}
 	}

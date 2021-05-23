@@ -11,28 +11,36 @@ public final class Restaurant {
 	private static ArrayList<Personne> personnel;
 	private static ArrayList<Ingredient> ingredients;
 	private static ArrayList<Plat> plats;
-	private static ArrayList<Affectation> affectations;
+	private static ArrayList<Affectation> affectationsJour;
+	private static ArrayList<Reservation> reservationsJour;
 	private static Date heureDejeunerOuverture;
 	private static Date heureDejeunerLimite;
 	private static Date heureDinerOuverture;
 	private static Date heureDinerLimite;
 	private static int nbTableMax;
 
-	public static void initialisation() throws ClassNotFoundException, SQLException, IOException {
-		Sql sql = new Sql();
-		sql.initialiserIngredients();
-		sql.initialiserEtages();
-		for (Etage etage : etages) {
-			etage.initialiserTables();
-		}
-		// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
-		sql.premierDemarrage();
-		// Initialisation du personnel
-		sql.initialiserPersonnel();
-		sql.initialiserPlats();
-		// Au lancement du programme en début de journée, aucune table n'est occupée
-		affectations = new ArrayList<Affectation>();
+	public static void initialisation() {
+		Sql sql;
+		try {
+			sql = new Sql();
+			sql.initialiserIngredients();
+			sql.initialiserEtages();
+			for (Etage etage : etages) {
+				etage.initialiserTables();
+			}
+			// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+			sql.premierDemarrage();
+			// Initialisation du personnel
+			sql.initialiserPersonnel();
+			sql.initialiserPlats();
+			// Au lancement du programme en début de journée, aucune table n'est occupée
+			affectationsJour = new ArrayList<Affectation>();
+			reservationsJour = new ArrayList<Reservation>();
 
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 //	public static void premierDemarrage(Sql sql) {
@@ -121,12 +129,20 @@ public final class Restaurant {
 		Restaurant.plats = plats;
 	}
 
-	public static ArrayList<Affectation> getAffectations() {
-		return affectations;
+	public static ArrayList<Affectation> getAffectationsJour() {
+		return affectationsJour;
 	}
 
-	public static void setAffectations(ArrayList<Affectation> affectations) {
-		Restaurant.affectations = affectations;
+	public static void setAffectationsJour(ArrayList<Affectation> affectations) {
+		Restaurant.affectationsJour = affectations;
+	}
+
+	public static ArrayList<Reservation> getReservationsJour() {
+		return reservationsJour;
+	}
+
+	public static void setReservationsJour(ArrayList<Reservation> reservationsJour) {
+		Restaurant.reservationsJour = reservationsJour;
 	}
 
 }
