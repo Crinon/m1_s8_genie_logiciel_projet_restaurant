@@ -697,4 +697,40 @@ public class Sql {
 	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
     }
 
+	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+
+		try {
+			executerInsert(
+					"INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
+							+ dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
+							+ ")");
+			int id = demanderDernierId("reservation");
+			Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
+			return reservation;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void supprimerReservation(Reservation asuppr) {
+		executerDelete("DELETE FROM restaurant.reservation WHERE id =" + asuppr.getId());
+	}
+
+//	// On veut avoir la plus petite table disponible pouvant contenir tous les
+//	// participants d'un repas
+//	public Table getMiniTable(int nombreParticipants, Date dateReservation) {
+//		// On regarde dans la base de données le jour donné toutes les tables de
+//		// réservation
+//		executerSelect(
+//				"SELECT tables.id FROM restaurant.tables as tables, restaurant.reservation as reservation, restaurant.affectation as affectation "
+//						+ "WHERE tables.capacite >= " + nombreParticipants + "ORDER BY tables.capacite ASC");
+//
+//		// On récupère les non réservée
+//
+//		// On essaie d'en récupérer une assez grande
+//
+//		return null;
+//	}
+
 }
