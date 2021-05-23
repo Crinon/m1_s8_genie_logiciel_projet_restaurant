@@ -1,12 +1,10 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
-import restaurant.Affectation;
-import restaurant.Assistant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -17,6 +15,8 @@ import java.util.Properties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import restaurant.Affectation;
 import restaurant.Categorie;
 import restaurant.Directeur;
 import restaurant.Etage;
@@ -199,6 +199,7 @@ public class TestUnitaire {
 
 	@Test
 	@DisplayName("Création d'un ingrédient dans la base de donnée")
+
 	public void insertionIngredientDB() throws SQLException, ClassNotFoundException, IOException {
 		directeur.ajouterIngredient("carotte", Restaurant.getIngredients());
 		ResultSet res = sql.executerSelect("select * from restaurant.ingredient where nom = 'carotte'");
@@ -241,7 +242,7 @@ public class TestUnitaire {
 	@DisplayName("Insertion d'un personnel assistant dans la base de données")
 	public void insertionPersonnelDB() {
 		System.out.println("\nTest en cours : Insertion d'un assistant dans la base de données");
-		directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		directeur.ajouterPersonnel("Julien", "assistant");
 		ResultSet resultSet = sql.executerSelect("SELECT login from restaurant.personne where login = '"
 				+ Restaurant.getPersonnel().get(Restaurant.getPersonnel().size() - 1).getIdentifiant() + "'");
 		try {
@@ -257,7 +258,7 @@ public class TestUnitaire {
 		try {
 			System.out.println(
 					"\nTest en cours : Modification d'un personnel (assistant vers serveur) dans la base de données");
-			Personne assistant = directeur.ajouterPersonnel("Hervé", "assistant", Restaurant.getPersonnel());
+			Personne assistant = directeur.ajouterPersonnel("Hervé", "assistant");
 			Personne herve = directeur.modifierPersonnel(assistant, "serveur");
 			ResultSet resultSet = sql
 					.executerSelect("SELECT id from restaurant.serveur where personne = " + herve.getId());
@@ -271,7 +272,7 @@ public class TestUnitaire {
 	@DisplayName("Suppression d'un personnel dans la base de données")
 	public void suppressionPersonnelDB() {
 		try {
-			directeur.ajouterPersonnel("NicolasSupprimer", "cuisinier", Restaurant.getPersonnel());
+			directeur.ajouterPersonnel("NicolasSupprimer", "cuisinier");
 
 			System.out.println("\nTest en cours : Suppression d'un personnel dans la base de données");
 			Personne personne = Restaurant.getPersonnel().get(Restaurant.getPersonnel().size() - 1);
@@ -291,7 +292,7 @@ public class TestUnitaire {
 	@DisplayName("Insertion d'un personnel dans la mémoire")
 	public void insertionPersonnelJava() {
 		System.out.println("\nTest en cours : Insertion d'un personnel dans la mémoire");
-		Personne newPersonne = directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		Personne newPersonne = directeur.ajouterPersonnel("Julien", "assistant");
 		assertEquals(newPersonne, Restaurant.getPersonnel().get(Restaurant.getPersonnel().size() - 1));
 	}
 
@@ -310,7 +311,7 @@ public class TestUnitaire {
 	@DisplayName("Suppression d'un personnel dans la mémoire")
 	public void suppressionPersonnelJava() {
 		System.out.println("\nTest en cours : Suppression d'un personnel dans la mémoire");
-		Personne personne = directeur.ajouterPersonnel("Julien", "assistant", Restaurant.getPersonnel());
+		Personne personne = directeur.ajouterPersonnel("Julien", "assistant");
 		directeur.supprimerPersonnel(personne, Restaurant.getPersonnel());
 		assertEquals(-1, Restaurant.getPersonnel().indexOf(personne));
 	}
@@ -827,20 +828,6 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@DisplayName("Calcul d'une facture dans la base de données")
-	public void updateFactureDB() {
-		System.out.println("\nTest en cours : Calcul d'une facture dans la base de données");
-		assertTrue(false);
-	}
-
-	@Test
-	@DisplayName("Calcul d'une facture dans la mémoire")
-	public void updateFactureJava() {
-		System.out.println("\nTest en cours : Calcul d'une facture dans la mémoire");
-		assertTrue(false);
-	}
-
-	@Test
 	@DisplayName("Ajout date de fin d'une affectation dans la base de donnée")
 	public void dateFinAffectationDB() {
 		System.out.println("\nTest en cours : Ajout date de fin d'une affectation dans la base de donnée");
@@ -1022,10 +1009,6 @@ public class TestUnitaire {
 			// On supprime la table
 			directeur.supprimerReservation(asuppr);
 			int nbReservationApres = Restaurant.getReservationsJour().size();
-
-			ResultSet resultSet = sql
-					.executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + asuppr.getId());
-			// On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
 			assertTrue(nbReservationApres < nbReservationAvant);
 		} catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
 			e.printStackTrace();

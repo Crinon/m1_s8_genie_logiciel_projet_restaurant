@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Serveur extends Personne {
 
-    private ArrayList<Table> tablesAffectees;
+    private ArrayList<Table> tablesAffectees = new ArrayList<Table>();
 
     /**
      * @param id

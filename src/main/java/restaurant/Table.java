@@ -6,6 +6,7 @@ public class Table {
     private int		capacite;
     private EtatTable	etat;
     private Reservation	reservation;
+    private Serveur	serveur	= null;
     private int		id;
 
     public Table(int id, int numero, int capacite, EtatTable etat) {
@@ -55,6 +56,14 @@ public class Table {
 
     public void setEtat(EtatTable etat) {
 	this.etat = etat;
+    }
+
+    public Serveur getServeur() {
+	return serveur;
+    }
+
+    public void setServeur(Serveur serveur) {
+	this.serveur = serveur;
     }
 
 }
