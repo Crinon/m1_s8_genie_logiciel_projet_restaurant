@@ -122,7 +122,6 @@ public class Directeur extends Personne {
  					System.out.println("Ereur, veuillez réessayer");
  				}
  			} while (Main.estNullOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
- 		
  	}
 
     public Personne ajouterPersonnel(String nom, String role) {
