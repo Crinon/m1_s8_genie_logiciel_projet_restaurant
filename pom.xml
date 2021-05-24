@@ -13,8 +13,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
         <junit.version>5.6.2</junit.version>
 		<!-- Où stocker la distribution binaire -->
-		<project.bindist.dir.unix>${project.basedir}/bindist-unix</project.bindist.dir.unix>
-		<project.bindist.dir.win>${project.basedir}/bindist-win</project.bindist.dir.win>
+		<project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
 		<!-- Nom de la classe principale -->
 		<project.main.classname>${project.groupId}.${project.artifactId}.Launcher</project.main.classname>
 		<!-- Nom du binaire -->
@@ -47,6 +46,13 @@
 		    <version>1.4.199</version>
 		    <scope>runtime</scope>
 		</dependency>
+		
+		<dependency>
+		  <groupId>org.codehaus.mojo</groupId>
+		  <artifactId>sonar-maven-plugin</artifactId>
+		  <version>3.6.1.1688</version>
+		  <type>pom</type>
+		</dependency>
 
 	</dependencies>
 	<build>
@@ -60,59 +66,57 @@
 					<release>11</release>
 				</configuration>
 			</plugin>
-			<plugin>
-				<!-- create run scripts for apps (.bat and .sh) -->
-				<!-- mvn package | appassembler:assemble -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.10</version>
-				<!-- Windows script -->
-				<executions>
-					<execution>
-						<id>win</id>
-						<phase>package</phase>
-						<goals>
-							<goal>assemble</goal>
-						</goals>
-						<configuration>
-							<assembleDirectory>${project.bindist.dir.win}</assembleDirectory>
-							<repositoryLayout>flat</repositoryLayout>
-							<extraJvmArguments>--module-path %JAVAFX_HOME%/lib</extraJvmArguments>
-							<programs>
-								<program>
-									<platforms>
-										<platform>windows</platform>
-									</platforms>
-									<mainClass>${project.main.classname}</mainClass>
-									<id>${project.bin.appname}</id>
-								</program>
-							</programs>
-						</configuration>
-					</execution>
-					<!-- Unix script -->
-					<execution>
-						<id>unix</id>
-						<phase>package</phase>
-						<goals>
-							<goal>assemble</goal>
-						</goals>
-						<configuration>
-							<assembleDirectory>${project.bindist.dir.unix}</assembleDirectory>
-							<repositoryLayout>flat</repositoryLayout>
-							<extraJvmArguments>--module-path $JAVAFX_HOME/lib</extraJvmArguments>
-							<programs>
-								<program>
-									<platforms>
-										<platform>unix</platform>
-									</platforms>
-									<mainClass>${project.main.classname}</mainClass>
-									<id>${project.bin.appname}</id>
-								</program>
-							</programs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <!-- create bat scripts for apps -->
+                <!-- mvn package | appassembler:assemble -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>win</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <assembleDirectory>${project.bindist.dir}</assembleDirectory>
+                            <repositoryLayout>flat</repositoryLayout>
+                            <extraJvmArguments>--module-path %JAVAFX_HOME%/lib</extraJvmArguments>
+                            <programs>
+                                <program>
+                                    <platforms>
+                                        <platform>windows</platform>
+                                    </platforms>
+                                    <mainClass>${project.main.classname}</mainClass>
+                                    <id>${project.bin.appname}</id>
+                                </program>
+                            </programs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unix</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <assembleDirectory>${project.bindist.dir}</assembleDirectory>
+                            <repositoryLayout>flat</repositoryLayout>
+                            <extraJvmArguments>--module-path $JAVAFX_HOME/lib</extraJvmArguments>
+                            <programs>
+                                <program>
+                                    <platforms>
+                                        <platform>unix</platform>
+                                    </platforms>
+                                    <mainClass>${project.main.classname}</mainClass>
+                                    <id>${project.bin.appname}</id>
+                                </program>
+                            </programs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

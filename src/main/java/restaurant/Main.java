@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+
 public class Main {
+
 
 	private static Scanner scanner = new Scanner(System.in);
 	static boolean quitterApplication = false;
@@ -261,7 +263,5 @@ public class Main {
 
 		}
 		scanner.close(); // On ferme le scanner après avoir quitté l'application
-
-	}
 
 }

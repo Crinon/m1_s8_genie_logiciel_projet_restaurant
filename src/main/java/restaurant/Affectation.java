@@ -1,25 +1,23 @@
 package restaurant;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Affectation {
-	
+
 	private int id;
 	private Date dateDebut;
 	private Date dateFin;
 	private int nbPersonne;
 	private ArrayList<Commande> commandes;
-	private Facture facture;
+	private double facture;
 	private Table table;
-	
 
-	public Affectation(int id, Date dateDebut, Date dateFin, int nbPersonne, ArrayList<Commande> commandes,
-			Facture facture, Table table) {
-		super();
+	public Affectation(int id, Date dateDebut, int nbPersonne, ArrayList<Commande> commandes, double facture,
+			Table table) {
 		this.id = id;
 		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
+		this.dateFin = null;
 		this.nbPersonne = nbPersonne;
 		this.commandes = commandes;
 		this.facture = facture;
@@ -65,16 +63,16 @@ public class Affectation {
 	public void setCommandes(ArrayList<Commande> commandes) {
 		this.commandes = commandes;
 	}
-	
+
 	public void addCommande(Commande commande) {
 		this.commandes.add(commande);
 	}
 
-	public Facture getFacture() {
+	public double getFacture() {
 		return facture;
 	}
 
-	public void setFacture(Facture facture) {
+	public void setFacture(double facture) {
 		this.facture = facture;
 	}
 
@@ -85,5 +83,10 @@ public class Affectation {
 	public void setTable(Table table) {
 		this.table = table;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Affectation [id=" + id + ", dateDebut=" + dateDebut + ", dateFin=" + dateFin + ", nbPersonne="
+				+ nbPersonne + ", commandes=" + commandes + ", facture=" + facture + ", table=" + table + "]";
+	}
 }

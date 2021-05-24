@@ -1,6 +1,6 @@
 package restaurant;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Reservation {
 
@@ -11,10 +11,8 @@ public class Reservation {
 	private int nBPersonnesPrevues;
 	private Table table;
 
-	
 	public Reservation(int id, boolean effetive, Date dateReservation, Date dateVenue, int nBPersonnesPrevues,
 			Table table) {
-		super();
 		this.id = id;
 		this.effetive = effetive;
 		this.dateReservation = dateReservation;
@@ -70,5 +68,5 @@ public class Reservation {
 	public void setTable(Table table) {
 		this.table = table;
 	}
-	
+
 }

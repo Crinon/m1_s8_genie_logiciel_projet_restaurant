@@ -3,40 +3,66 @@ package restaurant;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public final class Restaurant {
+
 	private static ArrayList<Etage> etages;
 	private static ArrayList<Personne> personnel;
 	private static ArrayList<Ingredient> ingredients;
 	private static ArrayList<Plat> plats;
-	private static Date heureDejeunerOuverture;
-	private static Date heureDejeunerLimite;
-	private static Date heureDinerOuverture;
-	private static Date heureDinerLimite;
+	private static ArrayList<Affectation> affectationsJour;
+	private static ArrayList<Reservation> reservationsJour;
+	private static ArrayList<Table> toutesLesTables;
+
+	private static LocalTime heureDejeunerOuverture;
+	private static LocalTime heureDejeunerLimite;
+	private static LocalTime heureDinerOuverture;
+	private static LocalTime heureDinerLimite;
 	private static int nbTableMax;
-	
-	public static void initialisation() throws ClassNotFoundException, SQLException, IOException {
-    	Sql sql = new Sql();
-    	sql.initialiserIngredients();
-    	sql.initialiserEtages();
-    	for (Etage etage : etages) {
-			etage.initialiserTables();
+
+	public static void initialisation() {
+		Sql sql;
+		try {
+			sql = new Sql();
+			sql.initialiserHoraires();
+			sql.initialiserIngredients();
+			sql.initialiserEtages();
+			for (Etage etage : etages) {
+				etage.initialiserTables();
+//				toutesLesTables.addAll(etage.getTables());
+			}
+			// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+			sql.premierDemarrage();
+			// Initialisation du personnel
+			sql.initialiserPersonnel();
+			sql.initialiserPlats();
+			// Au lancement du programme en début de journée, aucune table n'est occupée
+			affectationsJour = new ArrayList<Affectation>();
+			reservationsJour = new ArrayList<Reservation>();
+
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-    	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
-    	sql.premierDemarrage();
-    	// Initialisation du personnel
-    	sql.initialiserPersonnel();  
-    	sql.initialiserPlats();
 	}
-	
+
 //	public static void premierDemarrage(Sql sql) {
 //		// Regarde si c'est le premier démarrage de l'application
 //		sql.premierDemarrage();
 //			// il faut créer un directeur automatiquement
 //		
 //	}
-	
+
+	public static ArrayList<Table> getToutesLesTables() {
+		return toutesLesTables;
+	}
+
+	public static void setToutesLesTables(ArrayList<Table> toutesLesTables) {
+		Restaurant.toutesLesTables = toutesLesTables;
+	}
+
 	public static ArrayList<Ingredient> getIngredients() {
 		return ingredients;
 	}
@@ -52,7 +78,7 @@ public final class Restaurant {
 	public static void setEtages(ArrayList<Etage> etages) {
 		Restaurant.etages = etages;
 	}
-	
+
 	public static void addEtage(Etage etage) {
 		Restaurant.etages.add(etage);
 	}
@@ -65,35 +91,35 @@ public final class Restaurant {
 		Restaurant.personnel = personnel;
 	}
 
-	public static Date getHeureDejeunerOuverture() {
+	public static LocalTime getHeureDejeunerOuverture() {
 		return heureDejeunerOuverture;
 	}
 
-	public static void setHeureDejeunerOuverture(Date heureDejeunerOuverture) {
+	public static void setHeureDejeunerOuverture(LocalTime heureDejeunerOuverture) {
 		Restaurant.heureDejeunerOuverture = heureDejeunerOuverture;
 	}
 
-	public static Date getHeureDejeunerLimite() {
+	public static LocalTime getHeureDejeunerLimite() {
 		return heureDejeunerLimite;
 	}
 
-	public static void setHeureDejeunerLimite(Date heureDejeunerLimite) {
+	public static void setHeureDejeunerLimite(LocalTime heureDejeunerLimite) {
 		Restaurant.heureDejeunerLimite = heureDejeunerLimite;
 	}
 
-	public static Date getHeureDinerOuverture() {
+	public static LocalTime getHeureDinerOuverture() {
 		return heureDinerOuverture;
 	}
 
-	public static void setHeureDinerOuverture(Date heureDinerOuverture) {
+	public static void setHeureDinerOuverture(LocalTime heureDinerOuverture) {
 		Restaurant.heureDinerOuverture = heureDinerOuverture;
 	}
 
-	public static Date getHeureDinerLimite() {
+	public static LocalTime getHeureDinerLimite() {
 		return heureDinerLimite;
 	}
 
-	public static void setHeureDinerLimite(Date heureDinerLimite) {
+	public static void setHeureDinerLimite(LocalTime heureDinerLimite) {
 		Restaurant.heureDinerLimite = heureDinerLimite;
 	}
 
@@ -105,7 +131,8 @@ public final class Restaurant {
 		Restaurant.nbTableMax = nbTableMax;
 	}
 
-	private Restaurant() {}
+	private Restaurant() {
+	}
 
 	public static ArrayList<Plat> getPlats() {
 		return plats;
@@ -114,5 +141,21 @@ public final class Restaurant {
 	public static void setPlats(ArrayList<Plat> plats) {
 		Restaurant.plats = plats;
 	}
-	
+
+	public static ArrayList<Affectation> getAffectationsJour() {
+		return affectationsJour;
+	}
+
+	public static void setAffectationsJour(ArrayList<Affectation> affectations) {
+		Restaurant.affectationsJour = affectations;
+	}
+
+	public static ArrayList<Reservation> getReservationsJour() {
+		return reservationsJour;
+	}
+
+	public static void setReservationsJour(ArrayList<Reservation> reservationsJour) {
+		Restaurant.reservationsJour = reservationsJour;
+	}
+
 }

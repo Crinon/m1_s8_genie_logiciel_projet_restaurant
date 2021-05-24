@@ -1,6 +1,5 @@
 package restaurant;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Plat {
@@ -13,19 +12,10 @@ public class Plat {
 	private Type type;
 	private Categorie categorie;
 	private HashMap<Ingredient, Integer> recette;
-	
-	
-	@Override
-	public String toString() {
-		return "Plat [id=" + id + ", nom=" + nom + ", prix=" + prix + ", dureePreparation=" + dureePreparation
-				+ ", disponibleCarte=" + disponibleCarte + ", type=" + type + ", categorie=" + categorie + ", recette="
-				+ recette + "]";
-	}
 
-	public Plat(int id, String nom, double prix, int dureePreparation, boolean disponibleCarte, Type type, Categorie categorie,
-			HashMap<Ingredient, Integer> recetteAcreer) {
-		super();
-		this.nom=nom;
+	public Plat(int id, String nom, double prix, int dureePreparation, boolean disponibleCarte, Type type,
+			Categorie categorie, HashMap<Ingredient, Integer> recetteAcreer) {
+		this.nom = nom;
 		this.id = id;
 		this.prix = prix;
 		this.dureePreparation = dureePreparation;
@@ -99,8 +89,10 @@ public class Plat {
 		this.recette = recette;
 	}
 
-	
-	
-	
-	
+	@Override
+	public String toString() {
+		return "Plat [id=" + id + ", nom=" + nom + ", prix=" + prix + ", dureePreparation=" + dureePreparation
+				+ ", disponibleCarte=" + disponibleCarte + ", type=" + type + ", categorie=" + categorie + ", recette="
+				+ recette + "]";
+	}
 }
