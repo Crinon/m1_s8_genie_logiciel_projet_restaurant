@@ -263,5 +263,5 @@ public class Main {
 
 		}
 		scanner.close(); // On ferme le scanner après avoir quitté l'application
-
+	}
 }
