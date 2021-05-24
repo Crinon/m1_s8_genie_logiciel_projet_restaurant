@@ -15,17 +15,14 @@ public class Maitrehotel extends Personne {
 	super(id, nom, identifiant);
     }
     
-    // Menu principal du directeur
- 	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
+    // Menu principal du maitre d hotel
+ 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
 
  		// Affichage menu
  		System.out.println("----------------------------------"
  					+ "\n0: Déconnexion"
- 				+ "\n1: Commander un ingredient"
- 					+ "\n2: Ajouter personnel" + "\n3: Modifier personnel"
- 					+ "\n4: Supprimer personnel"
- 					+ "\n5: Suivi serveur" + "\n6: Statistiques"
- 					+ "\n7: AJOUTER METHODES DES AUTRES ROLES"
+ 					+ "\n1: Affecter un serveur à une table"
+ 					+ "\n2: AJOUTER METHODES DU ROLE SERVEUR ?????"
  					+ "\n----------------------------------\n");
 
  		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
@@ -36,14 +33,14 @@ public class Maitrehotel extends Personne {
  			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
  			break;
 
- 		// 
+ 		// Affecter un serveur à une table
  		case 1:
- 			
+ 			//TODO
  			break;
 
  		// 
  		case 2:
-
+ 			//TODO
  			break;
 
 

@@ -5,12 +5,11 @@ import java.util.Scanner;
 public class Main {
 
 	public static Scanner scanner = new Scanner(System.in);
-	public static boolean quitterApplication = false;
 	public static Personne persConnectee = null;
 
 	public static void quitterApplication() {
-		quitterApplication = true; // Permet de quitter l'application
 		System.out.println("\nAu revoir et à bientôt !");
+		System.exit(1);
 	}
 
 	// Permet de se connecter via l'identifiant, s'il existe
@@ -20,12 +19,12 @@ public class Main {
 		try {
 
 			System.out.println(
-					"Veuillez saisir 0 pour quitter l'application,\n ou votre identifiant pour vous connecter.");
+					"Veuillez saisir 0 pour quitter l'application,\nou votre identifiant pour vous connecter.");
 			String identifiant = scanner.nextLine();
-
+			
+			// Quitte l'application
 			if (!estNullOuVide(identifiant) && identifiant.equals("0")) {
 				quitterApplication();
-				return null;
 			}
 
 			// On vérifie si l'identifiant entré existe
@@ -112,10 +111,8 @@ public class Main {
 
 		// Initialisation du programme
 		Restaurant.initialisation(); // On a donc au minimum un utilisateur : le directeur
-		persConnectee = connexion();
 		// Application active
-		while (!quitterApplication) {
-
+		do {
 			while (persConnectee == null) {
 				// L'utilisateur se connecte : reconnaissance du rôle
 				persConnectee = connexion();
@@ -124,32 +121,30 @@ public class Main {
 
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
-			case "restaurant.Directeur":
+			case "fr.ul.miage.restaurant.Directeur":
 				Directeur.menuPrincipalDirecteur();
 				break;
 
-			case "restaurant.Maitrehotel":
-
+			case "fr.ul.miage.restaurant.Maitrehotel":
+				Maitrehotel.menuPrincipalMaitredhotel();
 				break;
 
-			case "restaurant.Cuisinier":
-
+			case "fr.ul.miage.restaurant.Cuisinier":
+				Cuisinier.menuPrincipalCuisinier();
 				break;
 
-			case "restaurant.Serveur":
-
+			case "fr.ul.miage.restaurant.Serveur":
+				Serveur.menuPrincipalServeur();
 				break;
 
-			case "restaurant.Assistant": // Assistant de service
-
+			case "fr.ul.miage.restaurant.Assistant": // Assistant de service
+				Assistant.menuPrincipalAssistant();
 				break;
 
 			default:
 				throw (new Exception("Problème de rôle"));
 			}
-			// Creer un ingrédient
-
-		}
-		scanner.close(); // On ferme le scanner après avoir quitté l'application
+			
+		} while (true);
 	}
 }

@@ -51,27 +51,27 @@ public class Directeur extends Personne {
 
  		// Ajouter personnel
  		case 2:
-
+ 			//TODO
  			break;
 
  		// Modifier personnel
  		case 3:
-
+ 			//TODO
  			break;
 
  		// Supprimer personnel
  		case 4:
-
+ 			//TODO
  			break;
 
  		// Suivi serveur
  		case 5:
-
+ 			//TODO
  			break;
 
  		// Statistiques
  		case 6:
-
+ 			//TODO
  			break;
 
  		// Méthodes des autres rôles....
