@@ -130,14 +130,14 @@ public class Directeur extends Personne {
 	}
     }
 
-    public boolean ajouterIngredient(String nom, ArrayList<Ingredient> ingredients) {
+    public boolean ajouterIngredient(String nom) {
 	boolean success = false;
 	Sql sql;
 	try {
 	    sql = new Sql();
 	    success = sql.insererIngredient(nom);
 	    if (success) {
-		ingredients.add(new Ingredient(sql.demanderDernierId("ingredient"), nom, 0));
+		Restaurant.getIngredients().add(new Ingredient(sql.demanderDernierId("ingredient"), nom, 0));
 		return success;
 	    }
 	    else {
@@ -247,19 +247,20 @@ public class Directeur extends Personne {
 	}
 	return false;
     }
-    
-	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
-		Sql sql;
-		try {
-			sql = new Sql();
-			Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
-			Restaurant.getReservationsJour().add(reservation);
-			return reservation;
-		} catch (ClassNotFoundException | SQLException | IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+
+    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
+	    Restaurant.getReservationsJour().add(reservation);
+	    return reservation;
 	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
 
 //	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
 //		Sql sql;
@@ -304,17 +305,18 @@ public class Directeur extends Personne {
 	}
     }
 
-	public void supprimerReservation(Reservation asuppr) {
-		try {
-			Sql sql = new Sql();
-			sql.supprimerReservation(asuppr);
-			int index = Restaurant.getReservationsJour().indexOf(asuppr);
-			Restaurant.getReservationsJour().remove(index);
-		} catch (ClassNotFoundException | SQLException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+    public void supprimerReservation(Reservation asuppr) {
+	try {
+	    Sql sql = new Sql();
+	    sql.supprimerReservation(asuppr);
+	    int index = Restaurant.getReservationsJour().indexOf(asuppr);
+	    Restaurant.getReservationsJour().remove(index);
 	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
+    }
 
 }

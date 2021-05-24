@@ -197,7 +197,7 @@ public class TestUnitaire {
     @Test
     @DisplayName("Création d'un ingrédient dans la base de donnée")
     public void insertionIngredientDB() throws SQLException, ClassNotFoundException, IOException {
-	directeur.ajouterIngredient("carotte", Restaurant.getIngredients());
+	directeur.ajouterIngredient("carotte");
 	ResultSet res = sql.executerSelect("select * from restaurant.ingredient where nom = 'carotte'");
 	assertTrue(res.next());
     }
@@ -205,7 +205,7 @@ public class TestUnitaire {
     @Test
     @DisplayName("Création d'un ingrédient dans la mémoire")
     public void insertionIngredientJava() throws SQLException, ClassNotFoundException, IOException {
-	directeur.ajouterIngredient("patate", Restaurant.getIngredients());
+	directeur.ajouterIngredient("patate");
 	assertEquals("patate", Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1).getNom());
     }
 
@@ -213,8 +213,8 @@ public class TestUnitaire {
     @DisplayName("Tentative de créer 2 fois le même ingrédient dans la base de données")
     public void refuseDoublonIngredientDB() throws ClassNotFoundException, SQLException, IOException {
 	System.out.println("\nTest en cours : doublon d'ingrédient");
-	directeur.ajouterIngredient("tomate", Restaurant.getIngredients());
-	directeur.ajouterIngredient("tomate", Restaurant.getIngredients());
+	directeur.ajouterIngredient("tomate");
+	directeur.ajouterIngredient("tomate");
 	ResultSet resultSet = sql
 		.executerSelect("SELECT count(*) as count from restaurant.ingredient where nom = 'tomate'");
 	resultSet.next();
@@ -586,9 +586,9 @@ public class TestUnitaire {
 	    String nomIngredientToast = "tartine";
 	    int quantiteSaumon = 2;
 	    int quantiteTartine = 2;
-	    directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+	    directeur.ajouterIngredient(nomIngredientSaumon);
 	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+	    directeur.ajouterIngredient(nomIngredientToast);
 	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
 	    HashMap<Ingredient, Integer> recette = new HashMap<>();
 	    recette.put(saumon, quantiteSaumon);
@@ -617,9 +617,9 @@ public class TestUnitaire {
 	String nomIngredientToast = "tartine";
 	int quantiteSaumon = 2;
 	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
+	directeur.ajouterIngredient(nomIngredientSaumon);
 	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
+	directeur.ajouterIngredient(nomIngredientToast);
 	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
 	HashMap<Ingredient, Integer> recette = new HashMap<>();
 	recette.put(saumon, quantiteSaumon);
