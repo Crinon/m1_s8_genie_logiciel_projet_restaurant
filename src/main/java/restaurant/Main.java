@@ -4,29 +4,27 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-
 public class Main {
-
 
 	private static Scanner scanner = new Scanner(System.in);
 	static boolean quitterApplication = false;
 	static Personne persConnectee = null;
 
-	
 	public static void quitterApplication() {
-		quitterApplication = true; //Permet de quitter l'application
+		quitterApplication = true; // Permet de quitter l'application
 		System.out.println("\nAu revoir et à bientôt !");
 	}
-	
+
 	// Permet de se connecter via l'identifiant, s'il existe
 	public static Personne connexion() {
 
 		// Requête qui vérifie
 		try {
 
-			System.out.println("Veuillez saisir 0 pour quitter l'application,\n ou votre identifiant pour vous connecter.");
+			System.out.println(
+					"Veuillez saisir 0 pour quitter l'application,\n ou votre identifiant pour vous connecter.");
 			String identifiant = scanner.nextLine();
-			
+
 			if (!estNulleOuVide(identifiant) && identifiant.equals("0")) {
 				quitterApplication();
 				return null;
@@ -94,7 +92,8 @@ public class Main {
 
 		String choix = "";
 
-		while (estNulleOuVide(choix) || !uniquementChiffres(choix) || !valeurIntOk(Integer.parseInt(choix), valeurChoixMax)) {
+		while (estNulleOuVide(choix) || !uniquementChiffres(choix)
+				|| !valeurIntOk(Integer.parseInt(choix), valeurChoixMax)) {
 			System.out.println(">Veuillez saisir votre choix (valeur allant de 0 à " + valeurChoixMax + ")");
 			choix = scanner.nextLine();
 		}
@@ -105,73 +104,64 @@ public class Main {
 	public static String listingIngredients() {
 		String liste = "";
 		for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-			liste += i + ":" + Restaurant.getIngredients().get(i).getNom()
-				   + "; quantite: " + Restaurant.getIngredients().get(i).getQuantite();
+			liste += i + ":" + Restaurant.getIngredients().get(i).getNom() + "; quantite: "
+					+ Restaurant.getIngredients().get(i).getQuantite();
 		}
 		return liste;
 	}
-	
+
 	// Permet de commander un ingrédient pour l'ajouter au stock
 	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
-		// Affichage menu
-		System.out.println("----------------------------------"
-					   + "\n-----Commander un ingredient------"
-				       + "\nListe des ingrédients : "
-				       + listingIngredients()
-				       + "\n----------------------------------\n"
-				       + "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
-				       + " pas dans la liste, ou le numéro d'un des ingrédients de la liste"
-				       );
-		
-		
-		String choix = scanner.nextLine();
-		int qtIngredient = 0;
-		do {
-			if (!estNulleOuVide(choix) && uniquementLettres(choix)) {
-				// Nouvel ingrédient
-				choix = choix.toLowerCase();
-				System.out.println(">Quantite de " + choix + " à commander");
-				qtIngredient = choixUtilisateur(500); //Quantite max par commande : 500
-			}else if(!estNulleOuVide(choix) && uniquementChiffres(choix) && !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
-				// MAJ quantite d'un ingrédient existant
-				System.out.println(">Quantite de " + choix + " à commander");
-				qtIngredient = choixUtilisateur(500); //Quantite max par commande : 500
-			}else{
-				System.out.println("Ereur de saisie, veuillez réessayer");
-			}
-		}while (estNulleOuVide(choix) || (!uniquementLettres(choix) && !uniquementChiffres(choix)));
 
-		//Valider ou annuler
-		System.out.println("Annuler (0) ou valider (1) ?");
-		if (choixUtilisateur(1) == 1 ) {
-			if (((Directeur) persConnectee).ajouterIngredient(choix) ) {
-				((Directeur) persConnectee).commanderIngredient(Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1), qtIngredient); //Dernier inséré
-				System.out.println("Commande passée (quantite : " + qtIngredient + ")");
-			}
-		}else {
-			System.out.println("Commande annulée");
+		if (listingIngredients() != null) {
+
+			// Affichage menu
+			System.out.println("----------------------------------"
+					+ "\n-----Commander un ingredient------"
+					+ "\nListe des ingrédients : " + listingIngredients()
+					+ "\n----------------------------------\n"
+					+ "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
+					+ " pas dans la liste, ou le numéro d'un des ingrédients de la liste");
+
+			String choix = scanner.nextLine();
+			int qtIngredient = 0;
+			do {
+				if (!estNulleOuVide(choix) && uniquementLettres(choix)) {
+					// Nouvel ingrédient
+					String nomIngredient = choix.toLowerCase();
+					System.out.println(">Quantité de " + choix + " à commander ?");
+					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+					((Directeur) persConnectee).ajouterIngredient(nomIngredient);
+					((Directeur) persConnectee).commanderIngredient(
+							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																							// inséré
+
+				} else if (!estNulleOuVide(choix) && uniquementChiffres(choix)
+						&& !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
+					// MAJ quantite d'un ingrédient existant
+					System.out.println(">Quantité à commander ?");
+					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+					((Directeur) persConnectee).commanderIngredient(
+							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
+
+				} else {
+					System.out.println("Ereur de saisie, veuillez réessayer");
+				}
+			} while (estNulleOuVide(choix) || (!uniquementLettres(choix) && !uniquementChiffres(choix)));
 		}
-		
-		
 	}
 
 	// Menu principal du directeur
-	public static void  menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
+	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
-		System.out.println("----------------------------------"
-				        + "\n0: Déconnexion"
-				        + "\n1: Commander un ingredient"
-				        + "\n2: Ajouter personnel"
-				        + "\n3: Modifier personnel"
-				        + "\n4: Supprimer personnel"
-				        + "\n5: Suivi serveur"
-				        + "\n6: Statistiques"
-				        + "\n7: AJOUTER METHODES DES AUTRES ROLES"
-				        + "\n----------------------------------\n"
-				        );
+		System.out.println("----------------------------------" + "\n0: Déconnexion" + "\n1: Commander un ingredient"
+				+ "\n2: Ajouter personnel" + "\n3: Modifier personnel" + "\n4: Supprimer personnel"
+				+ "\n5: Suivi serveur" + "\n6: Statistiques" + "\n7: AJOUTER METHODES DES AUTRES ROLES"
+				+ "\n----------------------------------\n");
 
-		switch (choixUtilisateur(7)) { //valeurChoixMin = 0
+		switch (choixUtilisateur(7)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -220,19 +210,19 @@ public class Main {
 
 	}
 
-	public static void main(String[] args) throws Exception {		
+	public static void main(String[] args) throws Exception {
 
 		// Initialisation du programme
 		Restaurant.initialisation(); // On a donc au minimum un utilisateur : le directeur
 		persConnectee = connexion();
 		// Application active
 		while (!quitterApplication) {
-			
+
 			while (persConnectee == null) {
 				// L'utilisateur se connecte : reconnaissance du rôle
 				persConnectee = connexion();
 			}
-			System.out.println("\nConnecté en tant que : " + persConnectee.getIdentifiant() );
+			System.out.println("\nConnecté en tant que : " + persConnectee.getIdentifiant());
 
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
