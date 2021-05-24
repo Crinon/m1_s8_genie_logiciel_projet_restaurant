@@ -417,6 +417,11 @@ public class Sql {
 	    System.out.println("Quantité nouvelle : " + nouvelleQuantite);
 	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
 		    + ingredient.getId());
+	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+			if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
+				Restaurant.getIngredients().get(i).setQuantite(Restaurant.getIngredients().get(i).getQuantite() + nouvelleQuantite);
+			}
+		}
 	    return true;
 	}
 	else {

@@ -22,4 +22,6 @@ public class Maitrehotel extends Personne {
 	serveur.ajouterTable(tables);
     }
 
+
+
 }

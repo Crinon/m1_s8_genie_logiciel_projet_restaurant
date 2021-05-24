@@ -1,9 +1,5 @@
 package restaurant;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 public abstract class Personne {
 
     int	   id;
@@ -39,9 +35,5 @@ public abstract class Personne {
     public void setIdentifiant(String identifiant) {
 	this.identifiant = identifiant;
     }
-
-	protected abstract boolean ajouterIngredient(String string, ArrayList<Ingredient> ingredients);
-
-	protected abstract void commanderIngredient(Ingredient ingredient, int ajout) throws ClassNotFoundException, SQLException, IOException;
 
 }

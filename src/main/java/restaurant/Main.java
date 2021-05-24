@@ -144,8 +144,8 @@ public class Main {
 		//Valider ou annuler
 		System.out.println("Annuler (0) ou valider (1) ?");
 		if (choixUtilisateur(1) == 1 ) {
-			if (persConnectee.ajouterIngredient(choix,Restaurant.getIngredients()) ) {
-				persConnectee.commanderIngredient(Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1), qtIngredient); //Dernier inséré
+			if (((Directeur) persConnectee).ajouterIngredient(choix) ) {
+				((Directeur) persConnectee).commanderIngredient(Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1), qtIngredient); //Dernier inséré
 				System.out.println("Commande passée (quantite : " + qtIngredient + ")");
 			}
 		}else {
