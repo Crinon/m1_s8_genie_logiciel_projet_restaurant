@@ -1,18 +1,27 @@
-package fr.ul.miage.restaurant;
+package restaurant;
 
 public abstract class Personne {
 
     int	   id;
+    int masterid;
     String nom;
     String identifiant;
 
     public Personne(int id, String nom, String identifiant) {
-	this.id = id;
-	this.nom = nom;
-	this.identifiant = identifiant;
+		this.id = id;
+		this.nom = nom;
+		this.identifiant = identifiant;
     }
 
-    public int getId() {
+    public int getMasterid() {
+		return masterid;
+	}
+
+	public void setMasterid(int masterid) {
+		this.masterid = masterid;
+	}
+
+	public int getId() {
 	return id;
     }
 

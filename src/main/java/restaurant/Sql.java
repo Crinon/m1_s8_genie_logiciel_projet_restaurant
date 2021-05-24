@@ -1,4 +1,4 @@
-package fr.ul.miage.restaurant;
+package restaurant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -222,6 +222,7 @@ public class Sql {
 	    }
 	    newPersonne.setIdentifiant(login);
 	    newPersonne.setId(id);
+	    newPersonne.setMasterid(demanderDernierId("personne"));
 
 	}
 	catch (SQLException e) {
@@ -278,8 +279,9 @@ public class Sql {
      */
     public void supprimerPersonne(Personne personne) throws SQLException {
 	executerDelete(
-		"DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = " + personne.getId());
-	executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getId());
+		"DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = " + personne.getMasterid());
+	
+	executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getMasterid());
     }
 
     public void insererEtage() {
@@ -324,7 +326,7 @@ public class Sql {
     public void insererTable(int numero, int capacite, Etage etage) {
 	// On vérifie si la capacité donnée est supérieur à 0
 	if (capacite < 1) {
-	    System.out.println("Vous avez tenté de créer une table avec une capacité inférieure à 1");
+	    System.err.println("Vous avez tenté de créer une table avec une capacité inférieure à 1");
 	    return;
 	}
 	// On vérifie si le numéro de table est disponible
@@ -333,7 +335,7 @@ public class Sql {
 	try {
 	    resultSet.next();
 	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
-		System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
+		System.err.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 	    }
 	    else {
 		executerInsert("INSERT INTO restaurant.tables (numero,capacite,etat,etage) VALUES (" + numero + ","
@@ -347,23 +349,27 @@ public class Sql {
     }
 
     // Méthode pour mettre à jour le numéro de la table
-    public boolean updateTable(int numero, int newNumero, Table table) {
+    public boolean updateTable(Table table, int newNumero) {
+    	int ancienNumero = table.getNumero();
 	// On vérifie que le nouveau numéro est différent de l'actuel
-	if (numero == newNumero) {
-	    System.out.println(
+	if (ancienNumero == newNumero) {
+	    System.err.println(
 		    "Vous avez tenté de mettre à jour le numéro d'une table mais l'ancien numéro est le même que celui spécifié");
 	    return false;
 	}
 	// On vérifie si le nouveau numéro est disponible
 	ResultSet resultSet = executerSelect(
-		"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
+		"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + ancienNumero);
 	try {
 	    resultSet.next();
+	    System.out.println("nombre de table avec le numéro " + ancienNumero + " " + Integer.parseInt(resultSet.getString("count")));
 	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
-		System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
-		return false;
+		    executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE id = " + table.getId());
+			return true;
+	    } else {
+			System.err.println("Mise à jour de table : Vous avez tenté de modifier une table avec un numéro inexistant");
+			return false;
 	    }
-	    executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE id = " + table.getId());
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -380,13 +386,13 @@ public class Sql {
 	ResultSet resultSet = executerSelect(
 		"SELECT count(*) as count FROM restaurant.ingredient WHERE nom = '" + nom + "'");
 	if (resultSet == null) {
-	    System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 	    return false;
 	}
 	resultSet.next();
 
 	if (Integer.parseInt(resultSet.getString("count")) != 0) {
-	    System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 	    return false;
 	}
 

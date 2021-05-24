@@ -1,6 +1,7 @@
-package fr.ul.miage.restaurant;
+package restaurant;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -205,31 +206,40 @@ public class Directeur extends Personne {
 	Restaurant.getEtages().remove(Restaurant.getEtages().size() - 1);
     }
 
-    public void ajouterTable(int numero, int capacite, Etage etage)
+    public Table ajouterTable(int numero, int capacite, Etage etage)
 	    throws ClassNotFoundException, SQLException, IOException {
 	Sql sql = new Sql();
 	sql.insererTable(numero, capacite, etage);
-	etage.addTable(new Table(sql.demanderDernierId("tables"), capacite, numero, EtatTable.Libre));
+	Table nouvelleTable = new Table(sql.demanderDernierId("tables"), numero, capacite, EtatTable.Libre);
+	etage.addTable(nouvelleTable);
+	return nouvelleTable;
     }
 
     public void modifierNumeroTable(Table table, int newNumero)
 	    throws ClassNotFoundException, SQLException, IOException {
 	boolean success;
 	Sql sql = new Sql();
-	success = sql.updateTable(table.getNumero(), newNumero, table);
+	success = sql.updateTable(table, newNumero);
 	if (success) {
 	    table.setNumero(newNumero);
 	}
     }
 
-    public void supprimerTable(Table tableToremove, ArrayList<Table> tables)
-	    throws ClassNotFoundException, SQLException, IOException {
-	boolean success;
-	Sql sql = new Sql();
-	success = sql.deleteTable(tableToremove);
-	if (success) {
-	    tables.remove(tableToremove);
+    public void supprimerTable(Table tableToremove, ArrayList<Table> tables){
+
+	try {
+		boolean success;
+		Sql sql;
+		sql = new Sql();	
+		success = sql.deleteTable(tableToremove);
+		if (success) {
+		    tables.remove(tableToremove);
+		}
+	} catch (ClassNotFoundException | SQLException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
+
     }
 
     public boolean ajouterIngredient(String nom) {
@@ -322,7 +332,7 @@ public class Directeur extends Personne {
 	}
     }
 
-    public Affectation creationAffectation(Timestamp dateDebut, int nbPersonne, Table table) {
+    public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
 	Sql sql;
 	try {
 	    sql = new Sql();
