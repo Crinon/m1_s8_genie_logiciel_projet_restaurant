@@ -1,8 +1,8 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -14,9 +14,9 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import restaurant.Categorie;
 import restaurant.Directeur;
 import restaurant.Etage;
@@ -118,11 +118,13 @@ public class TestUnitaire {
 	sql.executerTests("CREATE TABLE restaurant.tables\r\n" + "(\r\n"
 		+ "    id integer NOT NULL DEFAULT nextval('restaurant.tables_id_seq'),\r\n"
 		+ "    capacite integer NOT NULL,\r\n" + "    etat character varying NOT NULL,\r\n"
-		+ "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
+		+ "    serveur integer,\r\n" + "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
 		+ "    check (etat in ('Libre', 'Sale', 'Occupe', 'Reserve')),\r\n"
 		+ "    CONSTRAINT tables_pkey PRIMARY KEY (id),\r\n"
 		+ "    CONSTRAINT tables_etage_fkey FOREIGN KEY (etage)\r\n"
 		+ "        REFERENCES restaurant.etage (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
+		+ "        ON DELETE NO ACTION,\r\n" + "    CONSTRAINT tables_serveur_fkey FOREIGN KEY (serveur)\r\n"
+		+ "        REFERENCES restaurant.serveur (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
 		+ "        ON DELETE NO ACTION\r\n" + ")");
 	// Plat
 	sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
@@ -216,8 +218,7 @@ public class TestUnitaire {
 	ResultSet resultSet = sql
 		.executerSelect("SELECT count(*) as count from restaurant.ingredient where nom = 'tomate'");
 	resultSet.next();
-	assertEquals("ERREUR : un ingrédient avec le même nom est présent 2 fois en base.", 1,
-		Integer.parseInt(resultSet.getString("count")));
+	assertEquals(1, Integer.parseInt(resultSet.getString("count")));
     }
 
     @Test
@@ -343,7 +344,7 @@ public class TestUnitaire {
 	    int nbEtageAvant = Restaurant.getEtages().size();
 	    directeur.ajouterEtage();
 	    int nbEtageApres = Restaurant.getEtages().size();
-	    assertTrue("Aucun étage ajouté dans l'arraylist d'étages", nbEtageAvant < nbEtageApres);
+	    assertTrue(nbEtageAvant < nbEtageApres);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -387,8 +388,7 @@ public class TestUnitaire {
 	    int nbEtageAvantSuppression = Restaurant.getEtages().size();
 	    directeur.supprimerDernierEtage();
 	    int nbEtageApresSuppression = Restaurant.getEtages().size();
-	    assertTrue("Aucun étage ajouté dans l'arraylist d'étages",
-		    nbEtageApresSuppression < nbEtageAvantSuppression);
+	    assertTrue(nbEtageApresSuppression < nbEtageAvantSuppression);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -449,7 +449,7 @@ public class TestUnitaire {
 	    if (resultSet.next()) {
 		numeroTrouve = Integer.parseInt(resultSet.getString("numero"));
 	    }
-	    assertEquals("Le numéro de table n'a pas été mis à jour", numeroApres, numeroTrouve);
+	    assertEquals(numeroApres, numeroTrouve);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -468,8 +468,7 @@ public class TestUnitaire {
 	    directeur.ajouterTable(numeroAvant, 10, etage);
 	    Table tableActuelle = etage.getTables().get(0);
 	    directeur.modifierNumeroTable(tableActuelle, numeroApres);
-	    assertEquals("Le numéro de table n'a pas été mis à jour", numeroApres,
-		    etage.getTables().get(0).getNumero());
+	    assertEquals(numeroApres, etage.getTables().get(0).getNumero());
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -514,15 +513,15 @@ public class TestUnitaire {
     }
 
     @Test
-    @DisplayName("Modificiation du numéro d'une table dans la base de donées")
+    @DisplayName("Affectation table serveurs lors d'une affectation dans la base de donées")
     public void modifierServeurTableDB() {
 	System.out.println("\nTest en cours : Modificiation du numéro d'une table dans la base de donées");
 	try {
 	    directeur.ajouterEtage();
-	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "Serveur");
+	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "serveur");
 	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 	    directeur.ajouterTable(6, 10, etage);
-	    Table tableActuelle = etage.getTables().get(0);
+	    Table tableActuelle = etage.getTables().get(etage.getTables().size() - 1);
 	    directeur.affecterTableServeur(serveur, tableActuelle);
 	    ResultSet resultSet = sql
 		    .executerSelect("SELECT serveur FROM restaurant.tables WHERE id=" + tableActuelle.getId());
@@ -535,12 +534,12 @@ public class TestUnitaire {
     }
 
     @Test
-    @DisplayName("Modificiation du numéro d'une table dans la mémoire")
+    @DisplayName("Affectation table serveurs lors d'une affectation dans la mémoire")
     public void modifierServeurTableJava() {
 	System.out.println("\nTest en cours : Modificiation du numéro d'une table dans la mémoire");
 	try {
 	    directeur.ajouterEtage();
-	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "Serveur");
+	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "serveur");
 	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 	    directeur.ajouterTable(6, 10, etage);
 	    Table tableActuelle = etage.getTables().get(0);
@@ -553,12 +552,12 @@ public class TestUnitaire {
     }
 
     @Test
-    @DisplayName("Modificiation du numéro d'une table dans la mémoire")
+    @DisplayName("Retrait table serveurs lors d'une affectation dans la mémoire 2")
     public void modifierServeurTableJava2() {
 	System.out.println("\nTest en cours : Modificiation du numéro d'une table dans la mémoire");
 	try {
 	    directeur.ajouterEtage();
-	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "Serveur");
+	    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jean", "serveur");
 	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
 	    directeur.ajouterTable(6, 10, etage);
 	    Table tableActuelle = etage.getTables().get(0);
