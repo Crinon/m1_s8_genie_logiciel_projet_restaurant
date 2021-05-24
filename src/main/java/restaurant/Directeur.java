@@ -247,6 +247,19 @@ public class Directeur extends Personne {
 	}
 	return false;
     }
+    
+	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+		Sql sql;
+		try {
+			sql = new Sql();
+			Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
+			Restaurant.getReservationsJour().add(reservation);
+			return reservation;
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 //	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
 //		Sql sql;
@@ -290,5 +303,18 @@ public class Directeur extends Personne {
 	    e.printStackTrace();
 	}
     }
+
+	public void supprimerReservation(Reservation asuppr) {
+		try {
+			Sql sql = new Sql();
+			sql.supprimerReservation(asuppr);
+			int index = Restaurant.getReservationsJour().indexOf(asuppr);
+			Restaurant.getReservationsJour().remove(index);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 }

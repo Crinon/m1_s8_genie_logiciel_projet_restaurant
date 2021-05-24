@@ -1,19 +1,22 @@
 package m1_s8_genie_logiciel_projet_restaurant;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import restaurant.Affectation;
 import restaurant.Categorie;
 import restaurant.Directeur;
 import restaurant.Etage;
@@ -21,6 +24,7 @@ import restaurant.EtatTable;
 import restaurant.Ingredient;
 import restaurant.Personne;
 import restaurant.Plat;
+import restaurant.Reservation;
 import restaurant.Restaurant;
 import restaurant.Serveur;
 import restaurant.Sql;
@@ -30,8 +34,9 @@ import restaurant.Type;
 @DisplayName("Tests du projet restaurant")
 public class TestUnitaire {
 
-    private static Sql sql;
-    Directeur	       directeur = new Directeur(0, "directeur", "directeur0");
+    public final String	propertiesFilename = "database.properties";
+    private static Sql	sql;
+    Directeur		directeur	   = new Directeur(0, "directeur", "directeur0");
 
 //  @Test(expected=IllegalArgumentException.class)
 //  public void testIsMotDePasseValideNull() {
@@ -113,13 +118,11 @@ public class TestUnitaire {
 	sql.executerTests("CREATE TABLE restaurant.tables\r\n" + "(\r\n"
 		+ "    id integer NOT NULL DEFAULT nextval('restaurant.tables_id_seq'),\r\n"
 		+ "    capacite integer NOT NULL,\r\n" + "    etat character varying NOT NULL,\r\n"
-		+ "    serveur integer,\r\n" + "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
+		+ "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
 		+ "    check (etat in ('Libre', 'Sale', 'Occupe', 'Reserve')),\r\n"
 		+ "    CONSTRAINT tables_pkey PRIMARY KEY (id),\r\n"
 		+ "    CONSTRAINT tables_etage_fkey FOREIGN KEY (etage)\r\n"
 		+ "        REFERENCES restaurant.etage (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION,\r\n" + "    CONSTRAINT tables_serveur_fkey FOREIGN KEY (serveur)\r\n"
-		+ "        REFERENCES restaurant.serveur (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
 		+ "        ON DELETE NO ACTION\r\n" + ")");
 	// Plat
 	sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
@@ -153,6 +156,24 @@ public class TestUnitaire {
 		+ "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
 		+ "    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)\r\n"
 		+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
+	// Reservation
+	sql.executerTests("CREATE SEQUENCE restaurant.reservation_id_seq\r\n" + "    INCREMENT 1\r\n"
+		+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+	sql.executerTests("CREATE TABLE restaurant.reservation\r\n" + "(\r\n"
+		+ "    id integer NOT NULL DEFAULT nextval('restaurant.reservation_id_seq'),\r\n"
+		+ "    dateappel TIMESTAMP NOT NULL,\r\n" + "    datereservation TIMESTAMP NOT NULL,\r\n"
+		+ "    nombrepersonne integer NOT NULL,\r\n" + "    valide boolean NOT NULL,\r\n"
+		+ "    tablereserve integer NOT NULL,\r\n" + "    CONSTRAINT reservation_pkey PRIMARY KEY (id),\r\n"
+		+ "    CONSTRAINT reservation_tablereserve_fkey FOREIGN KEY (tablereserve)\r\n"
+		+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
+	// Restaurant
+	sql.executerTests("CREATE SEQUENCE restaurant.restaurant_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
+		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
+	sql.executerTests("CREATE TABLE restaurant.restaurant\r\n" + "(\r\n"
+		+ "    id integer NOT NULL DEFAULT nextval('restaurant.restaurant_id_seq'),\r\n"
+		+ "    heurelimitediner integer NOT NULL,\r\n" + "    heureouverturediner integer NOT NULL,\r\n"
+		+ "    heurelimitedejeune integer NOT NULL,\r\n" + "    heureouverturedejeune integer NOT NULL,\r\n"
+		+ "    CONSTRAINT restaurant_pkey PRIMARY KEY (id)\r\n" + ")");
 	Restaurant.initialisation();
     }
 
@@ -552,395 +573,6 @@ public class TestUnitaire {
     }
 
     @Test
-
-    @DisplayName("Suppression d'une table dans la base de donées")
-    public void supprimerTableDB() {
-	System.out.println("\nTest en cours : Suppression d'une table dans la base de donées");
-	try {
-	    directeur.ajouterEtage(); // Etage qui va recevoir une table
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(6, 10, etage);
-	    Table tableActuelle = etage.getTables().get(0);
-	    directeur.supprimerTable(tableActuelle, etage.getTables());
-	    ResultSet resultSet = sql
-		    .executerSelect("SELECT numero FROM restaurant.tables WHERE id=" + tableActuelle.getId());
-	    assertFalse(resultSet.next());
-	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-
-    @DisplayName("Suppression d'une table dans la mémoire")
-    public void supprimerTableJava() {
-	System.out.println("\nTest en cours : Suppression d'une table dans la mémoire");
-	try {
-	    // Numéro de la table que l'on créé puis supprime pour le test int
-	    directeur.ajouterEtage();
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(6, 10, etage);
-	    int totalTablesAvantSuppression = etage.getTables().size();
-
-	    Table tableActuelle = etage.getTables().get(0);
-	    directeur.supprimerTable(tableActuelle, etage.getTables());
-	    int totalTablesApresSuppression = etage.getTables().size();
-	    assertTrue(totalTablesApresSuppression < totalTablesAvantSuppression);
-	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Création d'un plat dans la base de données")
-    public void creationPlatDB() {
-	try {
-	    System.out.println("\nTest en cours : Création d'un plat dans la base de données");
-	    String nomPlat = "Toast au saumon";
-	    Double prixPlat = 9.5;
-	    int tempsPrepa = 5;
-	    boolean surCarte = true;
-	    Type type = Type.ENTREE;
-	    Categorie categorie = Categorie.POISSON;
-	    String nomIngredientSaumon = "saumon";
-	    String nomIngredientToast = "tartine";
-	    int quantiteSaumon = 2;
-	    int quantiteTartine = 2;
-	    directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    HashMap<Ingredient, Integer> recette = new HashMap<>();
-	    recette.put(saumon, quantiteSaumon);
-	    recette.put(tartine, quantiteTartine);
-	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	    ResultSet resultSet = sql.executerSelect("SELECT id FROM restaurant.plat WHERE id=" + plat.getId());
-	    assertTrue(resultSet.next());
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Création d'un plat dans la mémoire")
-    public void creationPlatJava() {
-	System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-	int nbPlatAvant = Restaurant.getPlats().size();
-	String nomPlat = "Toast au saumon";
-	Double prixPlat = 9.5;
-	int tempsPrepa = 5;
-	boolean surCarte = true;
-	Type type = Type.ENTREE;
-	Categorie categorie = Categorie.POISSON;
-	String nomIngredientSaumon = "saumon";
-	String nomIngredientToast = "tartine";
-	int quantiteSaumon = 2;
-	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	HashMap<Ingredient, Integer> recette = new HashMap<>();
-	recette.put(saumon, quantiteSaumon);
-	recette.put(tartine, quantiteTartine);
-	directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	int nbPlatApres = Restaurant.getPlats().size();
-	assertTrue(nbPlatAvant < nbPlatApres);
-    }
-
-    @Test
-    @DisplayName("Modification du prix d'un plat dans la base de données")
-    public void modificationPrixPlatDB() {
-	try {
-	    System.out.println("\nTest en cours : Création d'un plat dans la base de données");
-	    String nomPlat = "Toast au saumon";
-	    Double prixPlat = 9.5;
-	    int tempsPrepa = 5;
-	    boolean surCarte = true;
-	    Type type = Type.ENTREE;
-	    Categorie categorie = Categorie.POISSON;
-	    String nomIngredientSaumon = "saumon";
-	    String nomIngredientToast = "tartine";
-	    int quantiteSaumon = 2;
-	    int quantiteTartine = 2;
-	    directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    HashMap<Ingredient, Integer> recette = new HashMap<>();
-	    recette.put(saumon, quantiteSaumon);
-	    recette.put(tartine, quantiteTartine);
-	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	    directeur.modifierPrixPlat(plat, 10);
-	    ResultSet resultSet = sql.executerSelect("SELECT prix FROM restaurant.plat WHERE id=" + plat.getId());
-	    resultSet.next(); // On
-	    assertEquals(10, resultSet.getDouble("prix"), 0);
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Modification du prix d'un plat dans la mémoire")
-    public void modificationPrixPlatJava() {
-	System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-	String nomPlat = "Toast au saumon";
-	Double prixPlat = 9.5;
-	int tempsPrepa = 5;
-	boolean surCarte = true;
-	Type type = Type.ENTREE;
-	Categorie categorie = Categorie.POISSON;
-	String nomIngredientSaumon = "saumon";
-	String nomIngredientToast = "tartine";
-	int quantiteSaumon = 2;
-	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	HashMap<Ingredient, Integer> recette = new HashMap<>();
-	recette.put(saumon, quantiteSaumon);
-	recette.put(tartine, quantiteTartine);
-	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	directeur.modifierPrixPlat(plat, 10);
-	assertEquals(10, plat.getPrix(), 0);
-    }
-
-    @Test
-    @DisplayName("Modification de la disponibilité d'un plat dans la base de données")
-    public void modificationCartePlatDB() {
-	try {
-	    System.out.println("\nTest en cours : Création d'un plat dans la base de données");
-	    String nomPlat = "Toast au saumon";
-	    Double prixPlat = 9.5;
-	    int tempsPrepa = 5;
-	    boolean surCarte = true;
-	    Type type = Type.ENTREE;
-	    Categorie categorie = Categorie.POISSON;
-	    String nomIngredientSaumon = "saumon";
-	    String nomIngredientToast = "tartine";
-	    int quantiteSaumon = 2;
-	    int quantiteTartine = 2;
-	    directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    HashMap<Ingredient, Integer> recette = new HashMap<>();
-	    recette.put(saumon, quantiteSaumon);
-	    recette.put(tartine, quantiteTartine);
-	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	    directeur.modifierCartePlat(plat, false);
-	    ResultSet resultSet = sql
-		    .executerSelect("SELECT disponiblecarte FROM restaurant.plat WHERE id=" + plat.getId());
-	    resultSet.next(); // On
-	    assertFalse(resultSet.getBoolean("disponiblecarte"));
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Modification de la disponibilité d'un plat dans la mémoire")
-    public void modificationCartePlatJava() {
-	System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-	String nomPlat = "Toast au saumon";
-	Double prixPlat = 9.5;
-	int tempsPrepa = 5;
-	boolean surCarte = true;
-	Type type = Type.ENTREE;
-	Categorie categorie = Categorie.POISSON;
-	String nomIngredientSaumon = "saumon";
-	String nomIngredientToast = "tartine";
-	int quantiteSaumon = 2;
-	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	HashMap<Ingredient, Integer> recette = new HashMap<>();
-	recette.put(saumon, quantiteSaumon);
-	recette.put(tartine, quantiteTartine);
-	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	directeur.modifierCartePlat(plat, false);
-	assertFalse(plat.isDisponibleCarte());
-    }
-
-    @Test
-    @DisplayName("Modification de la durée d'un plat dans la base de données")
-    public void modificationDureePlatDB() {
-	try {
-	    System.out.println("\nTest en cours : Création d'un plat dans la base de données");
-	    String nomPlat = "Toast au saumon";
-	    Double prixPlat = 9.5;
-	    int tempsPrepa = 5;
-	    boolean surCarte = true;
-	    Type type = Type.ENTREE;
-	    Categorie categorie = Categorie.POISSON;
-	    String nomIngredientSaumon = "saumon";
-	    String nomIngredientToast = "tartine";
-	    int quantiteSaumon = 2;
-	    int quantiteTartine = 2;
-	    directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	    HashMap<Ingredient, Integer> recette = new HashMap<>();
-	    recette.put(saumon, quantiteSaumon);
-	    recette.put(tartine, quantiteTartine);
-	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	    directeur.modifierDureePlat(plat, 10);
-	    ResultSet resultSet = sql
-		    .executerSelect("SELECT dureepreparation FROM restaurant.plat WHERE id=" + plat.getId());
-	    resultSet.next(); // On
-	    assertEquals(10, resultSet.getInt("dureepreparation"));
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Modification de la durée d'un plat dans la mémoire")
-    public void modificationDureePlatJava() {
-	System.out.println("\nTest en cours : Création d'un plat dans la mémoire");
-	String nomPlat = "Toast au saumon";
-	Double prixPlat = 9.5;
-	int tempsPrepa = 5;
-	boolean surCarte = true;
-	Type type = Type.ENTREE;
-	Categorie categorie = Categorie.POISSON;
-	String nomIngredientSaumon = "saumon";
-	String nomIngredientToast = "tartine";
-	int quantiteSaumon = 2;
-	int quantiteTartine = 2;
-	directeur.ajouterIngredient(nomIngredientSaumon, Restaurant.getIngredients());
-	Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	directeur.ajouterIngredient(nomIngredientToast, Restaurant.getIngredients());
-	Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-	HashMap<Ingredient, Integer> recette = new HashMap<>();
-	recette.put(saumon, quantiteSaumon);
-	recette.put(tartine, quantiteTartine);
-	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
-	directeur.modifierDureePlat(plat, 10);
-	assertEquals(10, plat.getDureePreparation());
-    }
-
-    @Test
-    @DisplayName("Création d'une affectation dans la base de données")
-    public void creationAffectationDB() {
-	System.out.println("\nTest en cours : Création d'une affectation dans la base de données");
-	try { // Prérequis du
-	    int numeroTable = 7;
-	    directeur.ajouterEtage(); // Etage qui va recevoir une table
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(numeroTable, 10, etage); // La table créée
-	    Table tableActuelle = etage.getTables().get(0);
-	    // Création de l'affectation (date immédiate)
-	    Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
-		    tableActuelle);
-	    ResultSet resultSet = sql
-		    .executerSelect("SELECT id FROM restaurant.affectation WHERE id=" + affectation.getId());
-	    assertTrue(resultSet.next());
-	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-    @DisplayName("Création d'une affectation dans la mémoire")
-    public void creationAffectationJava() {
-	System.out.println("\nTest en cours : Création d'une affectation dans la mémoire");
-	try {
-	    int numeroTable = 8;
-	    directeur.ajouterEtage();
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(numeroTable, 10, etage); // La table créée
-	    Table tableActuelle = etage.getTables().get(0);
-	    int tailleAvant = Restaurant.getAffectationsJour().size();
-	    directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
-	    int tailleApres = Restaurant.getAffectationsJour().size();
-	    assertTrue(tailleAvant < tailleApres);
-	}
-	catch (ClassNotFoundException | SQLException |
-
-		IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-
-    @DisplayName("Calcul d'une facture dans la base de données")
-    public void
-
-	    updateFactureDB() {
-	System.out.println("\nTest en cours : Calcul d'une facture dans la base de données");
-	assertTrue(false);
-    }
-
-    @Test
-
-    @DisplayName("Calcul d'une facture dans la mémoire")
-    public void updateFactureJava() {
-	System.out.println("\nTest en cours : Calcul d'une facture dans la mémoire");
-	assertTrue(false);
-    }
-
-    @Test
-
-    @DisplayName("Ajout date de fin d'une affectation dans la base de donnée")
-    public void dateFinAffectationDB() {
-	System.out.println("\nTest en cours : Ajout date de fin d'une affectation dans la base de donnée");
-	try {
-	    int numeroTable = 9;
-	    directeur.ajouterEtage(); // Etage qui va recevoir une table Etage etage =
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(6, 10, etage); // La table créée
-	    Table tableActuelle = etage.getTables().get(0);
-	    Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
-		    tableActuelle);
-	    // Attente de 0.5 secondes Thread.sleep(500);
-	    Date dateFin = new Timestamp(new Date().getTime());
-	    directeur.dateFinAffectation(affectation, dateFin);
-	    ResultSet resultSet = sql
-		    .executerSelect("SELECT datefin FROM restaurant.affectation WHERE id=" + affectation.getId());
-	    resultSet.next();
-	    assertNotNull(resultSet.getDate("datefin"));
-	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
-
-    @DisplayName("Ajout date de fin d'une affectation dans la mémoire")
-    public void dateFinAffectationJava() {
-	System.out.println("\nTest en cours : Calcul d'une facture la mémoire");
-	try {
-	    int numeroTable = 9;
-	    directeur.ajouterEtage(); // Etage qui va recevoir une table
-	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
-	    directeur.ajouterTable(numeroTable, 10, etage); // La table créée
-	    Table tableActuelle = etage.getTables().get(0);
-	    Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2,
-		    tableActuelle);
-	    // Attente de 0.5 secondes Thread.sleep(500); Date dateFin = new
-	    directeur.dateFinAffectation(affectation, new Timestamp(new Date().getTime()));
-	    assertNotNull(affectation.getDateFin());
-	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    e.printStackTrace();
-	}
-    }
-
-    @Test
     @DisplayName("Modification de la durée d'un plat dans la base de données")
     public void suppressionPlatDB() {
 	try {
@@ -996,6 +628,178 @@ public class TestUnitaire {
 	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
 	directeur.supprimerPlat(plat);
 	assertFalse(Restaurant.getPlats().contains(plat));
+    }
+
+    @Test
+    @DisplayName("Création d'une affectation dans la base de données")
+    public void creationReservationDB() {
+	System.out.println("\nTest en cours : Création d'une affectation dans la base de données");
+	try {
+	    // Prérequis du test : mise en place d'un étage et d'une table
+	    int numeroTable = 10;
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    directeur.ajouterTable(numeroTable, 10, etage);
+	    // La table créée
+	    Table tableActuelle = etage.getTables().get(0);
+
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1995 22:55:00";
+	    Date date1;
+	    date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    Reservation reservation = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+	    ResultSet resultSet = sql
+		    .executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + reservation.getId());
+	    assertTrue(resultSet.next());
+	}
+	catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Création d'une affectation dans la mémoire")
+    public void creationReservationJava() {
+	System.out.println("\nTest en cours : Création d'une affectation dans la mémoire");
+	try {
+	    // Prérequis du test : mise en place d'un étage et d'une table
+	    int numeroTable = 11;
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    directeur.ajouterTable(numeroTable, 10, etage);
+	    // La table créée
+	    Table tableActuelle = etage.getTables().get(0);
+	    int nombreReservationsAvant = Restaurant.getReservationsJour().size();
+
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1992 22:55:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+	    int nombreReservationsApres = Restaurant.getReservationsJour().size();
+	    assertTrue(nombreReservationsAvant < nombreReservationsApres);
+	}
+	catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Suppression d'une réservation dans la base de donées")
+    public void supprimerReservationDB() {
+	System.out.println("\nTest en cours : Suppression d'une réservation dans la base de donées");
+	try {
+	    int numeroTable = 12;
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    directeur.ajouterTable(numeroTable, 10, etage);
+	    // La table créée
+	    Table tableActuelle = etage.getTables().get(0);
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1992 22:55:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+
+	    // On supprime la table
+	    directeur.supprimerReservation(asuppr);
+	    ResultSet resultSet = sql
+		    .executerSelect("SELECT id FROM restaurant.reservation WHERE id=" + asuppr.getId());
+	    // On vérifie qu'aucune ligne n'est trouvée car l'id recherché a été supprimé
+	    assertFalse(resultSet.next());
+	}
+	catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Suppression d'une réservation dans la mémoire")
+    public void supprimerReservationJava() {
+	System.out.println("\nTest en cours : Suppression d'une réservation dans la mémoire");
+	try {
+	    int numeroTable = 12;
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    directeur.ajouterTable(numeroTable, 10, etage);
+	    // La table créée
+	    Table tableActuelle = etage.getTables().get(0);
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1992 22:55:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5, tableActuelle);
+	    int nbReservationAvant = Restaurant.getReservationsJour().size();
+	    // On supprime la table
+	    directeur.supprimerReservation(asuppr);
+	    int nbReservationApres = Restaurant.getReservationsJour().size();
+	    assertTrue(nbReservationApres < nbReservationAvant);
+	}
+	catch (ClassNotFoundException | SQLException | IOException | ParseException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Vérification de l'initialisation des horaires dans la base de données")
+    public void verifierInitialisationHorairesDB() {
+	System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la base de données");
+	try {
+	    directeur.ajouterEtage();
+	    ResultSet resultSet = sql.executerSelect("SELECT * FROM restaurant.restaurant");
+	    resultSet.next();
+	    // Récupération des valeurs par défaut
+	    Properties prop = new Properties();
+	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+	    prop.load(inputStream);
+	    int heureDejeunerOuverture = Integer.parseInt(prop.getProperty("default.heureDejeunerOuverture"));
+//			int heureDejeunerLimite = Integer.parseInt(prop.getProperty("default.heureDejeunerLimite"));
+//			int heureDinerOuverture = Integer.parseInt(prop.getProperty("default.heureDinerOuverture"));
+//			int heureDinerLimite = Integer.parseInt(prop.getProperty("default.heureDinerLimite"));
+	    assertEquals(heureDejeunerOuverture, resultSet.getInt("heureouverturedejeune"));
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Vérification de l'initialisation des horaires dans la mémoire")
+    public void verifierInitialisationHorairesJava() {
+	System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la mémoire");
+	try {
+	    directeur.ajouterEtage();
+	    // Récupération des valeurs par défaut
+	    Properties prop = new Properties();
+	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+	    prop.load(inputStream);
+	    int heureDejeunerOuverture = Integer.parseInt(prop.getProperty("default.heureDejeunerOuverture"));
+	    assertEquals(LocalTime.ofSecondOfDay(heureDejeunerOuverture), Restaurant.getHeureDejeunerOuverture());
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
     }
 
 }
