@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Sql {
 
@@ -764,20 +766,57 @@ public class Sql {
 		}
 	}
 
-//	// On veut avoir la plus petite table disponible pouvant contenir tous les
-//	// participants d'un repas
-//	public Table getMiniTable(int nombreParticipants, Date dateReservation) {
-//		// On regarde dans la base de données le jour donné toutes les tables de
-//		// réservation
-//		executerSelect(
-//				"SELECT tables.id FROM restaurant.tables as tables, restaurant.reservation as reservation, restaurant.affectation as affectation "
-//						+ "WHERE tables.capacite >= " + nombreParticipants + "ORDER BY tables.capacite ASC");
-//
-//		// On récupère les non réservée
-//
-//		// On essaie d'en récupérer une assez grande
-//
-//		return null;
-//	}
+	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+		try {
+			executerInsert(
+					"INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
+							+ dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"+ Etat.COMMANDEE.name() +"'"
+							+ ")");
+			int idCommande = demanderDernierId("commande");
+			return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// On veut avoir la plus petite table disponible pouvant contenir tous les
+	// participants d'un repas
+	public Table getMiniTable(int nombreParticipants, Date dateReservation) {
+		ResultSet resultset = executerSelect("SELECT restaurant.reservation WHERE datereservation");
+ 
+		
+		// On regarde dans la base de données le jour donné toutes les tables de
+		// réservation
+		executerSelect(
+				"SELECT tables.id FROM restaurant.tables as tables, restaurant.reservation as reservation, restaurant.affectation as affectation "
+						+ "WHERE tables.capacite >= " + nombreParticipants + "ORDER BY tables.capacite ASC");
+
+		// On récupère les non réservée
+
+		// On essaie d'en récupérer une assez grande
+
+		return null;
+	}
+
+	public void initialiserReservation() {
+		try {
+			// On récupère toutes les futures réservations
+			Date now = new Timestamp(new Date().getTime());
+			ResultSet resultset = executerSelect("SELECT restaurant.reservation WHERE datereservation>"+now);
+			while(resultset.next()) {
+				ResultSet resultsetTableReserve = executerSelect("SELECT * FROM restaurant.tables WHERE id="+resultset.getInt("tablereserve"));
+				resultsetTableReserve.next();
+				int idTable = resultsetTableReserve.getInt("id");
+				// On récupère la table avec le bon id
+				Table tableReserve = Restaurant.getToutesLesTables().stream().filter(tableCurrent->tableCurrent.getId() == idTable).collect(Collectors.toList()).get(0);
+				Restaurant.getReservationsJour().add(new Reservation(resultset.getInt("id"), resultset.getBoolean("valide"), resultset.getDate("dateappel"), resultset.getDate("datereservation"), resultset.getInt("tablereserve"), tableReserve));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 }

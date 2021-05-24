@@ -14,7 +14,7 @@ public final class Restaurant {
 	private static ArrayList<Plat> plats;
 	private static ArrayList<Affectation> affectationsJour;
 	private static ArrayList<Reservation> reservationsJour;
-	private static ArrayList<Table> toutesLesTables;
+	private static ArrayList<Commande> commandes;
 
 	private static LocalTime heureDejeunerOuverture;
 	private static LocalTime heureDejeunerLimite;
@@ -40,8 +40,10 @@ public final class Restaurant {
 			sql.initialiserPlats();
 			// Au lancement du programme en début de journée, aucune table n'est occupée
 			affectationsJour = new ArrayList<Affectation>();
+			
 			reservationsJour = new ArrayList<Reservation>();
-
+			sql.initialiserReservation();
+			commandes  = new ArrayList<Commande>();
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,13 +57,13 @@ public final class Restaurant {
 //		
 //	}
 
+	// Méthode pour récupérer l'ensemble des tables du restaurant
 	public static ArrayList<Table> getToutesLesTables() {
+		ArrayList<Table> toutesLesTables = new ArrayList<>();
+		etages.forEach(etage->etage.getTables().forEach(table->toutesLesTables.add(table)));
 		return toutesLesTables;
 	}
 
-	public static void setToutesLesTables(ArrayList<Table> toutesLesTables) {
-		Restaurant.toutesLesTables = toutesLesTables;
-	}
 
 	public static ArrayList<Ingredient> getIngredients() {
 		return ingredients;
@@ -156,6 +158,14 @@ public final class Restaurant {
 
 	public static void setReservationsJour(ArrayList<Reservation> reservationsJour) {
 		Restaurant.reservationsJour = reservationsJour;
+	}
+
+	public static ArrayList<Commande> getCommandes() {
+		return commandes;
+	}
+
+	public static void setCommandes(ArrayList<Commande> commandes) {
+		Restaurant.commandes = commandes;
 	}
 
 }

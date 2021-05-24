@@ -432,4 +432,17 @@ public class Directeur extends Personne {
 
     }
 
+	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+		try {
+		    Sql sql = new Sql();
+		    Commande commande = sql.creationCommande(dateCommande,plat,estEnfant, affectation);
+		    Restaurant.getCommandes().add(commande);
+		    return commande;
+		}
+		catch (ClassNotFoundException | SQLException | IOException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	}
+
 }
