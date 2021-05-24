@@ -15,7 +15,7 @@
 		<!-- Où stocker la distribution binaire -->
 		<project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
 		<!-- Nom de la classe principale -->
-		<project.main.classname>${project.groupId}.${project.artifactId}.Launcher</project.main.classname>
+		<project.main.classname>${project.groupId}.${project.artifactId}.Main</project.main.classname>
 		<!-- Nom du binaire -->
 		<project.bin.appname>run</project.bin.appname>
 	</properties>
@@ -113,6 +113,28 @@
                                     <id>${project.bin.appname}</id>
                                 </program>
                             </programs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- create a distribution archive -->
+                <!-- mvn install ou assembly:single -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>make-zip</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>zip.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>true</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>

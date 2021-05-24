@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 public class Ingredient {
 

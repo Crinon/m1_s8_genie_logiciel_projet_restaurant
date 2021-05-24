@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 import java.util.Scanner;
 
@@ -124,23 +124,23 @@ public class Main {
 
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
-			case "restaurant.Directeur":
+			case "fr.ul.miage.restaurant.Directeur":
 				Directeur.menuPrincipalDirecteur();
 				break;
 
-			case "restaurant.Maitrehotel":
+			case "fr.ul.miage.restaurant.Maitrehotel":
 
 				break;
 
-			case "restaurant.Cuisinier":
+			case "fr.ul.miage.restaurant.Cuisinier":
 
 				break;
 
-			case "restaurant.Serveur":
+			case "fr.ul.miage.restaurant.Serveur":
 
 				break;
 
-			case "restaurant.Assistant": // Assistant de service
+			case "fr.ul.miage.restaurant.Assistant": // Assistant de service
 
 				break;
 

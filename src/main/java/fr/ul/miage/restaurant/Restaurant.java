@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 import java.io.IOException;
 import java.sql.Date;
