@@ -22,6 +22,108 @@ public class Directeur extends Personne {
     public String toString() {
 	return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
     }
+    
+ // Menu principal du directeur
+ 	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
+
+ 		// Affichage menu
+ 		System.out.println("----------------------------------"
+ 					+ "\n0: Déconnexion"
+ 				+ "\n1: Commander un ingredient"
+ 					+ "\n2: Ajouter personnel" + "\n3: Modifier personnel"
+ 					+ "\n4: Supprimer personnel"
+ 					+ "\n5: Suivi serveur" + "\n6: Statistiques"
+ 					+ "\n7: AJOUTER METHODES DES AUTRES ROLES"
+ 					+ "\n----------------------------------\n");
+
+ 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+ 		// Déconnexion
+ 		case 0:
+ 			Main.persConnectee = null;
+ 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+ 			break;
+
+ 		// Commander un ingredient
+ 		case 1:
+ 			commanderIngredient();
+ 			break;
+
+ 		// Ajouter personnel
+ 		case 2:
+
+ 			break;
+
+ 		// Modifier personnel
+ 		case 3:
+
+ 			break;
+
+ 		// Supprimer personnel
+ 		case 4:
+
+ 			break;
+
+ 		// Suivi serveur
+ 		case 5:
+
+ 			break;
+
+ 		// Statistiques
+ 		case 6:
+
+ 			break;
+
+ 		// Méthodes des autres rôles....
+ 		case 7:
+
+ 			break;
+
+ 		default:
+ 			break;
+ 		}
+
+ 	}
+ 	
+ // Permet de commander un ingrédient pour l'ajouter au stock
+ 	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
+
+ 			// Affichage menu
+ 			System.out.println("----------------------------------"
+ 					+ "\n-----Commander un ingredient------"
+ 					+ "\nListe des ingrédients : " + Main.listingIngredients()
+ 					+ "\n----------------------------------\n"
+ 					+ "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
+ 					+ " pas dans la liste, ou le numéro d'un des ingrédients de la liste");
+ 			
+ 			String choix = Main.scanner.nextLine();
+ 			int qtIngredient = 0;
+ 			do {
+ 				if (!Main.estNulleOuVide(choix) && Main.uniquementLettres(choix)) {
+ 					// Nouvel ingrédient
+ 					String nomIngredient = choix.toLowerCase();
+ 					System.out.println(">Quantité de " + choix + " à commander ?");
+ 					qtIngredient = Main.choixUtilisateur(500); // Quantite max par commande : 500
+ 					((Directeur) Main.persConnectee).ajouterIngredient(nomIngredient);
+ 					((Directeur) Main.persConnectee).commanderIngredient(
+ 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+ 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
+
+ 				} else if (Restaurant.getIngredients().size() != 0 && !Main.estNulleOuVide(choix) && Main.uniquementChiffres(choix)
+ 						&& !Main.valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
+ 					// MAJ quantite d'un ingrédient existant
+ 					System.out.println(">Quantité à commander ?");
+ 					qtIngredient = Main.choixUtilisateur(500); // Quantite max par commande : 500
+ 					((Directeur) Main.persConnectee).commanderIngredient(
+ 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+ 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
+
+ 				} else {
+ 					System.out.println("Ereur, veuillez réessayer");
+ 				}
+ 			} while (Main.estNulleOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
+ 		
+ 	}
 
     public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
