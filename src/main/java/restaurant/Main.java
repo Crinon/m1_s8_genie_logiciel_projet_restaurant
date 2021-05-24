@@ -1,5 +1,7 @@
 package restaurant;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
@@ -90,7 +92,6 @@ public class Main {
 
 		String choix = "";
 
-		
 		while (estNulleOuVide(choix) || !uniquementChiffres(choix) || !valeurIntOk(Integer.parseInt(choix), valeurChoixMax)) {
 			System.out.println(">Veuillez saisir votre choix (valeur allant de 0 à " + valeurChoixMax + ")");
 			choix = scanner.nextLine();
@@ -109,30 +110,51 @@ public class Main {
 	}
 	
 	// Permet de commander un ingrédient pour l'ajouter au stock
-	public static void commanderIngredient() {
+	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
 		// Affichage menu
 		System.out.println("----------------------------------"
 					   + "\n-----Commander un ingredient------"
 				       + "\nListe des ingrédients : "
 				       + listingIngredients()
-				       + "\nVeuillez sélectionner le numéro de l'ingrédient à commander"
 				       + "\n----------------------------------\n"
+				       + "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
+				       + " pas dans la liste, ou le numéro d'un des ingrédients de la liste"
 				       );
 		
-		int numIngredient = choixUtilisateur(Restaurant.getIngredients().size() );
 		
-		System.out.println("Veuillez sélectionner la quantite de " + Restaurant.getIngredients().get(numIngredient));
-		int qtIngredient = choixUtilisateur(500); //Quantite max par commande : 500
+		String choix = scanner.nextLine();
+		int qtIngredient = 0;
+		do {
+			if (!estNulleOuVide(choix) && uniquementLettres(choix)) {
+				// Nouvel ingrédient
+				choix = choix.toLowerCase();
+				System.out.println(">Quantite de " + choix + " à commander");
+				qtIngredient = choixUtilisateur(500); //Quantite max par commande : 500
+			}else if(!estNulleOuVide(choix) && uniquementChiffres(choix) && !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
+				// MAJ quantite d'un ingrédient existant
+				System.out.println(">Quantite de " + choix + " à commander");
+				qtIngredient = choixUtilisateur(500); //Quantite max par commande : 500
+			}else{
+				System.out.println("Ereur de saisie, veuillez réessayer");
+			}
+		}while (estNulleOuVide(choix) || (!uniquementLettres(choix) && !uniquementChiffres(choix)));
+
+		//Valider ou annuler
+		System.out.println("Annuler (0) ou valider (1) ?");
+		if (choixUtilisateur(1) == 1 ) {
+			if (persConnectee.ajouterIngredient(choix,Restaurant.getIngredients()) ) {
+				persConnectee.commanderIngredient(Restaurant.getIngredients().get(Restaurant.getIngredients().size()-1), qtIngredient); //Dernier inséré
+				System.out.println("Commande passée (quantite : " + qtIngredient + ")");
+			}
+		}else {
+			System.out.println("Commande annulée");
+		}
 		
-		//Ajout de l'ingrédient
-		//APPEL DE LA METHODE ajoutIngredient
 		
-		
-		//Valider ou retour
 	}
 
 	// Menu principal du directeur
-	public static void  menuPrincipalDirecteur() {
+	public static void  menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
 		System.out.println("----------------------------------"

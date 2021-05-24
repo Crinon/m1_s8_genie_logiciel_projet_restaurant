@@ -401,6 +401,7 @@ public class Sql {
 			System.out.println("Quantité nouvelle : " + nouvelleQuantite);
 			executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
 					+ ingredient.getId());
+			
 			return true;
 		} else {
 			return false;
