@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 import java.util.ArrayList;
 

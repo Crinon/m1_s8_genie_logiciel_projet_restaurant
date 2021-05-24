@@ -17,19 +17,20 @@ import java.util.Properties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import restaurant.Categorie;
-import restaurant.Directeur;
-import restaurant.Etage;
-import restaurant.EtatTable;
-import restaurant.Ingredient;
-import restaurant.Personne;
-import restaurant.Plat;
-import restaurant.Reservation;
-import restaurant.Restaurant;
-import restaurant.Serveur;
-import restaurant.Sql;
-import restaurant.Table;
-import restaurant.Type;
+
+import fr.ul.miage.restaurant.Categorie;
+import fr.ul.miage.restaurant.Directeur;
+import fr.ul.miage.restaurant.Etage;
+import fr.ul.miage.restaurant.EtatTable;
+import fr.ul.miage.restaurant.Ingredient;
+import fr.ul.miage.restaurant.Personne;
+import fr.ul.miage.restaurant.Plat;
+import fr.ul.miage.restaurant.Reservation;
+import fr.ul.miage.restaurant.Restaurant;
+import fr.ul.miage.restaurant.Serveur;
+import fr.ul.miage.restaurant.Sql;
+import fr.ul.miage.restaurant.Table;
+import fr.ul.miage.restaurant.Type;
 
 @DisplayName("Tests du projet restaurant")
 public class TestUnitaire {

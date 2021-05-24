@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 import java.util.Scanner;
 
@@ -23,7 +23,7 @@ public class Main {
 					"Veuillez saisir 0 pour quitter l'application,\n ou votre identifiant pour vous connecter.");
 			String identifiant = scanner.nextLine();
 
-			if (!estNulleOuVide(identifiant) && identifiant.equals("0")) {
+			if (!estNullOuVide(identifiant) && identifiant.equals("0")) {
 				quitterApplication();
 				return null;
 			}
@@ -58,7 +58,7 @@ public class Main {
 	}
 
 	// Vérifie que la chaine de caractères n'est pas nulle ni vide
-	public static boolean estNulleOuVide(String valeur) {
+	public static boolean estNullOuVide(String valeur) {
 
 		if (valeur == null || valeur == "") {
 			return true;
@@ -90,7 +90,7 @@ public class Main {
 
 		String choix = "";
 
-		while (estNulleOuVide(choix) || !uniquementChiffres(choix)
+		while (estNullOuVide(choix) || !uniquementChiffres(choix)
 				|| !valeurIntOk(Integer.parseInt(choix), valeurChoixMax)) {
 			System.out.println(">Veuillez saisir votre choix (valeur allant de 0 à " + valeurChoixMax + ")");
 			choix = scanner.nextLine();

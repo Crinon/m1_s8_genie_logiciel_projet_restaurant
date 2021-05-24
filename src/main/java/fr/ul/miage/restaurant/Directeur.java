@@ -1,4 +1,4 @@
-package restaurant;
+package fr.ul.miage.restaurant;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -99,7 +99,7 @@ public class Directeur extends Personne {
  			String choix = Main.scanner.nextLine();
  			int qtIngredient = 0;
  			do {
- 				if (!Main.estNulleOuVide(choix) && Main.uniquementLettres(choix)) {
+ 				if (!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)) {
  					// Nouvel ingrédient
  					String nomIngredient = choix.toLowerCase();
  					System.out.println(">Quantité de " + choix + " à commander ?");
@@ -109,19 +109,19 @@ public class Directeur extends Personne {
  							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
  					System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
 
- 				} else if (Restaurant.getIngredients().size() != 0 && !Main.estNulleOuVide(choix) && Main.uniquementChiffres(choix)
- 						&& !Main.valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
+ 				} else if (Restaurant.getIngredients().size() != 0 && !Main.estNullOuVide(choix) && Main.uniquementChiffres(choix)
+ 						&& Main.valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) {
  					// MAJ quantite d'un ingrédient existant
  					System.out.println(">Quantité à commander ?");
  					qtIngredient = Main.choixUtilisateur(500); // Quantite max par commande : 500
  					((Directeur) Main.persConnectee).commanderIngredient(
- 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+ 							Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
  					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
 
  				} else {
  					System.out.println("Ereur, veuillez réessayer");
  				}
- 			} while (Main.estNulleOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
+ 			} while (Main.estNullOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
  		
  	}
 
