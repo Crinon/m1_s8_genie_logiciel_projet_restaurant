@@ -2,6 +2,7 @@ package restaurant;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,18 +92,22 @@ public final class Restaurant {
     private static boolean memeDate(Date dateVenue, Date dateReservation) {
 	Calendar calendarVenue = Calendar.getInstance();
 	calendarVenue.setTime(dateVenue);
+	LocalDate localdateVenue = LocalDate.of(calendarVenue.get(Calendar.YEAR), calendarVenue.get(Calendar.MONTH),
+		calendarVenue.get(Calendar.DAY_OF_MONTH));
 	LocalTime heureDateVenue = LocalTime.of(calendarVenue.get(Calendar.HOUR_OF_DAY),
 		calendarVenue.get(Calendar.MINUTE), calendarVenue.get(Calendar.SECOND));
 	Calendar calendarReservation = Calendar.getInstance();
 	calendarReservation.setTime(dateReservation);
+	LocalDate localdateReservation = LocalDate.of(calendarReservation.get(Calendar.YEAR),
+		calendarReservation.get(Calendar.MONTH), calendarReservation.get(Calendar.DAY_OF_MONTH));
 	LocalTime heureDateReservation = LocalTime.of(calendarReservation.get(Calendar.HOUR_OF_DAY),
 		calendarReservation.get(Calendar.MINUTE), calendarReservation.get(Calendar.SECOND));
-	if ((heureDateVenue.isAfter(heureDejeunerOuverture) && heureDateVenue.isBefore(heureDejeunerLimite)
-		&& heureDateReservation.isAfter(heureDejeunerOuverture)
+	if (localdateVenue.equals(localdateReservation) && ((heureDateVenue.isAfter(heureDejeunerOuverture)
+		&& heureDateVenue.isBefore(heureDejeunerLimite) && heureDateReservation.isAfter(heureDejeunerOuverture)
 		&& heureDateReservation.isBefore(heureDejeunerLimite))
 		|| (heureDateVenue.isAfter(heureDinerOuverture) && heureDateVenue.isBefore(heureDinerLimite)
 			&& heureDateReservation.isAfter(heureDinerOuverture)
-			&& heureDateReservation.isBefore(heureDinerLimite))) {
+			&& heureDateReservation.isBefore(heureDinerLimite)))) {
 	    return true;
 	}
 	return false;
