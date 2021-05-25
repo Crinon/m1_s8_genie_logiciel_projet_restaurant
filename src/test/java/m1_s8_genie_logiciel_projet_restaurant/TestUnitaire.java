@@ -1397,6 +1397,87 @@ public class TestUnitaire {
     }
 
     @Test
+    @DisplayName("Création d'une facture dans la base de données")
+    public void creerFactureDB() {
+	System.out.println("\nTest en cours : Création d'une facture dans la base de données");
+	try {
+	    // Prérequis : étage, table, plat et affectation
+	    int numero = incr();
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+	    // Création de l'affectation (date immédiate)
+	    Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2);
+	    Date dateCommande = new Timestamp(new Date().getTime());
+	    // Création du plat
+	    String nomPlat = "Gigot d'agneau";
+	    Double prixPlat = 9.5;
+	    int tempsPrepa = 5;
+	    boolean surCarte = true;
+	    Type type = Type.ENTREE;
+	    Categorie categorie = Categorie.POISSON;
+	    String nomIngredientSaumon = "agneau";
+	    String nomIngredientToast = "haricots";
+	    int quantiteSaumon = 1;
+	    int quantiteTartine = 10;
+	    directeur.ajouterIngredient(nomIngredientSaumon);
+	    Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+	    directeur.ajouterIngredient(nomIngredientToast);
+	    Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+	    HashMap<Ingredient, Integer> recette = new HashMap<>();
+	    recette.put(saumon, quantiteSaumon);
+	    recette.put(tartine, quantiteTartine);
+	    Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+	    boolean estEnfant = true;
+	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    ResultSet resultSet = sql
+		    .executerSelect("SELECT facture FROM restaurant.affectation WHERE id=" + affectation.getId());
+	    resultSet.next();
+	    assertEquals(prixPlat * 3, resultSet.getDouble("facture"), 0.001);
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Test
+    @DisplayName("Création d'une facture dans la mémoire")
+    public void creerFactureJava() {
+	System.out.println("\nTest en cours : Création d'une facture dans la mémoire");
+	// Prérequis : étage, table, plat et affectation
+	int numero = incr();
+	// Etage qui va recevoir une table
+	Etage etage = directeur.ajouterEtage();
+	// On ajoute la table
+	Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+	// Création de l'affectation (date immédiate)
+	Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2);
+	Date dateCommande = new Timestamp(new Date().getTime());
+	// Création du plat
+	String nomPlat = "Cassoulet";
+	Double prixPlat = 9.5;
+	int tempsPrepa = 5;
+	boolean surCarte = true;
+	Type type = Type.ENTREE;
+	Categorie categorie = Categorie.POISSON;
+	Ingredient ingredient1 = directeur.ajouterIngredient("saussice");
+	Ingredient ingredient2 = directeur.ajouterIngredient("flageolets");
+	HashMap<Ingredient, Integer> recette = new HashMap<>();
+	recette.put(ingredient1, 5);
+	recette.put(ingredient2, 7);
+	Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+	boolean estEnfant = true;
+	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	assertEquals(prixPlat * 3, affectation.getFacture(), 0.001);
+    }
+
+    @Test
     @DisplayName("Baisse de stock au passage d'une commande dans la base de données")
     public void baisseStockCommandeDB() {
 	System.out.println("\nTest en cours : Baisse de stock au passage d'une commande dans la base de données");

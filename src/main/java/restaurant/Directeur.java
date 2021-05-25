@@ -201,6 +201,14 @@ public class Directeur extends Personne {
 	return true;
     }
 
+    public void creerFacture(Affectation affectation) {
+	Sql sql = new Sql();
+	double prixFacture = affectation.getCommandes().stream().mapToDouble(commande -> commande.getPlat().getPrix())
+		.sum();
+	sql.creerFacture(affectation, prixFacture);
+	affectation.setFacture(prixFacture);
+    }
+
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne) {
 	Sql sql;
 	sql = new Sql();
@@ -259,6 +267,7 @@ public class Directeur extends Personne {
     public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
 	Sql sql = new Sql();
 	Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
+	affectation.getCommandes().add(commande);
 	Restaurant.getCommandes().add(commande);
 	return commande;
     }

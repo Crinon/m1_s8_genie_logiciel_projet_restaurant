@@ -1018,4 +1018,9 @@ public class Sql {
     public void modifierEtatCommande(Commande commande, Etat etat) {
 	executerUpdate("UPDATE restaurant.commande SET etat = '" + etat.name() + "' WHERE id = " + commande.getId());
     }
+
+    public void creerFacture(Affectation affectation, double prixFacture) {
+	executerUpdate(
+		"UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
+    }
 }
