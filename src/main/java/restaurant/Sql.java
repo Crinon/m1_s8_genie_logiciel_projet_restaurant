@@ -659,13 +659,9 @@ public class Sql {
 //		Sa disponibilité sur la carte
 //		Son type
 //		Sa catégorie
-	String typeConverted = type.toString().toLowerCase().substring(0, 1).toUpperCase()
-		+ type.toString().toLowerCase().substring(1);
-	String categorieConverted = categorie.toString().toLowerCase().toString().toLowerCase().substring(0, 1)
-		.toUpperCase() + categorie.toString().toLowerCase().toString().toLowerCase().substring(1);
 	executerInsert(
 		"INSERT INTO restaurant.plat (nom,typePlat,typeIngredient,prix,dureePreparation,disponibleCarte) VALUES ('"
-			+ nomPlat + "','" + typeConverted + "','" + categorieConverted + "', " + prixPlat + ","
+			+ nomPlat + "','" + type.name() + "','" + categorie.name() + "'," + prixPlat + ","
 			+ +dureePreparation + "," + disponibleCarte + ")");
 	int idPlat = demanderDernierId("plat");
 //			Ensuite il faut sa recette
