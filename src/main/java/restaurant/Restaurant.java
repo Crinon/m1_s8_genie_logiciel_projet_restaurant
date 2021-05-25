@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 public final class Restaurant {
 
+	final static int TAILLE_MAX_NOM_INGREDIENT = 30; //Nombre de caractères max du nom d'un ingrédient
+	final static int QUANTITE_MAX_COMMANDE = 500; //quantité maximale pour une commande
+	final static int QUANTITE_MAX_STOCK = 20000; //quantité maximale de stock pour un ingrédient
+	
     private static ArrayList<Etage>	  etages;
     private static ArrayList<Personne>	  personnel;
     private static ArrayList<Ingredient>  ingredients;
@@ -26,6 +30,7 @@ public final class Restaurant {
     private static LocalTime heureDinerOuverture;
     private static LocalTime heureDinerLimite;
     private static int	     nbTableMax;
+    
 
     public static void initialisation() {
 	Sql sql;
