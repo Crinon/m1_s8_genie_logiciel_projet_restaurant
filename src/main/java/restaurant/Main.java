@@ -1,7 +1,5 @@
 package restaurant;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
@@ -110,7 +108,7 @@ public class Main {
 	}
 	
 	 // Permet de commander un ingrédient pour l'ajouter au stock
- 	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
+ 	public static void commanderIngredient() {
 
  			// Affichage menu
  			System.out.println("----------------------------------"
@@ -150,7 +148,7 @@ public class Main {
  	}
  	
  // Menu principal du directeur
-  	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
+  	public static void menuPrincipalDirecteur() {
 
   		// Affichage menu
   		System.out.println("----------------------------------"
@@ -212,7 +210,7 @@ public class Main {
   	}
   	
     // Menu principal du maitre d hotel
- 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
+ 	public static void menuPrincipalMaitredhotel() {
 
  		// Affichage menu
  		System.out.println("----------------------------------"
@@ -246,7 +244,7 @@ public class Main {
 
  	}
  	
- 	public static void menuPrincipalCuisinier() throws ClassNotFoundException, SQLException, IOException {
+ 	public static void menuPrincipalCuisinier() {
 
  		// Affichage menu
  		System.out.println("----------------------------------"
@@ -287,7 +285,7 @@ public class Main {
  	}
  	
  	 // Menu principal du serveur
- 	public static void menuPrincipalServeur() throws ClassNotFoundException, SQLException, IOException {
+ 	public static void menuPrincipalServeur() {
  		
  		// Affichage menu
  		System.out.println("----------------------------------"
@@ -322,7 +320,7 @@ public class Main {
  	}
  	
     // Menu principal de l'assistant
- 	public static void menuPrincipalAssistant() throws ClassNotFoundException, SQLException, IOException {
+ 	public static void menuPrincipalAssistant() {
 
  		// Affichage menu
  		System.out.println("----------------------------------"

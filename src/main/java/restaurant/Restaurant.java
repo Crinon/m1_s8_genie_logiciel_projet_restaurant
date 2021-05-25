@@ -30,27 +30,29 @@ public final class Restaurant {
 
     public static void initialisation() {
 	Sql sql;
-	try {
 	    sql = new Sql();
+	    // Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+	    System.out.println("Vérification s'il s'agit du premier démarrage");
+	    sql.premierDemarrage();
+	    System.out.println("Initialisation des horaires du restaurant");
 	    sql.initialiserHoraires();
+	    System.out.println("Chargement des constantes");
 	    sql.initialiserConstantes();
+	    System.out.println("Chargement des ingrédients existants");
 	    sql.initialiserIngredients();
+	    System.out.println("Chargement des étages existants");
 	    sql.initialiserEtages();
+	    System.out.println("Chargement des tables par étage");
 	    for (Etage etage : etages) {
 		etage.initialiserTables();
 	    }
-	    // Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
-	    sql.premierDemarrage();
-	    // Initialisation du personnel
+	    System.out.println("Chargement du personnel");
 	    sql.initialiserPersonnel();
+	    System.out.println("Chargement des plats existants");
 	    sql.initialiserPlats();
+	    System.out.println("Chargement des réservations");
 	    sql.initialiserReservation();
 	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-    }
 
 //	public static void premierDemarrage(Sql sql) {
 //		// Regarde si c'est le premier démarrage de l'application
