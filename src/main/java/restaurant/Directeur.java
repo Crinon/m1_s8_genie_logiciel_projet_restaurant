@@ -21,10 +21,6 @@ public class Directeur extends Personne {
     public String toString() {
 	return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
     }
-    
-    
- 	
-
 
     public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
@@ -125,21 +121,19 @@ public class Directeur extends Personne {
 	}
     }
 
-    public void supprimerTable(Table tableToremove, ArrayList<Table> tables){
-
+    public void supprimerTable(Table tableToremove, ArrayList<Table> tables) {
 	try {
-		boolean success;
-		Sql sql;
-		sql = new Sql();	
-		success = sql.deleteTable(tableToremove);
-		if (success) {
-		    tables.remove(tableToremove);
-		}
-	} catch (ClassNotFoundException | SQLException | IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	    boolean success;
+	    Sql sql;
+	    sql = new Sql();
+	    success = sql.deleteTable(tableToremove);
+	    if (success) {
+		tables.remove(tableToremove);
+	    }
 	}
-
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
     }
 
     public boolean ajouterIngredient(String nom) {
@@ -232,11 +226,12 @@ public class Directeur extends Personne {
 	}
     }
 
-    public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
+    public Affectation creationAffectation(Date dateDebut, int nbPersonne) {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
+	    Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne,
+		    Restaurant.getMiniTable(nbPersonne, dateDebut));
 	    Restaurant.getAffectationsJour().add(affectation);
 	    return affectation;
 	}
@@ -260,11 +255,12 @@ public class Directeur extends Personne {
 	return false;
     }
 
-    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne) {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
+	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne,
+		    Restaurant.getMiniTable(nbPersonne, dateReserve));
 	    Restaurant.getReservationsJour().add(reservation);
 	    return reservation;
 	}
@@ -325,24 +321,21 @@ public class Directeur extends Personne {
 	    Restaurant.getReservationsJour().remove(index);
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-
-
     }
 
-	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
-		try {
-		    Sql sql = new Sql();
-		    Commande commande = sql.creationCommande(dateCommande,plat,estEnfant, affectation);
-		    Restaurant.getCommandes().add(commande);
-		    return commande;
-		}
-		catch (ClassNotFoundException | SQLException | IOException e) {
-		    e.printStackTrace();
-		}
-		return null;
+    public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+	try {
+	    Sql sql = new Sql();
+	    Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    Restaurant.getCommandes().add(commande);
+	    return commande;
 	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
 
 }
