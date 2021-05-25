@@ -8,8 +8,6 @@ public class Main {
 	public static Personne persConnectee = null;
 
 	public static void quitterApplication() {
-		Sql sql = new Sql();
-		sql.hardReset(sql.hardResetPostgres);
 		System.out.println("\nAu revoir et à bientôt !");
 		System.exit(1);
 	}
