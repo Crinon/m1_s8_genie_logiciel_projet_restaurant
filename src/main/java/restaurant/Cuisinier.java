@@ -54,7 +54,6 @@ public class Cuisinier extends Personne {
  		}
 
  	}
-	
 
 	// Il choisit parmis les plats pas encore en carte
 	public void ajouterCarte(Plat plat) {

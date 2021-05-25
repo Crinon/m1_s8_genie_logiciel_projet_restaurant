@@ -2,7 +2,6 @@ package restaurant;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,27 +50,27 @@ public class Directeur extends Personne {
 
  		// Ajouter personnel
  		case 2:
- 			//TODO
+
  			break;
 
  		// Modifier personnel
  		case 3:
- 			//TODO
+
  			break;
 
  		// Supprimer personnel
  		case 4:
- 			//TODO
+
  			break;
 
  		// Suivi serveur
  		case 5:
- 			//TODO
+
  			break;
 
  		// Statistiques
  		case 6:
- 			//TODO
+
  			break;
 
  		// Méthodes des autres rôles....
@@ -85,81 +84,9 @@ public class Directeur extends Personne {
 
  	}
  	
- 	
-  	
-  	
- // Permet de commander un ingrédient pour l'ajouter au stock
- 	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
 
- 			// Affichage menu
- 			System.out.println("----------------------------------"
- 					+ "\n-----Commander un ingredient------"
- 					+ "\nListe des ingrédients : " + Main.listingIngredients()
- 					+ "\n----------------------------------\n"
- 					+ "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
- 					+ " pas dans la liste, ou le numéro d'un des ingrédients de la liste");
- 			
- 			String choix = Main.scanner.nextLine();
- 			int qtIngredient = 0;
- 			do {
- 				if (!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)) {
- 					// Nouvel ingrédient
- 					String nomIngredient = choix.toLowerCase();
- 					System.out.println(">Quantité de " + choix + " à commander ?");
- 					qtIngredient = Main.choixUtilisateur(500); // Quantite max par commande : 500
- 					((Directeur) Main.persConnectee).ajouterIngredient(nomIngredient);
- 					((Directeur) Main.persConnectee).commanderIngredient(
- 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
- 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
 
- 				} else if (Restaurant.getIngredients().size() != 0 && !Main.estNullOuVide(choix) && Main.uniquementChiffres(choix)
- 						&& Main.valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) {
- 					// MAJ quantite d'un ingrédient existant
- 					System.out.println(">Quantité à commander ?");
- 					qtIngredient = Main.choixUtilisateur(500); // Quantite max par commande : 500
- 					((Directeur) Main.persConnectee).commanderIngredient(
- 							Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
- 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
-
- 				} else {
- 					System.out.println("Ereur, veuillez réessayer");
- 				}
- 			} while (Main.estNullOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
- 	}
-
- 	//Permet de récupérer les paramètres d'insertion d'une personne
- 	public void ajouterPersonnel() {
- 		
- 		String choix = null;
- 		String role = null;
- 		String login = null;
-
- 		//TODO
- 		do {
- 	 		System.out.println(">Login de la personne à ajouter ?");
- 	 		choix = Main.scanner.nextLine();
-		
-	 		if(!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)){
-	 			login = choix;
-	 			
-	 			System.out.println(">Role de la personne à ajouter ?");
-	 	 		choix = Main.scanner.nextLine();
-	 	 		if(!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)){
-	 	 			role = choix;
-	 	 			//TODO
-	 	 		}
-	 	 		
-	 	 		//Tests à effectuer
-	 	 		//TODO
-	 	 		insererPersonne(login, role);
-	 		}else {
-				System.out.println("Mauvaise entrée");
-			}
- 		} while (login == null && role == null);
- 		
- 	}
- 	
-    public Personne insererPersonne(String nom, String role) {
+    public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
 	// Objet pour intéragir avec la base de données
 	try {
@@ -239,31 +166,40 @@ public class Directeur extends Personne {
 	Restaurant.getEtages().remove(Restaurant.getEtages().size() - 1);
     }
 
-    public void ajouterTable(int numero, int capacite, Etage etage)
+    public Table ajouterTable(int numero, int capacite, Etage etage)
 	    throws ClassNotFoundException, SQLException, IOException {
 	Sql sql = new Sql();
 	sql.insererTable(numero, capacite, etage);
-	etage.addTable(new Table(sql.demanderDernierId("tables"), capacite, numero, EtatTable.Libre));
+	Table nouvelleTable = new Table(sql.demanderDernierId("tables"), numero, capacite, EtatTable.Libre);
+	etage.addTable(nouvelleTable);
+	return nouvelleTable;
     }
 
     public void modifierNumeroTable(Table table, int newNumero)
 	    throws ClassNotFoundException, SQLException, IOException {
 	boolean success;
 	Sql sql = new Sql();
-	success = sql.updateTable(table.getNumero(), newNumero, table);
+	success = sql.updateTable(table, newNumero);
 	if (success) {
 	    table.setNumero(newNumero);
 	}
     }
 
-    public void supprimerTable(Table tableToremove, ArrayList<Table> tables)
-	    throws ClassNotFoundException, SQLException, IOException {
-	boolean success;
-	Sql sql = new Sql();
-	success = sql.deleteTable(tableToremove);
-	if (success) {
-	    tables.remove(tableToremove);
+    public void supprimerTable(Table tableToremove, ArrayList<Table> tables){
+
+	try {
+		boolean success;
+		Sql sql;
+		sql = new Sql();	
+		success = sql.deleteTable(tableToremove);
+		if (success) {
+		    tables.remove(tableToremove);
+		}
+	} catch (ClassNotFoundException | SQLException | IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
 	}
+
     }
 
     public boolean ajouterIngredient(String nom) {
@@ -356,7 +292,7 @@ public class Directeur extends Personne {
 	}
     }
 
-    public Affectation creationAffectation(Timestamp dateDebut, int nbPersonne, Table table) {
+    public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
 	Sql sql;
 	try {
 	    sql = new Sql();
@@ -455,5 +391,18 @@ public class Directeur extends Personne {
 
 
     }
+
+	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+		try {
+		    Sql sql = new Sql();
+		    Commande commande = sql.creationCommande(dateCommande,plat,estEnfant, affectation);
+		    Restaurant.getCommandes().add(commande);
+		    return commande;
+		}
+		catch (ClassNotFoundException | SQLException | IOException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	}
 
 }

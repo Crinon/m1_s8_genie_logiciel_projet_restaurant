@@ -61,5 +61,4 @@ public class Maitrehotel extends Personne {
     }
 
 
-
 }

@@ -18,7 +18,16 @@ public class Table {
 	this.reservation = null;
     }
 
-    public int getId() {
+
+    
+    @Override
+	public String toString() {
+		return "Table [numero=" + numero + ", capacite=" + capacite + ", etat=" + etat + ", reservation=" + reservation
+				+ ", serveur=" + serveur + ", id=" + id + "]";
+	}
+
+
+	public int getId() {
 	return id;
     }
 

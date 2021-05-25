@@ -1,5 +1,7 @@
 package restaurant;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
@@ -106,6 +108,46 @@ public class Main {
 		}
 		return liste;
 	}
+	
+	 // Permet de commander un ingrédient pour l'ajouter au stock
+ 	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
+
+ 			// Affichage menu
+ 			System.out.println("----------------------------------"
+ 					+ "\n-----Commander un ingredient------"
+ 					+ "\nListe des ingrédients : " + listingIngredients()
+ 					+ "\n----------------------------------\n"
+ 					+ "\nVeuillez taper un nom si vous voulez commander un ingrédient qui ne figure"
+ 					+ " pas dans la liste, ou le numéro d'un des ingrédients de la liste");
+ 			
+ 			String choix = scanner.nextLine();
+ 			int qtIngredient = 0;
+ 			do {
+ 				if (!estNullOuVide(choix) && uniquementLettres(choix)) {
+ 					// Nouvel ingrédient
+ 					String nomIngredient = choix.toLowerCase();
+ 					System.out.println(">Quantité de " + choix + " à commander ?");
+ 					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+ 					((Directeur) persConnectee).ajouterIngredient(nomIngredient);
+ 					((Directeur) persConnectee).commanderIngredient(
+ 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+ 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
+
+ 				} else if (Restaurant.getIngredients().size() != 0 && !estNullOuVide(choix) && uniquementChiffres(choix)
+ 						&& !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
+ 					// MAJ quantite d'un ingrédient existant
+ 					System.out.println(">Quantité à commander ?");
+ 					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+ 					((Directeur) persConnectee).commanderIngredient(
+ 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+ 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
+
+ 				} else {
+ 					System.out.println("Ereur, veuillez réessayer");
+ 				}
+ 			} while (estNullOuVide(choix) || (!uniquementLettres(choix) && !uniquementChiffres(choix)));
+ 		
+ 	}
 
 	public static void main(String[] args) throws Exception {
 

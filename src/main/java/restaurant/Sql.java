@@ -7,13 +7,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class Sql {
 
@@ -222,6 +224,7 @@ public class Sql {
 	    }
 	    newPersonne.setIdentifiant(login);
 	    newPersonne.setId(id);
+	    newPersonne.setMasterid(demanderDernierId("personne"));
 
 	}
 	catch (SQLException e) {
@@ -277,9 +280,10 @@ public class Sql {
      * @throws SQLException
      */
     public void supprimerPersonne(Personne personne) throws SQLException {
-	executerDelete(
-		"DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = " + personne.getId());
-	executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getId());
+	executerDelete("DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = "
+		+ personne.getMasterid());
+
+	executerDelete("DELETE FROM restaurant.personne WHERE id = " + personne.getMasterid());
     }
 
     public void insererEtage() {
@@ -324,7 +328,7 @@ public class Sql {
     public void insererTable(int numero, int capacite, Etage etage) {
 	// On vérifie si la capacité donnée est supérieur à 0
 	if (capacite < 1) {
-	    System.out.println("Vous avez tenté de créer une table avec une capacité inférieure à 1");
+	    System.err.println("Vous avez tenté de créer une table avec une capacité inférieure à 1");
 	    return;
 	}
 	// On vérifie si le numéro de table est disponible
@@ -333,7 +337,7 @@ public class Sql {
 	try {
 	    resultSet.next();
 	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
-		System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
+		System.err.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
 	    }
 	    else {
 		executerInsert("INSERT INTO restaurant.tables (numero,capacite,etat,etage) VALUES (" + numero + ","
@@ -347,23 +351,30 @@ public class Sql {
     }
 
     // Méthode pour mettre à jour le numéro de la table
-    public boolean updateTable(int numero, int newNumero, Table table) {
+    public boolean updateTable(Table table, int newNumero) {
+	int ancienNumero = table.getNumero();
 	// On vérifie que le nouveau numéro est différent de l'actuel
-	if (numero == newNumero) {
-	    System.out.println(
+	if (ancienNumero == newNumero) {
+	    System.err.println(
 		    "Vous avez tenté de mettre à jour le numéro d'une table mais l'ancien numéro est le même que celui spécifié");
 	    return false;
 	}
 	// On vérifie si le nouveau numéro est disponible
 	ResultSet resultSet = executerSelect(
-		"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + numero);
+		"SELECT count(*) as count FROM restaurant.tables WHERE numero = " + ancienNumero);
 	try {
 	    resultSet.next();
+	    System.out.println("nombre de table avec le numéro " + ancienNumero + " "
+		    + Integer.parseInt(resultSet.getString("count")));
 	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
-		System.out.println("Vous avez tenté de créer une table avec un numéro déjà utilisé");
+		executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE id = " + table.getId());
+		return true;
+	    }
+	    else {
+		System.err.println(
+			"Mise à jour de table : Vous avez tenté de modifier une table avec un numéro inexistant");
 		return false;
 	    }
-	    executerUpdate("UPDATE restaurant.tables SET numero=" + newNumero + " WHERE id = " + table.getId());
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -380,13 +391,13 @@ public class Sql {
 	ResultSet resultSet = executerSelect(
 		"SELECT count(*) as count FROM restaurant.ingredient WHERE nom = '" + nom + "'");
 	if (resultSet == null) {
-	    System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 	    return false;
 	}
 	resultSet.next();
 
 	if (Integer.parseInt(resultSet.getString("count")) != 0) {
-	    System.out.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 	    return false;
 	}
 
@@ -418,10 +429,11 @@ public class Sql {
 	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
 		    + ingredient.getId());
 	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-			if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
-				Restaurant.getIngredients().get(i).setQuantite(Restaurant.getIngredients().get(i).getQuantite() + nouvelleQuantite);
-			}
+		if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
+		    Restaurant.getIngredients().get(i)
+			    .setQuantite(Restaurant.getIngredients().get(i).getQuantite() + nouvelleQuantite);
 		}
+	    }
 	    return true;
 	}
 	else {
@@ -440,7 +452,6 @@ public class Sql {
 	    Restaurant.setIngredients(ingredients);
 	}
 	catch (SQLException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
     }
@@ -490,16 +501,10 @@ public class Sql {
 	    ResultSet resultSet = executerSelect("SELECT * FROM restaurant.directeur");
 	    if (resultSet.next() == false) {
 		// il faut créer un directeur automatiquement
-		Personne directeur = new Directeur(1, "directeur", "directeur0");
 		ajouterPersonne("directeur", "directeur");
-	    }
-	    else {
-		// Rien à faire, il y a déjà un directeur, donc l'application peut fonctionner
-		// correctement
 	    }
 	}
 	catch (SQLException e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 
@@ -544,7 +549,6 @@ public class Sql {
 	}
     }
 
-
     public Plat insererPlat(String nomPlat, Double prixPlat, int dureePreparation, boolean disponibleCarte, Type type,
 	    Categorie categorie, HashMap<Ingredient, Integer> recetteAcreer) {
 	// Pour un plat il faut
@@ -568,9 +572,9 @@ public class Sql {
 //			id ingrédient
 //			id du plat fraichelent créé
 //			quantité ingrédient
-	    Iterator it = recetteAcreer.entrySet().iterator();
+	    Iterator<Entry<Ingredient, Integer>> it = recetteAcreer.entrySet().iterator();
 	    while (it.hasNext()) {
-		Map.Entry pair = (Map.Entry) it.next();
+		Entry<Ingredient, Integer> pair = it.next();
 		Ingredient ingredient = (Ingredient) pair.getKey();
 		int quantite = (int) pair.getValue();
 		executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES (" + quantite + ","
@@ -585,8 +589,6 @@ public class Sql {
 	return null;
     }
 
-    // WORK IN
-    // PROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESSPROGRESS
     public void initialiserPlats() {
 	// Initialisation de la liste d'étages à retrouner
 	ArrayList<Plat> plats = new ArrayList<>();
@@ -596,9 +598,9 @@ public class Sql {
 	// retournée
 	try {
 	    while (resultSet.next()) {
-		HashMap<Ingredient, Integer> recetter = new HashMap<>();
+		HashMap<Ingredient, Integer> recetter = new HashMap<Ingredient, Integer>();
 		ResultSet resultSetIngredients = executerSelect("SELECT * FROM restaurant.ingredient WHERE ");
-
+		// TODO Liste d'ingredients a ajouter
 		plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
 			Double.parseDouble(resultSet.getString("prix")),
 			Integer.parseInt(resultSet.getString("dureePreparation")),
@@ -704,74 +706,100 @@ public class Sql {
 	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
     }
 
-	public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
 
-		try {
-			executerInsert(
-					"INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
-							+ dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
-							+ ")");
-			int id = demanderDernierId("reservation");
-			Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
-			return reservation;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
+	try {
+	    executerInsert(
+		    "INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
+			    + dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
+			    + ")");
+	    int id = demanderDernierId("reservation");
+	    Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
+	    return reservation;
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public void supprimerReservation(Reservation asuppr) {
+	executerDelete("DELETE FROM restaurant.reservation WHERE id =" + asuppr.getId());
+    }
+
+    public void insertionHorairesDefaut() {
+	try {
+	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+	    prop.load(inputStream);
+	    executerInsert(
+		    "INSERT INTO restaurant.restaurant (heurelimitediner,heureouverturediner,heurelimitedejeune,heureouverturedejeune) VALUES ("
+			    + prop.getProperty("default.heureDinerLimite") + ","
+			    + prop.getProperty("default.heureDinerOuverture") + ","
+			    + prop.getProperty("default.heureDejeunerLimite") + ","
+			    + prop.getProperty("default.heureDejeunerOuverture") + ")");
+	}
+	catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void initialiserHoraires() {
+	try {
+	    ResultSet resultset = executerSelect("SELECT * FROM restaurant.restaurant");
+	    if (!resultset.next()) {
+		// Initialisation des horaires de la base de données
+		insertionHorairesDefaut();
+		// Rechargement
+		resultset = executerSelect("SELECT * FROM restaurant.restaurant");
+		resultset.next();
+	    }
+	    Restaurant.setHeureDejeunerOuverture(LocalTime.ofSecondOfDay(resultset.getInt("heureouverturedejeune")));
+	    Restaurant.setHeureDejeunerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitedejeune"))));
+	    Restaurant.setHeureDinerOuverture((LocalTime.ofSecondOfDay(resultset.getInt("heureouverturediner"))));
+	    Restaurant.setHeureDinerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitediner"))));
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+	try {
+	    executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
+		    + dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
+		    + Etat.COMMANDEE.name() + "'" + ")");
+	    int idCommande = demanderDernierId("commande");
+	    return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public void initialiserReservation() {
+	try {
+	    // On récupère toutes les futures réservations
+	    Date now = new Timestamp(new Date().getTime());
+	    ResultSet resultset = executerSelect("SELECT restaurant.reservation WHERE datereservation>" + now);
+	    while (resultset.next()) {
+		ResultSet resultsetTableReserve = executerSelect(
+			"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
+		resultsetTableReserve.next();
+		int idTable = resultsetTableReserve.getInt("id");
+		// On récupère la table avec le bon id
+		Table tableReserve = Restaurant.getToutesLesTables().stream()
+			.filter(tableCurrent -> tableCurrent.getId() == idTable).collect(Collectors.toList()).get(0);
+		Restaurant.getReservationsJour()
+			.add(new Reservation(resultset.getInt("id"), resultset.getBoolean("valide"),
+				resultset.getDate("dateappel"), resultset.getDate("datereservation"),
+				resultset.getInt("tablereserve"), tableReserve));
+	    }
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
 	}
 
-	public void supprimerReservation(Reservation asuppr) {
-		executerDelete("DELETE FROM restaurant.reservation WHERE id =" + asuppr.getId());
-	}
-
-	public void insertionHorairesDefaut() {
-		try {
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
-			prop.load(inputStream);
-			executerInsert(
-					"INSERT INTO restaurant.restaurant (heurelimitediner,heureouverturediner,heurelimitedejeune,heureouverturedejeune) VALUES ("
-							+ prop.getProperty("default.heureDinerLimite") + ","
-							+ prop.getProperty("default.heureDinerOuverture") + ","
-							+ prop.getProperty("default.heureDejeunerLimite") + ","
-							+ prop.getProperty("default.heureDejeunerOuverture") + ")");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void initialiserHoraires() {
-		try {
-			ResultSet resultset = executerSelect("SELECT * FROM restaurant.restaurant");
-			if (!resultset.next()) {
-				// Initialisation des horaires de la base de données
-				insertionHorairesDefaut();
-				// Rechargement
-				resultset = executerSelect("SELECT * FROM restaurant.restaurant");
-				resultset.next();
-			}
-			Restaurant.setHeureDejeunerOuverture(LocalTime.ofSecondOfDay(resultset.getInt("heureouverturedejeune")));
-			Restaurant.setHeureDejeunerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitedejeune"))));
-			Restaurant.setHeureDinerOuverture((LocalTime.ofSecondOfDay(resultset.getInt("heureouverturediner"))));
-			Restaurant.setHeureDinerLimite((LocalTime.ofSecondOfDay(resultset.getInt("heurelimitediner"))));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-//	// On veut avoir la plus petite table disponible pouvant contenir tous les
-//	// participants d'un repas
-//	public Table getMiniTable(int nombreParticipants, Date dateReservation) {
-//		// On regarde dans la base de données le jour donné toutes les tables de
-//		// réservation
-//		executerSelect(
-//				"SELECT tables.id FROM restaurant.tables as tables, restaurant.reservation as reservation, restaurant.affectation as affectation "
-//						+ "WHERE tables.capacite >= " + nombreParticipants + "ORDER BY tables.capacite ASC");
-//
-//		// On récupère les non réservée
-//
-//		// On essaie d'en récupérer une assez grande
-//
-//		return null;
-//	}
+    }
 
 }

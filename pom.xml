@@ -15,7 +15,7 @@
 		<!-- Où stocker la distribution binaire -->
 		<project.bindist.dir>${project.basedir}/bindist</project.bindist.dir>
 		<!-- Nom de la classe principale -->
-		<project.main.classname>${project.groupId}.${project.artifactId}.Main</project.main.classname>
+		<project.main.classname>${project.artifactId}.Main</project.main.classname>
 		<!-- Nom du binaire -->
 		<project.bin.appname>run</project.bin.appname>
 	</properties>

@@ -38,4 +38,15 @@ public class Assistant extends Personne {
 
  	}
 
+    public void nettoyerTable(Table table) {
+	Sql sql;
+	try {
+	    sql = new Sql();
+	    sql.modifierEtatTable(table, EtatTable.Libre);
+	    table.setEtat(EtatTable.Libre);
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
 }
