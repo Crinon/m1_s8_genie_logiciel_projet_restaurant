@@ -338,4 +338,74 @@ public class Directeur extends Personne {
 	return null;
     }
 
+    public Double revenuHebdomadaire() {
+	try {
+	    return new Sql().revenuHebdomadaire();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuQuotidien() {
+	try {
+	    return new Sql().revenuQuotidien();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuMensuel() {
+	try {
+	    return new Sql().revenuMensuel();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double tempsPreparationMoyen() {
+	try {
+	    return new Sql().tempsPreparationMoyen();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double popularitePlats() {
+	try {
+	    return new Sql().popularitePlats();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDejeuner() {
+	try {
+	    return new Sql().profitDejeuner();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDiner() {
+	try {
+	    return new Sql().profitDiner();
+	}
+	catch (ClassNotFoundException | SQLException | IOException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
 }

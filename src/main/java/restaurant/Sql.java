@@ -24,39 +24,6 @@ public class Sql {
     public final String	propertiesFilename = "database.properties";
     private Properties	prop		   = new Properties();
 
-    // Temps de preparation moyen
-    /*
-     * SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM
-     * restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id
-     */
-
-    // Profit dejeuner
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) =
-     * DAY(NOW()) AND HOUR(aff.datefin) >
-     * restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <=
-     * restaurant.restaurant.heurelimitedejeune
-     */
-
-    // Profit diner
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) =
-     * DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner
-     * AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner
-     */
-
-    // Popularit� plats (plat + nbVentes)
-    /*
-     * SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN
-     * restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus
-     */
-
     public Sql() throws ClassNotFoundException, SQLException, IOException {
 	InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
 	prop.load(inputStream);
@@ -788,6 +755,59 @@ public class Sql {
 		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
 	    rs.next();
 	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double popularitePlats() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus");
+	    // TODO
+	    rs.next();
+	    return rs.getDouble("nbVendus");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double tempsPreparationMoyen() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id");
+	    rs.next();
+	    return rs.getDouble("tempsPrepaMoyen");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDejeuner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune");
+	    rs.next();
+	    return rs.getDouble("profit");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDiner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner");
+	    rs.next();
+	    return rs.getDouble("profit");
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
