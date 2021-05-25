@@ -19,87 +19,75 @@ import java.util.stream.Collectors;
 
 public class Sql {
 
-    private Connection	c		   = null;
-    private Statement	stmt		   = null;
-    public final String	propertiesFilename = "properties";
-    private Properties	prop		   = new Properties();
-    public static final String hardResetPostgres = "DELETE FROM restaurant.commande;\r\n"
-    		+ "DELETE FROM restaurant.affectation;\r\n"
-    		+ "DELETE FROM restaurant.reservation;\r\n"
-    		+ "DELETE FROM restaurant.tables;\r\n"
-    		+ "DELETE FROM restaurant.serveur;\r\n"
-    		+ "DELETE FROM restaurant.recette;\r\n"
-    		+ "DELETE FROM restaurant.ingredient;\r\n"
-    		+ "DELETE FROM restaurant.assistant;\r\n"
-    		+ "DELETE FROM restaurant.cuisinier;\r\n"
-    		+ "DELETE FROM restaurant.directeur;\r\n"
-    		+ "DELETE FROM restaurant.etage;\r\n"
-    		+ "DELETE FROM restaurant.maitrehotel;\r\n"
-    		+ "DELETE FROM restaurant.plat;\r\n"
-    		+ "DELETE FROM restaurant.restaurant;\r\n"
-    		+ "DELETE FROM restaurant.personne;\r\n"
-    		+ "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
-    
-    public static final String hardResetH2 = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.affectation;\r\n"
-    		+ "ALTER TABLE restaurant.assistant SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.assistant;\r\n"
-    		+ "ALTER TABLE restaurant.commande SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.commande;\r\n"
-    		+ "ALTER TABLE restaurant.cuisinier SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.cuisinier;\r\n"
-    		+ "ALTER TABLE restaurant.directeur SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.directeur;\r\n"
-    		+ "ALTER TABLE restaurant.etage SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.etage;\r\n"
-    		+ "ALTER TABLE restaurant.ingredient SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.ingredient;\r\n"
-    		+ "ALTER TABLE restaurant.maitrehotel SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.maitrehotel;\r\n"
-    		+ "ALTER TABLE restaurant.personne SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.personne;\r\n"
-    		+ "ALTER TABLE restaurant.plat SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.plat;\r\n"
-    		+ "ALTER TABLE restaurant.recette SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.recette;\r\n"
-    		+ "ALTER TABLE restaurant.reservation SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.reservation;\r\n"
-    		+ "ALTER TABLE restaurant.restaurant SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.restaurant;\r\n"
-    		+ "ALTER TABLE restaurant.serveur SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.serveur;\r\n"
-    		+ "ALTER TABLE restaurant.tables SET REFERENTIAL_INTEGRITY FALSE;"
-    		+ "TRUNCATE TABLE restaurant.tables;\r\n"
-    		+ "\r\n"
-    		+ "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
+    private Connection	       c		  = null;
+    private Statement	       stmt		  = null;
+    public final String	       propertiesFilename = "properties";
+    private Properties	       prop		  = new Properties();
+    public static final String hardResetPostgres  = "DELETE FROM restaurant.commande;\r\n"
+	    + "DELETE FROM restaurant.affectation;\r\n" + "DELETE FROM restaurant.reservation;\r\n"
+	    + "DELETE FROM restaurant.tables;\r\n" + "DELETE FROM restaurant.serveur;\r\n"
+	    + "DELETE FROM restaurant.recette;\r\n" + "DELETE FROM restaurant.ingredient;\r\n"
+	    + "DELETE FROM restaurant.assistant;\r\n" + "DELETE FROM restaurant.cuisinier;\r\n"
+	    + "DELETE FROM restaurant.directeur;\r\n" + "DELETE FROM restaurant.etage;\r\n"
+	    + "DELETE FROM restaurant.maitrehotel;\r\n" + "DELETE FROM restaurant.plat;\r\n"
+	    + "DELETE FROM restaurant.restaurant;\r\n" + "DELETE FROM restaurant.personne;\r\n"
+	    + "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
+
+    public static final String hardResetH2		      = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.affectation;\r\n"
+	    + "ALTER TABLE restaurant.assistant SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.assistant;\r\n"
+	    + "ALTER TABLE restaurant.commande SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.commande;\r\n"
+	    + "ALTER TABLE restaurant.cuisinier SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.cuisinier;\r\n"
+	    + "ALTER TABLE restaurant.directeur SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.directeur;\r\n"
+	    + "ALTER TABLE restaurant.etage SET REFERENTIAL_INTEGRITY FALSE;" + "TRUNCATE TABLE restaurant.etage;\r\n"
+	    + "ALTER TABLE restaurant.ingredient SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.ingredient;\r\n"
+	    + "ALTER TABLE restaurant.maitrehotel SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.maitrehotel;\r\n"
+	    + "ALTER TABLE restaurant.personne SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.personne;\r\n" + "ALTER TABLE restaurant.plat SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.plat;\r\n" + "ALTER TABLE restaurant.recette SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.recette;\r\n"
+	    + "ALTER TABLE restaurant.reservation SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.reservation;\r\n"
+	    + "ALTER TABLE restaurant.restaurant SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.restaurant;\r\n"
+	    + "ALTER TABLE restaurant.serveur SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.serveur;\r\n"
+	    + "ALTER TABLE restaurant.tables SET REFERENTIAL_INTEGRITY FALSE;" + "TRUNCATE TABLE restaurant.tables;\r\n"
+	    + "\r\n" + "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
     public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
     public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
     // V�rifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon
@@ -179,17 +167,17 @@ public class Sql {
     // Profit dejeuner
     // Profit diner
 
-
     public Sql() {
 	InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
 	try {
-		prop.load(inputStream);
-		Class.forName("org.postgresql.Driver");
-		c = DriverManager.getConnection(prop.getProperty("datasource.url"), prop.getProperty("datasource.username"),
-			prop.getProperty("datasource.password"));
-		c.setAutoCommit(false);
-	} catch (IOException | ClassNotFoundException | SQLException e) {
-		e.printStackTrace();
+	    prop.load(inputStream);
+	    Class.forName("org.postgresql.Driver");
+	    c = DriverManager.getConnection(prop.getProperty("datasource.url"), prop.getProperty("datasource.username"),
+		    prop.getProperty("datasource.password"));
+	    c.setAutoCommit(false);
+	}
+	catch (IOException | ClassNotFoundException | SQLException e) {
+	    e.printStackTrace();
 	}
 
     }
@@ -240,18 +228,17 @@ public class Sql {
 
     public ResultSet executerSelect(String requete) {
 	try {
-		ResultSet res = null;
+	    ResultSet res = null;
 	    this.stmt = c.createStatement();
 	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
 	    return res;
 	}
 	catch (SQLException e) {
-		System.err.println("executerSelect de Sql.java a échoué.");
+	    System.err.println("executerSelect de Sql.java a échoué.");
 	    e.printStackTrace();
 	    return null;
 	}
-
 
     }
 
@@ -478,22 +465,21 @@ public class Sql {
 	    return false;
 	}
 	try {
-		resultSet.next();
-		if (Integer.parseInt(resultSet.getString("count")) != 0) {
-		    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
-		    return false;
-		}
+	    resultSet.next();
+	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
+		System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+		return false;
+	    }
 
-		// On insère l'ingrédient avec une quantité nulle
-		executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
-		return true;
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	    // On insère l'ingrédient avec une quantité nulle
+	    executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
+	    return true;
+	}
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
 	return false;
-
-
 
     }
 
@@ -501,44 +487,46 @@ public class Sql {
 	ResultSet resultSet = executerSelect("SELECT MAX(id) as max FROM restaurant." + table);
 	// Démarrage du curseur
 	try {
-		resultSet.next();
-		return Integer.parseInt(resultSet.getString("max"));
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	    resultSet.next();
+	    return Integer.parseInt(resultSet.getString("max"));
+	}
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
 	return 0;
     }
 
     public boolean commanderIngredient(Ingredient ingredient, int ajout) {
-		// On récupère le stock actuel pour incrémenter
-		ResultSet resultSet = executerSelect(
-			"SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
-		int quantiteActuelle = 0;
-		int nouvelleQuantite = 0;
-		try {
-			resultSet.next();
-			if (resultSet.getString("quantite") != null) {
-			    System.out.println("Quantité actuelle : " + quantiteActuelle);
-			    quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
-			    nouvelleQuantite = quantiteActuelle + ajout;
-			    System.out.println("Quantité nouvelle : " + nouvelleQuantite);
-			    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
-				    + ingredient.getId());
-			    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-					if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
-					    Restaurant.getIngredients().get(i)
-						    .setQuantite(nouvelleQuantite);
-					}
-			    }
-			    return true;
-			} else {
-			    return false;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	// On récupère le stock actuel pour incrémenter
+	ResultSet resultSet = executerSelect(
+		"SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
+	int quantiteActuelle = 0;
+	int nouvelleQuantite = 0;
+	try {
+	    resultSet.next();
+	    if (resultSet.getString("quantite") != null) {
+		System.out.println("Quantité actuelle : " + quantiteActuelle);
+		quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
+		nouvelleQuantite = quantiteActuelle + ajout;
+		System.out.println("Quantité nouvelle : " + nouvelleQuantite);
+		executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
+			+ ingredient.getId());
+		for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+		    if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
+			Restaurant.getIngredients().get(i).setQuantite(nouvelleQuantite);
+		    }
 		}
+		return true;
+	    }
+	    else {
 		return false;
+	    }
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
+	return false;
     }
 
     public void initialiserIngredients() {
@@ -562,14 +550,16 @@ public class Sql {
 	// Pour chaque table trouvée, on créé un objet table que l'on ajoute à l'étage
 	// en cours
 	try {
-		while (resultSet.next()) {
-		    etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
-			    Integer.parseInt(resultSet.getString("numero")), Integer.parseInt(resultSet.getString("capacite")),
-			    EtatTable.valueOf(resultSet.getString("etat"))));
-		}
-	} catch (NumberFormatException | SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	    while (resultSet.next()) {
+		etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
+			Integer.parseInt(resultSet.getString("numero")),
+			Integer.parseInt(resultSet.getString("capacite")),
+			EtatTable.valueOf(resultSet.getString("etat"))));
+	    }
+	}
+	catch (NumberFormatException | SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
@@ -581,14 +571,15 @@ public class Sql {
 	// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste
 	// retournée
 	try {
-		while (resultSet.next()) {
-		    etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
-			    Integer.parseInt(resultSet.getString("niveau"))));
-		}
-		Restaurant.setEtages(etages);
-	} catch (NumberFormatException | SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	    while (resultSet.next()) {
+		etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
+			Integer.parseInt(resultSet.getString("niveau"))));
+	    }
+	    Restaurant.setEtages(etages);
+	}
+	catch (NumberFormatException | SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
@@ -683,14 +674,13 @@ public class Sql {
 //			quantité ingrédient
 	Iterator<Entry<Ingredient, Integer>> it = recetteAcreer.entrySet().iterator();
 	while (it.hasNext()) {
-	Entry<Ingredient, Integer> pair = it.next();
-	Ingredient ingredient = (Ingredient) pair.getKey();
-	int quantite = (int) pair.getValue();
-	executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES (" + quantite + ","
-		+ ingredient.getId() + "," + idPlat + ")");
+	    Entry<Ingredient, Integer> pair = it.next();
+	    Ingredient ingredient = (Ingredient) pair.getKey();
+	    int quantite = (int) pair.getValue();
+	    executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES (" + quantite + ","
+		    + ingredient.getId() + "," + idPlat + ")");
 	}
-	return new Plat(idPlat, nomPlat, prixPlat, dureePreparation, disponibleCarte, type, categorie,
-	    recetteAcreer);
+	return new Plat(idPlat, nomPlat, prixPlat, dureePreparation, disponibleCarte, type, categorie, recetteAcreer);
     }
 
     public void initialiserPlats() {
@@ -702,30 +692,30 @@ public class Sql {
 	// retournée
 	try {
 	    while (resultSet.next()) {
-			HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
-			ResultSet resultSetLignesRecette = executerSelect("SELECT * FROM restaurant.recette WHERE plat="+resultSet.getInt("id"));
-			while (resultSetLignesRecette.next()) {
-				Ingredient ingredient = Restaurant.getIngredients()
-								.stream()
-								.filter(ingredientCurrent ->  {
-									try {
-										return ingredientCurrent.getId() == resultSetLignesRecette.getInt("ingredient");
-									} catch (SQLException e) {
-										e.printStackTrace();
-										return false;
-									}
-								})
-								.collect(Collectors.toList()).get(0);
-				int quantite = resultSetLignesRecette.getInt("quantite");
-					recette.put(ingredient, quantite);
+		HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
+		ResultSet resultSetLignesRecette = executerSelect(
+			"SELECT * FROM restaurant.recette WHERE plat=" + resultSet.getInt("id"));
+		while (resultSetLignesRecette.next()) {
+		    Ingredient ingredient = Restaurant.getIngredients().stream().filter(ingredientCurrent -> {
+			try {
+			    return ingredientCurrent.getId() == resultSetLignesRecette.getInt("ingredient");
 			}
-			plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
-				Double.parseDouble(resultSet.getString("prix")),
-				Integer.parseInt(resultSet.getString("dureePreparation")),
-				resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
-				Categorie.valueOf(resultSet.getString("typeIngredient")), recette));
+			catch (SQLException e) {
+			    e.printStackTrace();
+			    return false;
+			}
+		    }).collect(Collectors.toList()).get(0);
+		    int quantite = resultSetLignesRecette.getInt("quantite");
+		    recette.put(ingredient, quantite);
+		}
+		plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
+			Double.parseDouble(resultSet.getString("prix")),
+			Integer.parseInt(resultSet.getString("dureePreparation")),
+			resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
+			Categorie.valueOf(resultSet.getString("typeIngredient")), recette));
 	    }
-	} catch (NumberFormatException | SQLException e) {
+	}
+	catch (NumberFormatException | SQLException e) {
 	    e.printStackTrace();
 	}
 	Restaurant.setPlats(plats);
@@ -751,7 +741,7 @@ public class Sql {
 
     public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
 	executerInsert("INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe) VALUES ('"
-	    + dateDebut + "',null," + nbPersonne + "," + table.getId() + ")");
+		+ dateDebut + "',null," + nbPersonne + "," + table.getId() + ")");
 	int idAffectation = demanderDernierId("affectation");
 	Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, null, 0.00, table);
 	return affectation;
@@ -825,9 +815,9 @@ public class Sql {
 
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
 	executerInsert(
-	    "INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
-		    + dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
-		    + ")");
+		"INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
+			+ dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
+			+ ")");
 	int id = demanderDernierId("reservation");
 	Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
 	return reservation;
@@ -874,23 +864,23 @@ public class Sql {
     }
 
     public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
-	    // Ajout de la commande en base
-		executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
-		    + dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
-		    + Etat.COMMANDEE.name() + "'" + ")");
-	    // Retrait des quantités nécessaires à la commande
-		HashMap<Ingredient,Integer> recette = plat.getRecette();
-		recette.forEach((ingredient,quantiteNecessaire) ->{
-			int quantiteRestante = ingredient.getQuantite() - quantiteNecessaire;
-			// Mise à jour quantité en base
-		    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + quantiteRestante + " WHERE id = "
-				    + ingredient.getId());
-			// Mise à jour quantité en objet
-			ingredient.setQuantite(quantiteRestante);
-	    });
-	    int idCommande = demanderDernierId("commande");
-	    return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
-	}
+	// Ajout de la commande en base
+	executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
+		+ dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
+		+ Etat.COMMANDEE.name() + "'" + ")");
+	// Retrait des quantités nécessaires à la commande
+	HashMap<Ingredient, Integer> recette = plat.getRecette();
+	recette.forEach((ingredient, quantiteNecessaire) -> {
+	    int quantiteRestante = ingredient.getQuantite() - quantiteNecessaire;
+	    // Mise à jour quantité en base
+	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + quantiteRestante + " WHERE id = "
+		    + ingredient.getId());
+	    // Mise à jour quantité en objet
+	    ingredient.setQuantite(quantiteRestante);
+	});
+	int idCommande = demanderDernierId("commande");
+	return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
+    }
 
     public void initialiserReservation() {
 	try {
@@ -918,21 +908,20 @@ public class Sql {
     }
 
     // Les constantes ne sont utilisées qu'en java, pas dans la base de données
-	public void initialiserConstantes() {
-	    try {
-		    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
-			prop.load(inputStream);
-		    Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    public void initialiserConstantes() {
+	try {
+	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+	    prop.load(inputStream);
+	    Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
 	}
-	
-	public int hardReset(String database) {
-		return executerUpdate(database);
+	catch (IOException e) {
+	    e.printStackTrace();
 	}
+    }
 
-
+    public int hardReset(String database) {
+	return executerUpdate(database);
+    }
 
     public Double revenuHebdomadaire() {
 	try {
@@ -1024,5 +1013,9 @@ public class Sql {
 	    e.printStackTrace();
 	}
 	return null;
+    }
+
+    public void modifierEtatCommande(Commande commande, Etat etat) {
+	executerUpdate("UPDATE restaurant.commande SET etat = '" + etat.name() + "' WHERE id = " + commande.getId());
     }
 }
