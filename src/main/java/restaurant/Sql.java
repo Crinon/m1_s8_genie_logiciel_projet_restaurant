@@ -179,6 +179,7 @@ public class Sql {
     // Profit dejeuner
     // Profit diner
 
+
     public Sql() {
 	InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
 	try {
@@ -275,7 +276,7 @@ public class Sql {
 
 	try {
 	    String login = definirLogin(nom, 0);
-	    executerInsert(String.format(requete_insertion_personne, nom, login));
+	    executerInsert(String.format("INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')", nom, login));
 	    ResultSet resultSet = executerSelect("Select MAX(id) as max FROM restaurant.personne");
 	    resultSet.next();
 	    executerInsert(
@@ -813,11 +814,16 @@ public class Sql {
      * @param table
      */
     public void affecterTableServeur(Serveur serveur, Table table) {
-	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	if (serveur != null) {
+	    executerUpdate(
+		    "UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	}
+	else {
+	    executerUpdate("UPDATE restaurant.tables SET serveur = null WHERE id = " + table.getId());
+	}
     }
 
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
-
 	executerInsert(
 	    "INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
 		    + dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
@@ -890,7 +896,8 @@ public class Sql {
 	try {
 	    // On récupère toutes les futures réservations
 	    Date now = new Timestamp(new Date().getTime());
-	    ResultSet resultset = executerSelect("SELECT * FROM restaurant.reservation WHERE datereservation>'" + now+"'");
+	    ResultSet resultset = executerSelect(
+		    "SELECT * FROM restaurant.reservation WHERE datereservation>'" + now + "'");
 	    while (resultset.next()) {
 		ResultSet resultsetTableReserve = executerSelect(
 			"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
@@ -908,7 +915,6 @@ public class Sql {
 	catch (SQLException e) {
 	    e.printStackTrace();
 	}
-
     }
 
     // Les constantes ne sont utilisées qu'en java, pas dans la base de données
@@ -928,4 +934,95 @@ public class Sql {
 
 
 
+    public Double revenuHebdomadaire() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuMensuel() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuQuotidien() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double popularitePlats() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus");
+	    // TODO
+	    rs.next();
+	    return rs.getDouble("nbVendus");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double tempsPreparationMoyen() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id");
+	    rs.next();
+	    return rs.getDouble("tempsPrepaMoyen");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDejeuner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune");
+	    rs.next();
+	    return rs.getDouble("profit");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDiner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner");
+	    rs.next();
+	    return rs.getDouble("profit");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
 }

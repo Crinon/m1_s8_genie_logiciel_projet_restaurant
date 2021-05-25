@@ -21,10 +21,6 @@ public class Directeur extends Personne {
     public String toString() {
 	return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
     }
-    
-    
- 	
-
 
     public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
@@ -74,11 +70,17 @@ public class Directeur extends Personne {
     public void supprimerPersonnel(Personne personne, ArrayList<Personne> personnel) {
 	    // Objet pour intéragir avec la base de données
 	    Sql sql = new Sql();
+	    if (personne.getClass().getName().toLowerCase().contains("serveur")) {
+		((Serveur) personne).getTablesAffectees().forEach(table -> {
+		    sql.affecterTableServeur(null, table);
+		    table.setServeur(null);
+		});
+	    }
 	    sql.supprimerPersonne(personne);
 	    personnel.remove(personne);
 	}
 
-    public Etage ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
+    public Etage ajouterEtage() {
 		Sql sql = new Sql();
 		sql.insererEtage();
 		Etage etage = new Etage(sql.demanderDernierId("etage"), sql.demanderDernierEtage());
@@ -86,20 +88,19 @@ public class Directeur extends Personne {
 		return etage;
     }
 
-    public void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
-	Sql sql = new Sql();
-	sql.supprimerEtage();
-	Restaurant.getEtages().remove(Restaurant.getEtages().size() - 1);
+    public void supprimerDernierEtage() {
+		Sql sql = new Sql();
+		sql.supprimerEtage();
+		Restaurant.getEtages().remove(Restaurant.getEtages().size() - 1);
     }
 
-    public Table ajouterTable(int numero, int capacite, Etage etage)
-	    {
-	Sql sql;
-	sql = new Sql();
-	sql.insererTable(numero, capacite, etage);
-	Table nouvelleTable = new Table(sql.demanderDernierId("tables"), numero, capacite, EtatTable.Libre);
-	etage.addTable(nouvelleTable);
-	return nouvelleTable;
+    public Table ajouterTable(int numero, int capacite, Etage etage) {
+		Sql sql;
+		sql = new Sql();
+		sql.insererTable(numero, capacite, etage);
+		Table nouvelleTable = new Table(sql.demanderDernierId("tables"), numero, capacite, EtatTable.Libre);
+		etage.addTable(nouvelleTable);
+		return nouvelleTable;
     }
 
     public void modifierNumeroTable(Table table, int newNumero){
@@ -120,8 +121,8 @@ public class Directeur extends Personne {
 		if (success) {
 		    tables.remove(tableToremove);
 		}
-
     }
+
 
     public Ingredient ajouterIngredient(String nom) {
 	Sql sql;
@@ -179,12 +180,19 @@ public class Directeur extends Personne {
 	    Restaurant.getPlats().remove(plat);
     }
 
-    public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
+    public Affectation creationAffectation(Date dateDebut, int nbPersonne) {
 	Sql sql;
 	    sql = new Sql();
-	    Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
-	    Restaurant.getAffectationsJour().add(affectation);
-	    return affectation;
+	    Table table = Restaurant.getMiniTable(nbPersonne, dateDebut);
+	    if (table == null) {
+		System.err.println("Aucune table n'est disponible");
+	    }
+	    else {
+		Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
+		Restaurant.getAffectationsJour().add(affectation);
+		return affectation;
+	    }
+	return null;
     }
 
     public Boolean dateFinAffectation(Affectation affectation, Date dateFin) {
@@ -195,12 +203,19 @@ public class Directeur extends Personne {
 	    return true;
     }
 
-    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
+    public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne) {
 	Sql sql;
 	    sql = new Sql();
-	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, tableAreserver);
-	    Restaurant.getReservationsJour().add(reservation);
-	    return reservation;
+	    Table table = Restaurant.getMiniTable(nbPersonne, dateReserve);
+	    if (table == null) {
+		System.err.println("Aucune table n'est disponible");
+	    }
+	    else {
+		Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, table);
+		Restaurant.getReservationsJour().add(reservation);
+		return reservation;
+	    }
+	return null;
     }
 
 //	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
@@ -243,11 +258,39 @@ public class Directeur extends Personne {
 	    Restaurant.getReservationsJour().remove(index);
 	}
 
-	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
-		    Sql sql = new Sql();
-		    Commande commande = sql.creationCommande(dateCommande,plat,estEnfant, affectation);
-		    Restaurant.getCommandes().add(commande);
-		    return commande;
+    public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+	    Sql sql = new Sql();
+	    Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    Restaurant.getCommandes().add(commande);
+	    return commande;
 	}
+
+    public Double revenuHebdomadaire() {
+	    return new Sql().revenuHebdomadaire();
+    }
+
+    public Double revenuQuotidien() {
+	    return new Sql().revenuQuotidien();
+    }
+
+    public Double revenuMensuel() {
+	    return new Sql().revenuMensuel();
+    }
+
+    public Double tempsPreparationMoyen() {
+	    return new Sql().tempsPreparationMoyen();
+    }
+
+    public Double popularitePlats() {
+	    return new Sql().popularitePlats();
+    }
+
+    public Double profitDejeuner() {
+	    return new Sql().profitDejeuner();
+    }
+
+    public Double profitDiner() {
+	    return new Sql().profitDiner();
+    }
 
 }

@@ -101,7 +101,7 @@ public class Main {
 	public static String listingIngredients() {
 		String liste = "";
 		for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-			liste += i + ":" + Restaurant.getIngredients().get(i).getNom() + "; quantite: "
+			liste += "\n " + i + ":" + Restaurant.getIngredients().get(i).getNom() + "; quantite: "
 					+ Restaurant.getIngredients().get(i).getQuantite();
 		}
 		return liste;
@@ -121,11 +121,11 @@ public class Main {
  			String choix = scanner.nextLine();
  			int qtIngredient = 0;
  			do {
- 				if (!estNullOuVide(choix) && uniquementLettres(choix)) {
+ 				if (!estNullOuVide(choix) && uniquementLettres(choix) && choix.length() <= Restaurant.TAILLE_MAX_NOM_INGREDIENT) {
  					// Nouvel ingrédient
  					String nomIngredient = choix.toLowerCase();
  					System.out.println(">Quantité de " + choix + " à commander ?");
- 					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+ 					qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
  					((Directeur) persConnectee).ajouterIngredient(nomIngredient);
  					((Directeur) persConnectee).commanderIngredient(
  							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
@@ -135,7 +135,7 @@ public class Main {
  						&& !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size())) {
  					// MAJ quantite d'un ingrédient existant
  					System.out.println(">Quantité à commander ?");
- 					qtIngredient = choixUtilisateur(500); // Quantite max par commande : 500
+ 					qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
  					((Directeur) persConnectee).commanderIngredient(
  							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
  					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
