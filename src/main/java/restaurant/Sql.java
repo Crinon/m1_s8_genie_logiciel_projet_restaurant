@@ -624,7 +624,13 @@ public class Sql {
      * @param table
      */
     public void affecterTableServeur(Serveur serveur, Table table) {
-	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	if (serveur != null) {
+	    executerUpdate(
+		    "UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	}
+	else {
+	    executerUpdate("UPDATE restaurant.tables SET serveur = null WHERE id = " + table.getId());
+	}
     }
 
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {

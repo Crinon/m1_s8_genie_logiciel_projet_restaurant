@@ -81,6 +81,12 @@ public class Directeur extends Personne {
 	try {
 	    // Objet pour intéragir avec la base de données
 	    Sql sql = new Sql();
+	    if (personne.getClass().getName().toLowerCase().contains("serveur")) {
+		((Serveur) personne).getTablesAffectees().forEach(table -> {
+		    sql.affecterTableServeur(null, table);
+		    table.setServeur(null);
+		});
+	    }
 	    sql.supprimerPersonne(personne);
 	    personnel.remove(personne);
 	}
