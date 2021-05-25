@@ -23,21 +23,22 @@ public class Sql {
     private Statement	stmt		   = null;
     public final String	propertiesFilename = "properties";
     private Properties	prop		   = new Properties();
-    public static final String hardReset = "TRUNCATE restaurant.affectation CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.assistant CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.commande CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.cuisinier CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.directeur CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.etage CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.ingredient CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.maitrehotel CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.personne CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.plat CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.recette CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.reservation CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.restaurant CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.serveur CASCADE;\r\n"
-    		+ "TRUNCATE restaurant.table CASCADE;\r\n"
+    public static final String hardResetPostgres = "TRUNCATE TABLE restaurant.affectation CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.assistant CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.commande CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.cuisinier CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.directeur CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.etage CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.ingredient CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.maitrehotel CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.personne CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.plat CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.recette CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.reservation CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.restaurant CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.serveur CASCADE;\r\n"
+    		+ "TRUNCATE TABLE restaurant.tables CASCADE;\r\n"
+    		+ "\r\n"
     		+ "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
@@ -52,7 +53,54 @@ public class Sql {
     		+ "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
-    		+ "ALTER SEQUENCE restaurant.table_id_seq RESTART WITH 1;";
+    		+ "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
+    
+    public static final String hardResetH2 = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.affectation;\r\n"
+    		+ "ALTER TABLE restaurant.assistant SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.assistant;\r\n"
+    		+ "ALTER TABLE restaurant.commande SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.commande;\r\n"
+    		+ "ALTER TABLE restaurant.cuisinier SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.cuisinier;\r\n"
+    		+ "ALTER TABLE restaurant.directeur SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.directeur;\r\n"
+    		+ "ALTER TABLE restaurant.etage SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.etage;\r\n"
+    		+ "ALTER TABLE restaurant.ingredient SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.ingredient;\r\n"
+    		+ "ALTER TABLE restaurant.maitrehotel SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.maitrehotel;\r\n"
+    		+ "ALTER TABLE restaurant.personne SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.personne;\r\n"
+    		+ "ALTER TABLE restaurant.plat SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.plat;\r\n"
+    		+ "ALTER TABLE restaurant.recette SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.recette;\r\n"
+    		+ "ALTER TABLE restaurant.reservation SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.reservation;\r\n"
+    		+ "ALTER TABLE restaurant.restaurant SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.restaurant;\r\n"
+    		+ "ALTER TABLE restaurant.serveur SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.serveur;\r\n"
+    		+ "ALTER TABLE restaurant.tables SET REFERENTIAL_INTEGRITY FALSE;"
+    		+ "TRUNCATE TABLE restaurant.tables;\r\n"
+    		+ "\r\n"
+    		+ "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
+    		+ "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
     public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
     public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
     // V�rifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon
@@ -873,8 +921,8 @@ public class Sql {
 		}
 	}
 	
-	public  void hardReset() {
-		executerUpdate(hardReset);
+	public  void hardReset(String database) {
+		executerUpdate(database);
 	}
 
 

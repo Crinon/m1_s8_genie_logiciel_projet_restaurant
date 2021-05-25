@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ public class TestUnitaire {
 	}
 
 	@BeforeAll
-	public static void initialisation() throws SQLException, ClassNotFoundException, IOException {
+	public static void initialisation() {
 		numeroGlobal = 0;
 		sql = new Sql();
 		System.out.println("\nBEFORE : création BDD");
@@ -1395,5 +1396,26 @@ public class TestUnitaire {
 			e.printStackTrace();
 		}
 	}
+	
+	@AfterAll
+	public static void suppression() {
+		ResultSet rs = sql.executerSelect("SELECT * FROM restaurant.etage");
+		try {
+			while(rs.next()) {
+				System.out.println(rs.getInt("niveau"));
+			}
+			sql.hardReset(sql.hardResetH2);
+			System.out.println("Recherche d'étages après suppression");
+			ResultSet rs2 = sql.executerSelect("SELECT * FROM restaurant.etage");
+			while(rs2.next()) {
+				System.out.println(rs2.getInt("niveau"));
+			}
+			System.out.println("Fin");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 }
