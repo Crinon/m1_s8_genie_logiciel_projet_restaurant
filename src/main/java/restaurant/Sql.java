@@ -781,7 +781,7 @@ public class Sql {
 	try {
 	    // On récupère toutes les futures réservations
 	    Date now = new Timestamp(new Date().getTime());
-	    ResultSet resultset = executerSelect("SELECT restaurant.reservation WHERE datereservation>" + now);
+	    ResultSet resultset = executerSelect("SELECT * FROM restaurant.reservation WHERE datereservation>'" + now+"'");
 	    while (resultset.next()) {
 		ResultSet resultsetTableReserve = executerSelect(
 			"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
