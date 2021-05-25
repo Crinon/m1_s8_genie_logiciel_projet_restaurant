@@ -21,7 +21,7 @@ public class Sql {
 
     private Connection	c		   = null;
     private Statement	stmt		   = null;
-    public final String	propertiesFilename = "database.properties";
+    public final String	propertiesFilename = "properties";
     private Properties	prop		   = new Properties();
 
     public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
@@ -824,5 +824,18 @@ public class Sql {
 	}
 
     }
+
+    // Les constantes ne sont utilisées qu'en java, pas dans la base de données
+	public void initialiserConstantes() {
+	    try {
+		    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+			prop.load(inputStream);
+		    Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 
 }

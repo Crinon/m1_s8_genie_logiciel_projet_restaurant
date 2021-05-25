@@ -41,7 +41,7 @@ import restaurant.Type;
 public class TestUnitaire {
 
 	public static int numeroGlobal;
-	public final String propertiesFilename = "database.properties";
+	public final String propertiesFilename = "properties";
 	private static Sql sql;
 	Directeur directeur = new Directeur(0, "directeur", "directeur0");
 

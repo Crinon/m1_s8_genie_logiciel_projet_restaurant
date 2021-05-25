@@ -26,12 +26,14 @@ public final class Restaurant {
     private static LocalTime heureDinerOuverture;
     private static LocalTime heureDinerLimite;
     private static int	     nbTableMax;
+    private static int QUANTITE_MAX_STOCK;
 
     public static void initialisation() {
 	Sql sql;
 	try {
 	    sql = new Sql();
 	    sql.initialiserHoraires();
+	    sql.initialiserConstantes();
 	    sql.initialiserIngredients();
 	    sql.initialiserEtages();
 	    for (Etage etage : etages) {
@@ -210,5 +212,13 @@ public final class Restaurant {
     public static void setCommandes(ArrayList<Commande> commandes) {
 	Restaurant.commandes = commandes;
     }
+
+	public static int getQUANTITE_MAX_STOCK() {
+		return QUANTITE_MAX_STOCK;
+	}
+
+	public static void setQUANTITE_MAX_STOCK(int qUANTITE_MAX_STOCK) {
+		QUANTITE_MAX_STOCK = qUANTITE_MAX_STOCK;
+	}
 
 }
