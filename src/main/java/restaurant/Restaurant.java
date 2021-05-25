@@ -102,15 +102,16 @@ public final class Restaurant {
 		calendarReservation.get(Calendar.MONTH), calendarReservation.get(Calendar.DAY_OF_MONTH));
 	LocalTime heureDateReservation = LocalTime.of(calendarReservation.get(Calendar.HOUR_OF_DAY),
 		calendarReservation.get(Calendar.MINUTE), calendarReservation.get(Calendar.SECOND));
-	if (localdateVenue.equals(localdateReservation) && ((heureDateVenue.isAfter(heureDejeunerOuverture)
+	return (localdateVenue.equals(localdateReservation) && 
+		( (heureDateVenue.isAfter(heureDejeunerOuverture)
 		&& heureDateVenue.isBefore(heureDejeunerLimite) && heureDateReservation.isAfter(heureDejeunerOuverture)
 		&& heureDateReservation.isBefore(heureDejeunerLimite))
-		|| (heureDateVenue.isAfter(heureDinerOuverture) && heureDateVenue.isBefore(heureDinerLimite)
-			&& heureDateReservation.isAfter(heureDinerOuverture)
-			&& heureDateReservation.isBefore(heureDinerLimite)))) {
-	    return true;
-	}
-	return false;
+		|| 
+		  (heureDateVenue.isAfter(heureDinerOuverture) && heureDateVenue.isBefore(heureDinerLimite)
+		&& heureDateReservation.isAfter(heureDinerOuverture)
+		&& heureDateReservation.isBefore(heureDinerLimite))
+		)
+	);
     }
 
     public static ArrayList<Ingredient> getIngredients() {
