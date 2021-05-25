@@ -1,7 +1,5 @@
 package restaurant;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Serveur extends Personne {
@@ -17,43 +15,6 @@ public class Serveur extends Personne {
 	super(id, nom, identifiant);
     }
     
-    // Menu principal du serveur
- 	public static void menuPrincipalServeur() throws ClassNotFoundException, SQLException, IOException {
-
- 		
- 		
- 		// Affichage menu
- 		System.out.println("----------------------------------"
-	 				//Affichage des tables de son étage + couleurs (état) associées
-	 		 		//TODO
- 					+ "\n0: Déconnexion"
- 					+ "\n1: Affecter un serveur à une table"
- 					+ "\n----------------------------------\n");
-
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
-
- 		// Déconnexion
- 		case 0:
- 			Main.persConnectee = null;
- 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
- 			break;
-
- 		// Affecter un serveur à une table
- 		case 1:
- 			
- 			break;
-
- 		// TODO
- 		case 2:
-
- 			break;
-
-
- 		default:
- 			break;
- 		}
-
- 	}
 
     public ArrayList<Table> getTablesAffectees() {
 	return tablesAffectees;

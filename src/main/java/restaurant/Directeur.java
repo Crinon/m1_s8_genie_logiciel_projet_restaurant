@@ -22,67 +22,7 @@ public class Directeur extends Personne {
 	return "Directeur [id=" + id + ", nom=" + nom + ", identifiant=" + identifiant + "]";
     }
     
- // Menu principal du directeur
- 	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
-
- 		// Affichage menu
- 		System.out.println("----------------------------------"
- 					+ "\n0: Déconnexion"
- 				+ "\n1: Commander un ingredient"
- 					+ "\n2: Ajouter personnel" + "\n3: Modifier personnel"
- 					+ "\n4: Supprimer personnel"
- 					+ "\n5: Suivi serveur" + "\n6: Statistiques"
- 					+ "\n7: AJOUTER METHODES DES AUTRES ROLES"
- 					+ "\n----------------------------------\n");
-
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
-
- 		// Déconnexion
- 		case 0:
- 			Main.persConnectee = null;
- 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
- 			break;
-
- 		// Commander un ingredient
- 		case 1:
- 			commanderIngredient();
- 			break;
-
- 		// Ajouter personnel
- 		case 2:
-
- 			break;
-
- 		// Modifier personnel
- 		case 3:
-
- 			break;
-
- 		// Supprimer personnel
- 		case 4:
-
- 			break;
-
- 		// Suivi serveur
- 		case 5:
-
- 			break;
-
- 		// Statistiques
- 		case 6:
-
- 			break;
-
- 		// Méthodes des autres rôles....
- 		case 7:
-
- 			break;
-
- 		default:
- 			break;
- 		}
-
- 	}
+    
  	
 
 

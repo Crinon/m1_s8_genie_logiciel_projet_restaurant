@@ -9,34 +9,6 @@ public class Assistant extends Personne {
 	super(id, nom, identifiant);
     }
     
-    
-    // Menu principal de l'assistant
- 	public static void menuPrincipalAssistant() throws ClassNotFoundException, SQLException, IOException {
-
- 		// Affichage menu
- 		System.out.println("----------------------------------"
- 					+ "\n0: Déconnexion"
- 					+ "\n1: Signaler table nettoyée"
- 					+ "\n----------------------------------\n");
-
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
-
- 		// Déconnexion
- 		case 0:
- 			Main.persConnectee = null;
- 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
- 			break;
-
- 		// Signaler table nettoyée
- 		case 1:
- 			//TODO
- 			break;
-
- 		default:
- 			break;
- 		}
-
- 	}
 
     public void nettoyerTable(Table table) {
 	Sql sql;

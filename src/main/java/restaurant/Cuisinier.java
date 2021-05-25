@@ -1,8 +1,5 @@
 package restaurant;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class Cuisinier extends Personne {
 
 	/**
@@ -15,45 +12,7 @@ public class Cuisinier extends Personne {
 	}
 	
 	 // Menu principal du cuisinier
- 	public static void menuPrincipalCuisinier() throws ClassNotFoundException, SQLException, IOException {
-
- 		// Affichage menu
- 		System.out.println("----------------------------------"
- 					+ "\n0: Déconnexion"
- 					+ "\n1: Définir un plat"
- 					+ "\n2: Consulter les commandes"
- 					+ "\n3: Passer une commande à \"terminée\""
- 					+ "\n----------------------------------\n");
-
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
-
- 		// Déconnexion
- 		case 0:
- 			Main.persConnectee = null;
- 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
- 			break;
-
- 		// Définir un plat
- 		case 1:
- 			//TODO
- 			break;
-
- 		// Consulter les commandes
- 		case 2:
- 			//TODO
- 			break;
- 			
- 		// Passer une commande à "terminée"
- 		case 3:
- 			//TODO
- 			break;
-
-
- 		default:
- 			break;
- 		}
-
- 	}
+ 	
 
 	// Il choisit parmis les plats pas encore en carte
 	public void ajouterCarte(Plat plat) {

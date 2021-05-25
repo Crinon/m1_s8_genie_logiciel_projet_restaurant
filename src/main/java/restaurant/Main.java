@@ -148,7 +148,208 @@ public class Main {
  			} while (estNullOuVide(choix) || (!uniquementLettres(choix) && !uniquementChiffres(choix)));
  		
  	}
+ 	
+ // Menu principal du directeur
+  	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
+  		// Affichage menu
+  		System.out.println("----------------------------------"
+  					+ "\n0: Déconnexion"
+  				+ "\n1: Commander un ingredient"
+  					+ "\n2: Ajouter personnel" + "\n3: Modifier personnel"
+  					+ "\n4: Supprimer personnel"
+  					+ "\n5: Suivi serveur" + "\n6: Statistiques"
+  					+ "\n7: AJOUTER METHODES DES AUTRES ROLES"
+  					+ "\n----------------------------------\n");
+
+  		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+  		// Déconnexion
+  		case 0:
+  			Main.persConnectee = null;
+  			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+  			break;
+
+  		// Commander un ingredient
+  		case 1:
+  			commanderIngredient();
+  			break;
+
+  		// Ajouter personnel
+  		case 2:
+
+  			break;
+
+  		// Modifier personnel
+  		case 3:
+
+  			break;
+
+  		// Supprimer personnel
+  		case 4:
+
+  			break;
+
+  		// Suivi serveur
+  		case 5:
+
+  			break;
+
+  		// Statistiques
+  		case 6:
+
+  			break;
+
+  		// Méthodes des autres rôles....
+  		case 7:
+
+  			break;
+
+  		default:
+  			break;
+  		}
+
+  	}
+  	
+    // Menu principal du maitre d hotel
+ 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
+
+ 		// Affichage menu
+ 		System.out.println("----------------------------------"
+ 					+ "\n0: Déconnexion"
+ 					+ "\n1: Affecter un serveur à une table"
+ 					+ "\n2: AJOUTER METHODES DU ROLE SERVEUR ?????"
+ 					+ "\n----------------------------------\n");
+
+ 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+ 		// Déconnexion
+ 		case 0:
+ 			Main.persConnectee = null;
+ 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+ 			break;
+
+ 		// Affecter un serveur à une table
+ 		case 1:
+ 			//TODO
+ 			break;
+
+ 		// 
+ 		case 2:
+ 			//TODO
+ 			break;
+
+
+ 		default:
+ 			break;
+ 		}
+
+ 	}
+ 	
+ 	public static void menuPrincipalCuisinier() throws ClassNotFoundException, SQLException, IOException {
+
+ 		// Affichage menu
+ 		System.out.println("----------------------------------"
+ 					+ "\n0: Déconnexion"
+ 					+ "\n1: Définir un plat"
+ 					+ "\n2: Consulter les commandes"
+ 					+ "\n3: Passer une commande à \"terminée\""
+ 					+ "\n----------------------------------\n");
+
+ 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+ 		// Déconnexion
+ 		case 0:
+ 			Main.persConnectee = null;
+ 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+ 			break;
+
+ 		// Définir un plat
+ 		case 1:
+ 			//TODO
+ 			break;
+
+ 		// Consulter les commandes
+ 		case 2:
+ 			//TODO
+ 			break;
+ 			
+ 		// Passer une commande à "terminée"
+ 		case 3:
+ 			//TODO
+ 			break;
+
+
+ 		default:
+ 			break;
+ 		}
+
+ 	}
+ 	
+ 	 // Menu principal du serveur
+ 	public static void menuPrincipalServeur() throws ClassNotFoundException, SQLException, IOException {
+ 		
+ 		// Affichage menu
+ 		System.out.println("----------------------------------"
+	 				//Affichage des tables de son étage + couleurs (état) associées
+	 		 		//TODO
+ 					+ "\n0: Déconnexion"
+ 					+ "\n1: Affecter un serveur à une table"
+ 					+ "\n----------------------------------\n");
+
+ 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+ 		// Déconnexion
+ 		case 0:
+ 			Main.persConnectee = null;
+ 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+ 			break;
+
+ 		// Affecter un serveur à une table
+ 		case 1:
+ 			
+ 			break;
+
+ 		// TODO
+ 		case 2:
+
+ 			break;
+
+
+ 		default:
+ 			break;
+ 		}
+ 	}
+ 	
+    // Menu principal de l'assistant
+ 	public static void menuPrincipalAssistant() throws ClassNotFoundException, SQLException, IOException {
+
+ 		// Affichage menu
+ 		System.out.println("----------------------------------"
+ 					+ "\n0: Déconnexion"
+ 					+ "\n1: Signaler table nettoyée"
+ 					+ "\n----------------------------------\n");
+
+ 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+
+ 		// Déconnexion
+ 		case 0:
+ 			Main.persConnectee = null;
+ 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
+ 			break;
+
+ 		// Signaler table nettoyée
+ 		case 1:
+ 			//TODO
+ 			break;
+
+ 		default:
+ 			break;
+ 		}
+
+ 	}
+ 	
+ 	
 	public static void main(String[] args) throws Exception {
 
 		// Initialisation du programme
@@ -164,23 +365,28 @@ public class Main {
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
 			case "restaurant.Directeur":
-				Directeur.menuPrincipalDirecteur();
+				persConnectee = (Directeur) persConnectee;
+				menuPrincipalDirecteur();
 				break;
 
 			case "restaurant.Maitrehotel":
-				Maitrehotel.menuPrincipalMaitredhotel();
+				persConnectee = (Maitrehotel) persConnectee;
+				menuPrincipalMaitredhotel();
 				break;
 
 			case "restaurant.Cuisinier":
-				Cuisinier.menuPrincipalCuisinier();
+				persConnectee = (Cuisinier) persConnectee;
+				menuPrincipalCuisinier();
 				break;
 
 			case "restaurant.Serveur":
-				Serveur.menuPrincipalServeur();
+				persConnectee = (Serveur) persConnectee;
+				menuPrincipalServeur();
 				break;
 
 			case "restaurant.Assistant": // Assistant de service
-				Assistant.menuPrincipalAssistant();
+				persConnectee = (Assistant) persConnectee;
+				menuPrincipalAssistant();
 				break;
 
 			default:
