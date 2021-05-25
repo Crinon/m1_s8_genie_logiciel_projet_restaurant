@@ -777,9 +777,20 @@ public class Sql {
 
     public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
 	try {
-	    executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
+	    // Ajout de la commande en base
+		executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
 		    + dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
 		    + Etat.COMMANDEE.name() + "'" + ")");
+	    // Retrait des quantités nécessaires à la commande
+		HashMap<Ingredient,Integer> recette = plat.getRecette();
+		recette.forEach((ingredient,quantiteNecessaire) ->{
+			int quantiteRestante = ingredient.getQuantite() - quantiteNecessaire;
+			// Mise à jour quantité en base
+		    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + quantiteRestante + " WHERE id = "
+				    + ingredient.getId());
+			// Mise à jour quantité en objet
+			ingredient.setQuantite(quantiteRestante);
+	    });
 	    int idCommande = demanderDernierId("commande");
 	    return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
 	}

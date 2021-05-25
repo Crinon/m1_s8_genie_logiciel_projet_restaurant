@@ -1255,13 +1255,13 @@ public class TestUnitaire {
 			String nomIngredientToast = "frite";
 			int quantiteSaumon = 1;
 			int quantiteTartine = 10;
-			directeur.ajouterIngredient(nomIngredientSaumon);
-			Ingredient saumon = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
-			directeur.ajouterIngredient(nomIngredientToast);
-			Ingredient tartine = Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1);
+			Ingredient saumon = directeur.ajouterIngredient(nomIngredientSaumon);
+			Ingredient tartine = directeur.ajouterIngredient(nomIngredientToast);
 			HashMap<Ingredient, Integer> recette = new HashMap<>();
 			recette.put(saumon, quantiteSaumon);
 			recette.put(tartine, quantiteTartine);
+			directeur.commanderIngredient(saumon, 50);
+			directeur.commanderIngredient(tartine, 50);
 			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
 			boolean estEnfant = true;
 			Commande commande = directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
@@ -1301,10 +1301,96 @@ public class TestUnitaire {
 			recette.put(ingredient2, 7);
 			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
 			boolean estEnfant = true;
+			directeur.commanderIngredient(ingredient1, 50);
+			directeur.commanderIngredient(ingredient2, 50);
 			int nbCommandeAvant = 0;
 			directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 			int nbCommandeApres = Restaurant.getCommandes().size();
 			assertTrue(nbCommandeAvant < nbCommandeApres);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Baisse de stock au passage d'une commande dans la base de données")
+	public void baisseStockCommandeDB() {
+		System.out.println("\nTest en cours : Baisse de stock au passage d'une commande dans la base de données");
+		try {
+			// Prérequis : étage, table, plat et affectation
+			int numero = incr();
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+			// Création de l'affectation (date immédiate)
+			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
+			Date dateCommande = new Timestamp(new Date().getTime());
+			// Création du plat
+			String nomPlat = "Rat & radis";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.DESSERT;
+			Categorie categorie = Categorie.SUCRE;
+			Ingredient ingredient1 = directeur.ajouterIngredient("rat");
+			Ingredient ingredient2 = directeur.ajouterIngredient("radis");
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(ingredient1, 5);
+			recette.put(ingredient2, 3);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			boolean estEnfant = true;
+			directeur.commanderIngredient(ingredient1, 50);
+			directeur.commanderIngredient(ingredient2, 50);
+			ResultSet resultSetAvant = sql.executerSelect("SELECT quantite FROM restaurant.ingredient WHERE id="+ingredient1.getId());
+			resultSetAvant.next();
+			int quantiteAvantCommande = resultSetAvant.getInt("quantite");
+			directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+			ResultSet resultSetApres = sql.executerSelect("SELECT quantite FROM restaurant.ingredient WHERE id="+ingredient1.getId());
+			resultSetApres.next();
+			int quantiteApresCommande = resultSetApres.getInt("quantite");
+			assertTrue(quantiteAvantCommande > quantiteApresCommande);
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Baisse de stock au passage d'une commande dans la mémoire")
+	public void baisseStockCommandeJava() {
+		System.out.println("\nTest en cours : Baisse de stock au passage d'une commande dans la mémoire");
+		try {
+			// Prérequis : étage, table, plat et affectation
+			int numero = incr();
+			directeur.ajouterEtage();
+			// Etage qui va recevoir une table
+			Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+			// On ajoute la table
+			Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+			// Création de l'affectation (date immédiate)
+			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
+			Date dateCommande = new Timestamp(new Date().getTime());
+			// Création du plat
+			String nomPlat = "Anaconda & sel";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.DESSERT;
+			Categorie categorie = Categorie.SUCRE;
+			Ingredient ingredient1 = directeur.ajouterIngredient("anaconda");
+			Ingredient ingredient2 = directeur.ajouterIngredient("sel");
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(ingredient1, 5);
+			recette.put(ingredient2, 3);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			boolean estEnfant = true;
+			directeur.commanderIngredient(ingredient1, 50);
+			directeur.commanderIngredient(ingredient2, 50);
+			int quantiteAvantCommande = ingredient1.getQuantite();
+			directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+			int quantiteApresCommande = ingredient1.getQuantite();
+			assertTrue(quantiteAvantCommande > quantiteApresCommande);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}
