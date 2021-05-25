@@ -660,7 +660,7 @@ public class Sql {
 //		Son type
 //		Sa catégorie
 	executerInsert(
-		"INSERT INTO restaurant.plat (nom,typePlat,typeIngredient,prix,dureePreparation,disponibleCarte) VALUES ('"
+		"INSERT INTO restaurant.plat (nom,typeplat,typeingredient,prix,dureePreparation,disponibleCarte) VALUES ('"
 			+ nomPlat + "','" + type.name() + "','" + categorie.name() + "'," + prixPlat + ","
 			+ +dureePreparation + "," + disponibleCarte + ")");
 	int idPlat = demanderDernierId("plat");
@@ -736,10 +736,12 @@ public class Sql {
     }
 
     public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
-	executerInsert("INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe) VALUES ('"
-		+ dateDebut + "',null," + nbPersonne + "," + table.getId() + ")");
+	executerInsert(
+		"INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe,facture) VALUES ('"
+			+ dateDebut + "',null," + nbPersonne + "," + table.getId() + ",0)");
 	int idAffectation = demanderDernierId("affectation");
-	Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, null, 0.00, table);
+	Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, new ArrayList<Commande>(), 0.00,
+		table);
 	return affectation;
     }
 

@@ -1,20 +1,19 @@
 package restaurant;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Affectation {
 
-    private int			id;
-    private Date		dateDebut;
-    private Date		dateFin;
-    private int			nbPersonne;
-    private ArrayList<Commande>	commandes = new ArrayList<Commande>();
-    private double		facture;
-    private Table		table;
+    private int		   id;
+    private Date	   dateDebut;
+    private Date	   dateFin;
+    private int		   nbPersonne;
+    private List<Commande> commandes;
+    private double	   facture;
+    private Table	   table;
 
-    public Affectation(int id, Date dateDebut, int nbPersonne, ArrayList<Commande> commandes, double facture,
-	    Table table) {
+    public Affectation(int id, Date dateDebut, int nbPersonne, List<Commande> commandes, double facture, Table table) {
 	this.id = id;
 	this.dateDebut = dateDebut;
 	this.dateFin = null;
@@ -56,11 +55,11 @@ public class Affectation {
 	this.nbPersonne = nbPersonne;
     }
 
-    public ArrayList<Commande> getCommandes() {
+    public List<Commande> getCommandes() {
 	return commandes;
     }
 
-    public void setCommandes(ArrayList<Commande> commandes) {
+    public void setCommandes(List<Commande> commandes) {
 	this.commandes = commandes;
     }
 

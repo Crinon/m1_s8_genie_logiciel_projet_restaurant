@@ -178,7 +178,7 @@ public class TestUnitaire {
 		+ "    id integer NOT NULL DEFAULT nextval('restaurant.affectation_id_seq'),\r\n"
 		+ "    datedebut TIMESTAMP NOT NULL,\r\n" + "    datefin TIMESTAMP,\r\n"
 		+ "    nombrepersonne integer NOT NULL,\r\n" + "    tableoccupe integer NOT NULL,\r\n"
-		+ "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
+		+ "    facture double precision NOT NULL,\r\n" + "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
 		+ "    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)\r\n"
 		+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
 	// Reservation
@@ -1412,7 +1412,7 @@ public class TestUnitaire {
 	    Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2);
 	    Date dateCommande = new Timestamp(new Date().getTime());
 	    // Création du plat
-	    String nomPlat = "Gigot d'agneau";
+	    String nomPlat = "Gigot";
 	    Double prixPlat = 9.5;
 	    int tempsPrepa = 5;
 	    boolean surCarte = true;
@@ -1434,6 +1434,7 @@ public class TestUnitaire {
 	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 	    directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	    directeur.creerFacture(affectation);
 	    ResultSet resultSet = sql
 		    .executerSelect("SELECT facture FROM restaurant.affectation WHERE id=" + affectation.getId());
 	    resultSet.next();
@@ -1474,6 +1475,7 @@ public class TestUnitaire {
 	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+	directeur.creerFacture(affectation);
 	assertEquals(prixPlat * 3, affectation.getFacture(), 0.001);
     }
 
