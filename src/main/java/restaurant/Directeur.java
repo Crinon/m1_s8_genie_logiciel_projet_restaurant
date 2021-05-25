@@ -236,10 +236,15 @@ public class Directeur extends Personne {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne,
-		    Restaurant.getMiniTable(nbPersonne, dateDebut));
-	    Restaurant.getAffectationsJour().add(affectation);
-	    return affectation;
+	    Table table = Restaurant.getMiniTable(nbPersonne, dateDebut);
+	    if (table == null) {
+		System.err.println("Aucune table n'est disponible");
+	    }
+	    else {
+		Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
+		Restaurant.getAffectationsJour().add(affectation);
+		return affectation;
+	    }
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
@@ -265,11 +270,15 @@ public class Directeur extends Personne {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    System.out.println(Restaurant.getMiniTable(nbPersonne, dateReserve));
-	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne,
-		    Restaurant.getMiniTable(nbPersonne, dateReserve));
-	    Restaurant.getReservationsJour().add(reservation);
-	    return reservation;
+	    Table table = Restaurant.getMiniTable(nbPersonne, dateReserve);
+	    if (table == null) {
+		System.err.println("Aucune table n'est disponible");
+	    }
+	    else {
+		Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne, table);
+		Restaurant.getReservationsJour().add(reservation);
+		return reservation;
+	    }
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
