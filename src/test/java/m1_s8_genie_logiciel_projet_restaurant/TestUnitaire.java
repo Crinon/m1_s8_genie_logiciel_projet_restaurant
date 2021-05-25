@@ -1315,8 +1315,8 @@ public class TestUnitaire {
 	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
 	    Date dateReservationSQL = new Timestamp(date1.getTime());
 	    String dateAppel = "20/06/2020 12:00:00";
-	    Date date2 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
-	    Date dateAppelSQL = new Timestamp(date1.getTime());
+	    Date date2 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateAppel);
+	    Date dateAppelSQL = new Timestamp(date2.getTime());
 	    Reservation res = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 4);
 	    Reservation res2 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
 	    Reservation res3 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 3);
