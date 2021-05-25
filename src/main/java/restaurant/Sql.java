@@ -23,22 +23,21 @@ public class Sql {
     private Statement	stmt		   = null;
     public final String	propertiesFilename = "properties";
     private Properties	prop		   = new Properties();
-    public static final String hardResetPostgres = "TRUNCATE TABLE restaurant.affectation CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.assistant CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.commande CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.cuisinier CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.directeur CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.etage CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.ingredient CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.maitrehotel CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.personne CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.plat CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.recette CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.reservation CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.restaurant CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.serveur CASCADE;\r\n"
-    		+ "TRUNCATE TABLE restaurant.tables CASCADE;\r\n"
-    		+ "\r\n"
+    public static final String hardResetPostgres = "DELETE FROM restaurant.commande;\r\n"
+    		+ "DELETE FROM restaurant.affectation;\r\n"
+    		+ "DELETE FROM restaurant.reservation;\r\n"
+    		+ "DELETE FROM restaurant.tables;\r\n"
+    		+ "DELETE FROM restaurant.serveur;\r\n"
+    		+ "DELETE FROM restaurant.recette;\r\n"
+    		+ "DELETE FROM restaurant.ingredient;\r\n"
+    		+ "DELETE FROM restaurant.assistant;\r\n"
+    		+ "DELETE FROM restaurant.cuisinier;\r\n"
+    		+ "DELETE FROM restaurant.directeur;\r\n"
+    		+ "DELETE FROM restaurant.etage;\r\n"
+    		+ "DELETE FROM restaurant.maitrehotel;\r\n"
+    		+ "DELETE FROM restaurant.plat;\r\n"
+    		+ "DELETE FROM restaurant.restaurant;\r\n"
+    		+ "DELETE FROM restaurant.personne;\r\n"
     		+ "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
     		+ "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
@@ -255,15 +254,17 @@ public class Sql {
 
     }
 
-    private void executerUpdate(String requete) {
+    private int executerUpdate(String requete) {
 	try {
 	    this.stmt = c.createStatement();
 	    System.out.println("Update : " + requete);
-	    stmt.executeUpdate(requete);
+	    int nbAffecte = stmt.executeUpdate(requete);
 	    c.commit();
+	    return nbAffecte;
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
+	    return 0;
 	}
     }
 
@@ -921,8 +922,8 @@ public class Sql {
 		}
 	}
 	
-	public  void hardReset(String database) {
-		executerUpdate(database);
+	public int hardReset(String database) {
+		return executerUpdate(database);
 	}
 
 
