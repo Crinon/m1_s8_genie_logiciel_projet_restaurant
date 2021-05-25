@@ -628,7 +628,6 @@ public class Sql {
     }
 
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
-
 	try {
 	    executerInsert(
 		    "INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"

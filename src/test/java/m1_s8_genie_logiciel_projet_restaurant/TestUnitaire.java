@@ -1282,4 +1282,59 @@ public class TestUnitaire {
 	}
     }
 
+    @Test
+    @DisplayName("Récuperation plus petite table")
+    public void getTableMini() {
+	System.out.println("\nTest en cours : Récuperation plus petite table");
+	try {
+	    int numero = incr();
+	    int numero2 = incr();
+	    int numero3 = incr();
+	    int numero4 = incr();
+	    int numero5 = incr();
+	    int numero6 = incr();
+	    int numero7 = incr();
+	    int numero8 = incr();
+	    int numero9 = incr();
+	    int numero10 = incr();
+	    directeur.ajouterEtage();
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    directeur.ajouterEtage();
+	    Etage etage2 = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    directeur.ajouterTable(numero, 2, etage);
+	    directeur.ajouterTable(numero2, 3, etage2);
+	    directeur.ajouterTable(numero3, 4, etage);
+	    directeur.ajouterTable(numero4, 4, etage2);
+	    directeur.ajouterTable(numero5, 2, etage);
+	    directeur.ajouterTable(numero6, 3, etage);
+	    directeur.ajouterTable(numero7, 2, etage);
+	    directeur.ajouterTable(numero8, 1, etage);
+	    directeur.ajouterTable(numero9, 10, etage);
+	    directeur.ajouterTable(numero10, 8, etage);
+	    String dateReservation = "20/06/2021 12:00:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    String dateAppel = "20/06/2020 12:00:00";
+	    Date date2 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateAppelSQL = new Timestamp(date1.getTime());
+	    Reservation res = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 4);
+	    Reservation res2 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
+	    Reservation res3 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 3);
+	    Reservation res4 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
+	    Reservation res5 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
+	    Reservation res6 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 9);
+	    System.out.println(res.getTable());
+	    System.out.println(res2.getTable());
+	    System.out.println(res3.getTable());
+	    System.out.println(res4.getTable());
+	    System.out.println(res5.getTable());
+	    System.out.println(res6.getTable());
+	    // TODO VRAI ASSERT
+	    assertTrue(false);
+	}
+	catch (ClassNotFoundException | SQLException | ParseException | IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
 }

@@ -259,6 +259,7 @@ public class Directeur extends Personne {
 	Sql sql;
 	try {
 	    sql = new Sql();
+	    System.out.println(Restaurant.getMiniTable(nbPersonne, dateReserve));
 	    Reservation reservation = sql.creationReservation(dateAppel, dateReserve, nbPersonne,
 		    Restaurant.getMiniTable(nbPersonne, dateReserve));
 	    Restaurant.getReservationsJour().add(reservation);
