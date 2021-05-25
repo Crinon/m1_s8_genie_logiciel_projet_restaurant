@@ -1,4 +1,4 @@
-package fr.ul.miage.restaurant;
+package restaurant;
 
 public abstract class Personne {
 

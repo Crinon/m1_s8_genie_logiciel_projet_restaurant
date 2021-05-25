@@ -1,4 +1,4 @@
-package fr.ul.miage.restaurant;
+package restaurant;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -85,6 +85,9 @@ public class Directeur extends Personne {
 
  	}
  	
+ 	
+  	
+  	
  // Permet de commander un ingrédient pour l'ajouter au stock
  	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
 
@@ -124,7 +127,39 @@ public class Directeur extends Personne {
  			} while (Main.estNullOuVide(choix) || (!Main.uniquementLettres(choix) && !Main.uniquementChiffres(choix)));
  	}
 
-    public Personne ajouterPersonnel(String nom, String role) {
+ 	//Permet de récupérer les paramètres d'insertion d'une personne
+ 	public void ajouterPersonnel() {
+ 		
+ 		String choix = null;
+ 		String role = null;
+ 		String login = null;
+
+ 		//TODO
+ 		do {
+ 	 		System.out.println(">Login de la personne à ajouter ?");
+ 	 		choix = Main.scanner.nextLine();
+		
+	 		if(!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)){
+	 			login = choix;
+	 			
+	 			System.out.println(">Role de la personne à ajouter ?");
+	 	 		choix = Main.scanner.nextLine();
+	 	 		if(!Main.estNullOuVide(choix) && Main.uniquementLettres(choix)){
+	 	 			role = choix;
+	 	 			//TODO
+	 	 		}
+	 	 		
+	 	 		//Tests à effectuer
+	 	 		//TODO
+	 	 		insererPersonne(login, role);
+	 		}else {
+				System.out.println("Mauvaise entrée");
+			}
+ 		} while (login == null && role == null);
+ 		
+ 	}
+ 	
+    public Personne insererPersonne(String nom, String role) {
 	Personne personne = null;
 	// Objet pour intéragir avec la base de données
 	try {
