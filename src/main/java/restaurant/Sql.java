@@ -506,8 +506,9 @@ public class Sql {
 	try {
 	    resultSet.next();
 	    if (resultSet.getString("quantite") != null) {
-		System.out.println("Quantité actuelle : " + quantiteActuelle);
+		System.out.println(ajout);
 		quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
+		System.out.println("Quantité actuelle : " + quantiteActuelle);
 		nouvelleQuantite = quantiteActuelle + ajout;
 		System.out.println("Quantité nouvelle : " + nouvelleQuantite);
 		executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
