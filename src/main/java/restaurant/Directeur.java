@@ -93,11 +93,12 @@ public class Directeur extends Personne {
 	}
     }
 
-    public boolean ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
-	Sql sql = new Sql();
-	sql.insererEtage();
-	Restaurant.addEtage(new Etage(sql.demanderDernierId("etage"), sql.demanderDernierEtage()));
-	return true;
+    public Etage ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
+		Sql sql = new Sql();
+		sql.insererEtage();
+		Etage etage = new Etage(sql.demanderDernierId("etage"), sql.demanderDernierEtage());
+		Restaurant.addEtage(etage);
+		return etage;
     }
 
     public void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
@@ -142,25 +143,23 @@ public class Directeur extends Personne {
 
     }
 
-    public boolean ajouterIngredient(String nom) {
-	boolean success = false;
+    public Ingredient ajouterIngredient(String nom) {
 	Sql sql;
 	try {
 	    sql = new Sql();
-	    success = sql.insererIngredient(nom);
-	    if (success) {
-		Restaurant.getIngredients().add(new Ingredient(sql.demanderDernierId("ingredient"), nom, 0));
-		return success;
-	    }
-	    else {
-		System.out.println("L'ajout de l'ingrédient " + nom + " a échoué.");
-		return false;
+	    if (sql.insererIngredient(nom)) {
+	    Ingredient ingredient = new Ingredient(sql.demanderDernierId("ingredient"), nom, 0);
+		Restaurant.getIngredients().add(ingredient);
+		return ingredient;
+	    }	    else {
+		System.err.println("L'ajout de l'ingrédient " + nom + " a échoué.");
+		return null;
 	    }
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    e.printStackTrace();
 	}
-	return success;
+	return null;
     }
 
     public void commanderIngredient(Ingredient ingredient, int ajout)

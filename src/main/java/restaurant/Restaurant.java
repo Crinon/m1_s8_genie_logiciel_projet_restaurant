@@ -16,10 +16,10 @@ public final class Restaurant {
     private static ArrayList<Etage>	  etages;
     private static ArrayList<Personne>	  personnel;
     private static ArrayList<Ingredient>  ingredients;
-    private static ArrayList<Plat>	  plats;
-    private static ArrayList<Affectation> affectationsJour;
-    private static ArrayList<Reservation> reservationsJour;
-    private static ArrayList<Commande>	  commandes;
+    private static ArrayList<Plat>	  plats =new ArrayList<Plat>();
+    private static ArrayList<Affectation> affectationsJour = new ArrayList<Affectation>();
+    private static ArrayList<Reservation> reservationsJour = new ArrayList<Reservation>();
+    private static ArrayList<Commande>	  commandes = new ArrayList<Commande>();;
 
     private static LocalTime heureDejeunerOuverture;
     private static LocalTime heureDejeunerLimite;
@@ -36,19 +36,13 @@ public final class Restaurant {
 	    sql.initialiserEtages();
 	    for (Etage etage : etages) {
 		etage.initialiserTables();
-//				toutesLesTables.addAll(etage.getTables());
 	    }
 	    // Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
 	    sql.premierDemarrage();
 	    // Initialisation du personnel
 	    sql.initialiserPersonnel();
 	    sql.initialiserPlats();
-	    // Au lancement du programme en début de journée, aucune table n'est occupée
-	    affectationsJour = new ArrayList<Affectation>();
-
-	    reservationsJour = new ArrayList<Reservation>();
 	    sql.initialiserReservation();
-	    commandes = new ArrayList<Commande>();
 	}
 	catch (ClassNotFoundException | SQLException | IOException e) {
 	    // TODO Auto-generated catch block

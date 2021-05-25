@@ -255,14 +255,26 @@ public class TestUnitaire {
 	}
 
 	@Test
-	@DisplayName("Commander un ingrédient : modification de la quantité dans la base de données")
+	@DisplayName("Commander un ingrédient : modification de la quantité d'un ingrédient dans la base de données")
 	public void commanderIngredientDB() throws ClassNotFoundException, SQLException, IOException {
-		System.out.println("\nTest en cours : commande d'ingrédient");
+		System.out.println("\nTest en cours : modification de la quantité d'un ingrédient dans la base de données");
 		directeur.commanderIngredient(Restaurant.getIngredients().get(0), 10);
 		ResultSet resultSet = sql.executerSelect("SELECT nom,quantite from restaurant.ingredient where id = "
 				+ Restaurant.getIngredients().get(0).getId());
 		resultSet.next();
 		assertEquals(10, Integer.parseInt(resultSet.getString("quantite")));
+	}
+	
+	@Test
+	@DisplayName("Commander un ingrédient : modification de la quantité d'un ingrédient dans la mémoire")
+	public void commanderIngredientJava() throws ClassNotFoundException, SQLException, IOException {
+		System.out.println("\nTest en cours : modification de la quantité d'un ingrédient dans la mémoire");
+		Ingredient ingredientTest = directeur.ajouterIngredient("ours");
+		directeur.commanderIngredient(ingredientTest, 17);
+		directeur.commanderIngredient(ingredientTest, 23);
+
+		assertEquals(40,ingredientTest.getQuantite());
+//		assertEquals(10, Integer.parseInt(resultSet.getString("quantite")));
 	}
 
 	@Test
@@ -1240,7 +1252,7 @@ public class TestUnitaire {
 			Type type = Type.ENTREE;
 			Categorie categorie = Categorie.POISSON;
 			String nomIngredientSaumon = "sanglier";
-			String nomIngredientToast = "firte";
+			String nomIngredientToast = "frite";
 			int quantiteSaumon = 1;
 			int quantiteTartine = 10;
 			directeur.ajouterIngredient(nomIngredientSaumon);
@@ -1256,6 +1268,43 @@ public class TestUnitaire {
 			
 			ResultSet resultSet = sql.executerSelect("SELECT * FROM restaurant.commande WHERE id="+commande.getId());
 			assertTrue(resultSet.next());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@DisplayName("Création d'une commande dans la mémoire")
+	public void creationCommandeJava() {
+		System.out.println("\nTest en cours : Création d'une commande dans la mémoire");
+		try {
+			// Prérequis : étage, table, plat et affectation
+			int numero = incr();
+			// Etage qui va recevoir une table
+			Etage etage =  directeur.ajouterEtage();
+			// On ajoute la table
+			Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+			// Création de l'affectation (date immédiate)
+			Affectation affectation = directeur.creationAffectation(new Timestamp(new Date().getTime()), 2, tableActuelle);
+			Date dateCommande = new Timestamp(new Date().getTime());
+			// Création du plat
+			String nomPlat = "Crododile mayo";
+			Double prixPlat = 9.5;
+			int tempsPrepa = 5;
+			boolean surCarte = true;
+			Type type = Type.ENTREE;
+			Categorie categorie = Categorie.POISSON;
+			Ingredient ingredient1 = directeur.ajouterIngredient("crocodile");
+			Ingredient ingredient2 = directeur.ajouterIngredient("mayonnaise");
+			HashMap<Ingredient, Integer> recette = new HashMap<>();
+			recette.put(ingredient1, 5);
+			recette.put(ingredient2, 7);
+			Plat plat = directeur.creerPlat(nomPlat, prixPlat, tempsPrepa, surCarte, type, categorie, recette);
+			boolean estEnfant = true;
+			int nbCommandeAvant = 0;
+			directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
+			int nbCommandeApres = Restaurant.getCommandes().size();
+			assertTrue(nbCommandeAvant < nbCommandeApres);
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			e.printStackTrace();
 		}

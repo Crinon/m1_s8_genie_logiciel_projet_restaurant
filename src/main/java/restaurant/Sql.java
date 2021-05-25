@@ -415,30 +415,29 @@ public class Sql {
     }
 
     public boolean commanderIngredient(Ingredient ingredient, int ajout) throws NumberFormatException, SQLException {
-	// On récupère le stock actuel pour incrémenter
-	ResultSet resultSet = executerSelect(
-		"SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
-	int quantiteActuelle = 0;
-	int nouvelleQuantite = 0;
-	resultSet.next();
-	if (resultSet.getString("quantite") != null) {
-	    System.out.println("Quantité actuelle : " + quantiteActuelle);
-	    quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
-	    nouvelleQuantite = quantiteActuelle + ajout;
-	    System.out.println("Quantité nouvelle : " + nouvelleQuantite);
-	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
-		    + ingredient.getId());
-	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-		if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
-		    Restaurant.getIngredients().get(i)
-			    .setQuantite(Restaurant.getIngredients().get(i).getQuantite() + nouvelleQuantite);
+		// On récupère le stock actuel pour incrémenter
+		ResultSet resultSet = executerSelect(
+			"SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
+		int quantiteActuelle = 0;
+		int nouvelleQuantite = 0;
+		resultSet.next();
+		if (resultSet.getString("quantite") != null) {
+		    System.out.println("Quantité actuelle : " + quantiteActuelle);
+		    quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
+		    nouvelleQuantite = quantiteActuelle + ajout;
+		    System.out.println("Quantité nouvelle : " + nouvelleQuantite);
+		    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
+			    + ingredient.getId());
+		    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+				if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
+				    Restaurant.getIngredients().get(i)
+					    .setQuantite(nouvelleQuantite);
+				}
+		    }
+		    return true;
+		} else {
+		    return false;
 		}
-	    }
-	    return true;
-	}
-	else {
-	    return false;
-	}
     }
 
     public void initialiserIngredients() {
@@ -590,25 +589,38 @@ public class Sql {
     }
 
     public void initialiserPlats() {
-	// Initialisation de la liste d'étages à retrouner
+	// On créer l'arraylist de plat et on la retourne
 	ArrayList<Plat> plats = new ArrayList<>();
-	// Sélection de tous les étages présents dans la DB
+	// Sélection de tous les plats présents dans la DB
 	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.plat");
 	// Pour chaque plat existant, on créé un objet Plat et on l'ajoute à la liste
 	// retournée
 	try {
 	    while (resultSet.next()) {
-		HashMap<Ingredient, Integer> recetter = new HashMap<Ingredient, Integer>();
-		ResultSet resultSetIngredients = executerSelect("SELECT * FROM restaurant.ingredient WHERE ");
-		// TODO Liste d'ingredients a ajouter
-		plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
-			Double.parseDouble(resultSet.getString("prix")),
-			Integer.parseInt(resultSet.getString("dureePreparation")),
-			resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
-			Categorie.valueOf(resultSet.getString("typeIngredient")), recetter));
+			HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
+			ResultSet resultSetLignesRecette = executerSelect("SELECT * FROM restaurant.recette WHERE plat="+resultSet.getInt("id"));
+			while (resultSetLignesRecette.next()) {
+				Ingredient ingredient = Restaurant.getIngredients()
+								.stream()
+								.filter(ingredientCurrent ->  {
+									try {
+										return ingredientCurrent.getId() == resultSetLignesRecette.getInt("ingredient");
+									} catch (SQLException e) {
+										e.printStackTrace();
+										return false;
+									}
+								})
+								.collect(Collectors.toList()).get(0);
+				int quantite = resultSetLignesRecette.getInt("quantite");
+					recette.put(ingredient, quantite);
+			}
+			plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
+				Double.parseDouble(resultSet.getString("prix")),
+				Integer.parseInt(resultSet.getString("dureePreparation")),
+				resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
+				Categorie.valueOf(resultSet.getString("typeIngredient")), recette));
 	    }
-	}
-	catch (NumberFormatException | SQLException e) {
+	} catch (NumberFormatException | SQLException e) {
 	    e.printStackTrace();
 	}
 	Restaurant.setPlats(plats);
