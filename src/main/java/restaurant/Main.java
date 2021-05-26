@@ -258,7 +258,7 @@ public class Main {
 
   			break;
   		case 7:
-  			viderBddDirecteur();
+  			
   			break;
 
   		case 8:
@@ -321,7 +321,7 @@ public class Main {
 
 			break;
   		case 24:
-
+  		    	viderBddDirecteur();
 			break;
 
   		default:
