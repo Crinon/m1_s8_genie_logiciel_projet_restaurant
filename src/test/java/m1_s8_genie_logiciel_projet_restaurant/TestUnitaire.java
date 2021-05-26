@@ -1468,25 +1468,4 @@ public class TestUnitaire {
 	assertTrue(quantiteAvantCommande > quantiteApresCommande);
     }
 
-    @AfterAll
-    public static void suppression() {
-	ResultSet rs = sql.executerSelect("SELECT * FROM restaurant.etage");
-	try {
-	    while (rs.next()) {
-		System.out.println(rs.getInt("niveau"));
-	    }
-	    sql.hardResetH2(sql.hardResetH2);
-	    System.out.println("Recherche d'étages après suppression");
-	    ResultSet rs2 = sql.executerSelect("SELECT * FROM restaurant.etage");
-	    while (rs2.next()) {
-		System.out.println(rs2.getInt("niveau"));
-	    }
-	    System.out.println("Fin");
-	}
-	catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-    }
-
 }
