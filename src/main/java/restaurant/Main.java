@@ -137,7 +137,7 @@ public class Main {
 	
 	
 	
-	 // Permet de commander un ingrédient pour l'ajouter au stock
+	// Permet de commander un ingrédient pour l'ajouter au stock
  	public static void commanderIngredientDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
  			// Affichage menu
@@ -181,6 +181,12 @@ public class Main {
 				System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
 			}
  			
+ 		
+ 	}
+ 	
+ 	
+ 	// Permet de vider la base de données pour réinitialiser le restaurant
+ 	public static void viderBddDirecteur() throws ClassNotFoundException, SQLException, IOException {
  		
  	}
  	
@@ -252,7 +258,7 @@ public class Main {
 
   			break;
   		case 7:
-
+  			viderBddDirecteur();
   			break;
 
   		case 8:
@@ -588,27 +594,22 @@ public class Main {
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
 			case "restaurant.Directeur":
-				persConnectee = (Directeur) persConnectee;
 				menuPrincipalDirecteur();
 				break;
 
 			case "restaurant.Maitrehotel":
-				persConnectee = (Maitrehotel) persConnectee;
 				menuPrincipalMaitredhotel();
 				break;
 
 			case "restaurant.Cuisinier":
-				persConnectee = (Cuisinier) persConnectee;
 				menuPrincipalCuisinier();
 				break;
 
 			case "restaurant.Serveur":
-				persConnectee = (Serveur) persConnectee;
 				menuPrincipalServeur();
 				break;
 
 			case "restaurant.Assistant": // Assistant de service
-				persConnectee = (Assistant) persConnectee;
 				menuPrincipalAssistant();
 				break;
 
