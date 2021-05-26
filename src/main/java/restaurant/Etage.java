@@ -45,7 +45,7 @@ public class Etage {
 	this.tables.add(table);
     }
 
-    public void initialiserTables() throws ClassNotFoundException, SQLException, IOException {
+    public void initialiserTables() {
 	Sql sql = new Sql();
 	sql.initialiserTables(this);
     }

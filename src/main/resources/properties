@@ -5,3 +5,4 @@ default.heureDejeunerOuverture=43200
 default.heureDejeunerLimite=54000
 default.heureDinerOuverture=68400
 default.heureDinerLimite=79200
+constant.QUANTITE_MAX_STOCK=500

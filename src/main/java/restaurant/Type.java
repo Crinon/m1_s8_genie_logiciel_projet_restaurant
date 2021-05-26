@@ -1,5 +1,5 @@
 package restaurant;
 
 public enum Type {
-    ENTREE, PLAT, DESSERT
+    Entree, Plat, Dessert
 }

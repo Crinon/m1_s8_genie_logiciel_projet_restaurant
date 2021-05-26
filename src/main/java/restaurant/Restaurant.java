@@ -1,7 +1,5 @@
 package restaurant;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -13,54 +11,50 @@ import java.util.stream.Collectors;
 
 public final class Restaurant {
 
+
 	final static int TAILLE_MAX_NOM_INGREDIENT = 30; //Nombre de caractères max du nom d'un ingrédient
 	final static int TAILLE_MAX_NOM_PERSONNE = 30; //Nombre de caractères max du nom d'une personne
 	final static int QUANTITE_MAX_COMMANDE = 500; //quantité maximale pour une commande
-	final static int QUANTITE_MAX_STOCK = 20000; //quantité maximale de stock pour un ingrédient
-	
-	
+
     private static ArrayList<Etage>	  etages;
     private static ArrayList<Personne>	  personnel;
     private static ArrayList<Ingredient>  ingredients;
-    private static ArrayList<Plat>	  plats;
-    private static ArrayList<Affectation> affectationsJour;
-    private static ArrayList<Reservation> reservationsJour;
-    private static ArrayList<Commande>	  commandes;
+    private static ArrayList<Plat>	  plats		   = new ArrayList<Plat>();
+    private static ArrayList<Affectation> affectationsJour = new ArrayList<Affectation>();
+    private static ArrayList<Reservation> reservationsJour = new ArrayList<Reservation>();
+    private static ArrayList<Commande>	  commandes	   = new ArrayList<Commande>();;
 
     private static LocalTime heureDejeunerOuverture;
     private static LocalTime heureDejeunerLimite;
     private static LocalTime heureDinerOuverture;
     private static LocalTime heureDinerLimite;
     private static int	     nbTableMax;
-    
+    private static int	     QUANTITE_MAX_STOCK;    // quantité maximale de stock pour un ingrédient
 
     public static void initialisation() {
 	Sql sql;
-	try {
-	    sql = new Sql();
-	    sql.initialiserHoraires();
-	    sql.initialiserIngredients();
-	    sql.initialiserEtages();
-	    for (Etage etage : etages) {
-		etage.initialiserTables();
-//				toutesLesTables.addAll(etage.getTables());
-	    }
-	    // Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
-	    sql.premierDemarrage();
-	    // Initialisation du personnel
-	    sql.initialiserPersonnel();
-	    sql.initialiserPlats();
-	    // Au lancement du programme en début de journée, aucune table n'est occupée
-	    affectationsJour = new ArrayList<Affectation>();
-
-	    reservationsJour = new ArrayList<Reservation>();
-	    sql.initialiserReservation();
-	    commandes = new ArrayList<Commande>();
+	sql = new Sql();
+	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base
+	System.out.println("Vérification s'il s'agit du premier démarrage");
+	sql.premierDemarrage();
+	System.out.println("Initialisation des horaires du restaurant");
+	sql.initialiserHoraires();
+	System.out.println("Chargement des constantes");
+	sql.initialiserConstantes();
+	System.out.println("Chargement des ingrédients existants");
+	sql.initialiserIngredients();
+	System.out.println("Chargement des étages existants");
+	sql.initialiserEtages();
+	System.out.println("Chargement des tables par étage");
+	for (Etage etage : etages) {
+	    etage.initialiserTables();
 	}
-	catch (ClassNotFoundException | SQLException | IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	System.out.println("Chargement du personnel");
+	sql.initialiserPersonnel();
+	System.out.println("Chargement des plats existants");
+	sql.initialiserPlats();
+	System.out.println("Chargement des réservations");
+	sql.initialiserReservation();
     }
 
 //	public static void premierDemarrage(Sql sql) {
@@ -109,16 +103,16 @@ public final class Restaurant {
 		calendarReservation.get(Calendar.MONTH), calendarReservation.get(Calendar.DAY_OF_MONTH));
 	LocalTime heureDateReservation = LocalTime.of(calendarReservation.get(Calendar.HOUR_OF_DAY),
 		calendarReservation.get(Calendar.MINUTE), calendarReservation.get(Calendar.SECOND));
-	return (localdateVenue.equals(localdateReservation) && 
-		( (heureDateVenue.isAfter(heureDejeunerOuverture)
+	return (localdateVenue.equals(localdateReservation) && ((heureDateVenue.isAfter(heureDejeunerOuverture)
 		&& heureDateVenue.isBefore(heureDejeunerLimite) && heureDateReservation.isAfter(heureDejeunerOuverture)
 		&& heureDateReservation.isBefore(heureDejeunerLimite))
-		|| 
-		  (heureDateVenue.isAfter(heureDinerOuverture) && heureDateVenue.isBefore(heureDinerLimite)
-		&& heureDateReservation.isAfter(heureDinerOuverture)
-		&& heureDateReservation.isBefore(heureDinerLimite))
-		)
-	);
+		|| (heureDateVenue.isAfter(heureDinerOuverture) && heureDateVenue.isBefore(heureDinerLimite)
+			&& heureDateReservation.isAfter(heureDinerOuverture)
+			&& heureDateReservation.isBefore(heureDinerLimite))));
+    }
+
+    public static List<Plat> getCarte() {
+	return plats.stream().filter(plat -> plat.isDisponibleCarte()).collect(Collectors.toList());
     }
 
     public static ArrayList<Ingredient> getIngredients() {
@@ -222,6 +216,14 @@ public final class Restaurant {
 
     public static void setCommandes(ArrayList<Commande> commandes) {
 	Restaurant.commandes = commandes;
+    }
+
+    public static int getQUANTITE_MAX_STOCK() {
+	return QUANTITE_MAX_STOCK;
+    }
+
+    public static void setQUANTITE_MAX_STOCK(int qUANTITE_MAX_STOCK) {
+	QUANTITE_MAX_STOCK = qUANTITE_MAX_STOCK;
     }
 
 }

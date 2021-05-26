@@ -267,7 +267,7 @@ public class Main {
 		//Contrôle de l'entrée
 		while ( estNullOuVide(numPersonne) //vide
 				|| !uniquementChiffres(numPersonne) //pas que des chiffres
-				|| (uniquementChiffres(numPersonne) && !valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1) ) //personne n'existe pas
+				|| (uniquementChiffres(numPersonne) && valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1) ) //personne n'existe pas
 			  ){
 			
 			System.out.println("Erreur, veuillez réessayer");

@@ -19,11 +19,75 @@ import java.util.stream.Collectors;
 
 public class Sql {
 
-    private Connection	c		   = null;
-    private Statement	stmt		   = null;
-    public final String	propertiesFilename = "database.properties";
-    private Properties	prop		   = new Properties();
+    private Connection	       c		  = null;
+    private Statement	       stmt		  = null;
+    public final String	       propertiesFilename = "properties";
+    private Properties	       prop		  = new Properties();
+    public static final String hardResetPostgres  = "DELETE FROM restaurant.commande;\r\n"
+	    + "DELETE FROM restaurant.affectation;\r\n" + "DELETE FROM restaurant.reservation;\r\n"
+	    + "DELETE FROM restaurant.tables;\r\n" + "DELETE FROM restaurant.serveur;\r\n"
+	    + "DELETE FROM restaurant.recette;\r\n" + "DELETE FROM restaurant.ingredient;\r\n"
+	    + "DELETE FROM restaurant.assistant;\r\n" + "DELETE FROM restaurant.cuisinier;\r\n"
+	    + "DELETE FROM restaurant.directeur;\r\n" + "DELETE FROM restaurant.etage;\r\n"
+	    + "DELETE FROM restaurant.maitrehotel;\r\n" + "DELETE FROM restaurant.plat;\r\n"
+	    + "DELETE FROM restaurant.restaurant;\r\n" + "DELETE FROM restaurant.personne;\r\n"
+	    + "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
 
+    public static final String hardResetH2		      = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.affectation;\r\n"
+	    + "ALTER TABLE restaurant.assistant SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.assistant;\r\n"
+	    + "ALTER TABLE restaurant.commande SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.commande;\r\n"
+	    + "ALTER TABLE restaurant.cuisinier SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.cuisinier;\r\n"
+	    + "ALTER TABLE restaurant.directeur SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.directeur;\r\n"
+	    + "ALTER TABLE restaurant.etage SET REFERENTIAL_INTEGRITY FALSE;" + "TRUNCATE TABLE restaurant.etage;\r\n"
+	    + "ALTER TABLE restaurant.ingredient SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.ingredient;\r\n"
+	    + "ALTER TABLE restaurant.maitrehotel SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.maitrehotel;\r\n"
+	    + "ALTER TABLE restaurant.personne SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.personne;\r\n" + "ALTER TABLE restaurant.plat SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.plat;\r\n" + "ALTER TABLE restaurant.recette SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.recette;\r\n"
+	    + "ALTER TABLE restaurant.reservation SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.reservation;\r\n"
+	    + "ALTER TABLE restaurant.restaurant SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.restaurant;\r\n"
+	    + "ALTER TABLE restaurant.serveur SET REFERENTIAL_INTEGRITY FALSE;"
+	    + "TRUNCATE TABLE restaurant.serveur;\r\n"
+	    + "ALTER TABLE restaurant.tables SET REFERENTIAL_INTEGRITY FALSE;" + "TRUNCATE TABLE restaurant.tables;\r\n"
+	    + "\r\n" + "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
+	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
     public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
     public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
     // V�rifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon
@@ -103,13 +167,19 @@ public class Sql {
     // Profit dejeuner
     // Profit diner
 
-    public Sql() throws ClassNotFoundException, SQLException, IOException {
+    public Sql() {
 	InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
-	prop.load(inputStream);
-	Class.forName("org.postgresql.Driver");
-	c = DriverManager.getConnection(prop.getProperty("datasource.url"), prop.getProperty("datasource.username"),
-		prop.getProperty("datasource.password"));
-	c.setAutoCommit(false);
+	try {
+	    prop.load(inputStream);
+	    Class.forName("org.postgresql.Driver");
+	    c = DriverManager.getConnection(prop.getProperty("datasource.url"), prop.getProperty("datasource.username"),
+		    prop.getProperty("datasource.password"));
+	    c.setAutoCommit(false);
+	}
+	catch (IOException | ClassNotFoundException | SQLException e) {
+	    e.printStackTrace();
+	}
+
     }
 
     // La classe de test doit pouvoir exécuter des requêtes
@@ -157,29 +227,32 @@ public class Sql {
     }
 
     public ResultSet executerSelect(String requete) {
-	ResultSet res = null;
 	try {
+	    ResultSet res = null;
 	    this.stmt = c.createStatement();
 	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
 	    return res;
 	}
 	catch (SQLException e) {
+	    System.err.println("executerSelect de Sql.java a échoué.");
 	    e.printStackTrace();
 	    return null;
 	}
 
     }
 
-    private void executerUpdate(String requete) {
+    private int executerUpdate(String requete) {
 	try {
 	    this.stmt = c.createStatement();
 	    System.out.println("Update : " + requete);
-	    stmt.executeUpdate(requete);
+	    int nbAffecte = stmt.executeUpdate(requete);
 	    c.commit();
+	    return nbAffecte;
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
+	    return 0;
 	}
     }
 
@@ -190,7 +263,7 @@ public class Sql {
 
 	try {
 	    String login = definirLogin(nom, 0);
-	    executerInsert(String.format(requete_insertion_personne, nom, login));
+	    executerInsert(String.format("INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')", nom, login));
 	    ResultSet resultSet = executerSelect("Select MAX(id) as max FROM restaurant.personne");
 	    resultSet.next();
 	    executerInsert(
@@ -239,7 +312,6 @@ public class Sql {
      * @param nom
      * @param nombre
      * @return login
-     * @throws SQLException
      */
     public String definirLogin(String nom, int nombre) {
 	try {
@@ -267,7 +339,6 @@ public class Sql {
     /**
      * @param personne
      * @param role
-     * @throws SQLException
      */
     public void modifierPersonne(Personne personne, String role) {
 	executerDelete(
@@ -277,9 +348,8 @@ public class Sql {
 
     /**
      * @param personne
-     * @throws SQLException
      */
-    public void supprimerPersonne(Personne personne) throws SQLException {
+    public void supprimerPersonne(Personne personne) {
 	executerDelete("DELETE FROM " + personne.getClass().getName().toLowerCase() + " WHERE personne = "
 		+ personne.getMasterid());
 
@@ -386,7 +456,7 @@ public class Sql {
 	return executerDelete("DELETE FROM restaurant.tables WHERE id = " + table.getId());
     }
 
-    public boolean insererIngredient(String nom) throws SQLException {
+    public boolean insererIngredient(String nom) {
 	// On vérifie que 2 ingrédient ne peuvent pas avoir le même nom
 	ResultSet resultSet = executerSelect(
 		"SELECT count(*) as count FROM restaurant.ingredient WHERE nom = '" + nom + "'");
@@ -394,51 +464,70 @@ public class Sql {
 	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
 	    return false;
 	}
-	resultSet.next();
+	try {
+	    resultSet.next();
+	    if (Integer.parseInt(resultSet.getString("count")) != 0) {
+		System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
+		return false;
+	    }
 
-	if (Integer.parseInt(resultSet.getString("count")) != 0) {
-	    System.err.println("Vous avez tenté de créer un ingrédient avec un nom déjà existant");
-	    return false;
+	    // On insère l'ingrédient avec une quantité nulle
+	    executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
+	    return true;
 	}
-
-	// On insère l'ingrédient avec une quantité nulle
-	executerInsert("INSERT INTO restaurant.ingredient (nom,quantite) VALUES ('" + nom + "',0)");
-	return true;
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	return false;
 
     }
 
-    public int demanderDernierId(String table) throws SQLException {
+    public int demanderDernierId(String table) {
 	ResultSet resultSet = executerSelect("SELECT MAX(id) as max FROM restaurant." + table);
 	// Démarrage du curseur
-	resultSet.next();
-	return Integer.parseInt(resultSet.getString("max"));
+	try {
+	    resultSet.next();
+	    return Integer.parseInt(resultSet.getString("max"));
+	}
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	return 0;
     }
 
-    public boolean commanderIngredient(Ingredient ingredient, int ajout) throws NumberFormatException, SQLException {
+    public boolean commanderIngredient(Ingredient ingredient, int ajout) {
 	// On récupère le stock actuel pour incrémenter
 	ResultSet resultSet = executerSelect(
 		"SELECT quantite FROM restaurant.ingredient WHERE id =" + ingredient.getId());
 	int quantiteActuelle = 0;
 	int nouvelleQuantite = 0;
-	resultSet.next();
-	if (resultSet.getString("quantite") != null) {
-	    System.out.println("Quantité actuelle : " + quantiteActuelle);
-	    quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
-	    nouvelleQuantite = quantiteActuelle + ajout;
-	    System.out.println("Quantité nouvelle : " + nouvelleQuantite);
-	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
-		    + ingredient.getId());
-	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-		if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
-		    Restaurant.getIngredients().get(i)
-			    .setQuantite(Restaurant.getIngredients().get(i).getQuantite() + nouvelleQuantite);
+	try {
+	    resultSet.next();
+	    if (resultSet.getString("quantite") != null) {
+		System.out.println(ajout);
+		quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
+		System.out.println("Quantité actuelle : " + quantiteActuelle);
+		nouvelleQuantite = quantiteActuelle + ajout;
+		System.out.println("Quantité nouvelle : " + nouvelleQuantite);
+		executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
+			+ ingredient.getId());
+		for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+		    if (Restaurant.getIngredients().get(i).getId() == ingredient.getId()) {
+			Restaurant.getIngredients().get(i).setQuantite(nouvelleQuantite);
+		    }
 		}
+		return true;
 	    }
-	    return true;
+	    else {
+		return false;
+	    }
 	}
-	else {
-	    return false;
+	catch (Exception e) {
+	    e.printStackTrace();
 	}
+	return false;
     }
 
     public void initialiserIngredients() {
@@ -456,30 +545,43 @@ public class Sql {
 	}
     }
 
-    public void initialiserTables(Etage etage) throws NumberFormatException, SQLException {
+    public void initialiserTables(Etage etage) {
 	// On récupère toutes les tables affecté à l'étage demandé
 	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.tables WHERE id = " + etage.getId());
 	// Pour chaque table trouvée, on créé un objet table que l'on ajoute à l'étage
 	// en cours
-	while (resultSet.next()) {
-	    etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
-		    Integer.parseInt(resultSet.getString("numero")), Integer.parseInt(resultSet.getString("capacite")),
-		    EtatTable.valueOf(resultSet.getString("etat"))));
+	try {
+	    while (resultSet.next()) {
+		etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
+			Integer.parseInt(resultSet.getString("numero")),
+			Integer.parseInt(resultSet.getString("capacite")),
+			EtatTable.valueOf(resultSet.getString("etat"))));
+	    }
+	}
+	catch (NumberFormatException | SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
     }
 
-    public void initialiserEtages() throws NumberFormatException, SQLException {
+    public void initialiserEtages() {
 	// Initialisation de la liste d'étages à retrouner
 	ArrayList<Etage> etages = new ArrayList<>();
 	// Sélection de tous les étages présents dans la DB
 	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.etage");
 	// Pour chaque étage existant, on créé un objet étage et on l'ajoute à la liste
 	// retournée
-	while (resultSet.next()) {
-	    etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
-		    Integer.parseInt(resultSet.getString("niveau"))));
+	try {
+	    while (resultSet.next()) {
+		etages.add(new Etage(Integer.parseInt(resultSet.getString("id")),
+			Integer.parseInt(resultSet.getString("niveau"))));
+	    }
+	    Restaurant.setEtages(etages);
 	}
-	Restaurant.setEtages(etages);
+	catch (NumberFormatException | SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
     public int demanderDernierEtage() {
@@ -558,54 +660,56 @@ public class Sql {
 //		Sa disponibilité sur la carte
 //		Son type
 //		Sa catégorie
-	String typeConverted = type.toString().toLowerCase().substring(0, 1).toUpperCase()
-		+ type.toString().toLowerCase().substring(1);
-	String categorieConverted = categorie.toString().toLowerCase().toString().toLowerCase().substring(0, 1)
-		.toUpperCase() + categorie.toString().toLowerCase().toString().toLowerCase().substring(1);
 	executerInsert(
-		"INSERT INTO restaurant.plat (nom,typePlat,typeIngredient,prix,dureePreparation,disponibleCarte) VALUES ('"
-			+ nomPlat + "','" + typeConverted + "','" + categorieConverted + "', " + prixPlat + ","
+		"INSERT INTO restaurant.plat (nom,typeplat,typeingredient,prix,dureePreparation,disponibleCarte) VALUES ('"
+			+ nomPlat + "','" + type.name() + "','" + categorie.name() + "'," + prixPlat + ","
 			+ +dureePreparation + "," + disponibleCarte + ")");
-	try {
-	    int idPlat = demanderDernierId("plat");
+	int idPlat = demanderDernierId("plat");
 //			Ensuite il faut sa recette
 //			id ingrédient
 //			id du plat fraichelent créé
 //			quantité ingrédient
-	    Iterator<Entry<Ingredient, Integer>> it = recetteAcreer.entrySet().iterator();
-	    while (it.hasNext()) {
-		Entry<Ingredient, Integer> pair = it.next();
-		Ingredient ingredient = (Ingredient) pair.getKey();
-		int quantite = (int) pair.getValue();
-		executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES (" + quantite + ","
-			+ ingredient.getId() + "," + idPlat + ")");
-	    }
-	    return new Plat(idPlat, nomPlat, prixPlat, dureePreparation, disponibleCarte, type, categorie,
-		    recetteAcreer);
+	Iterator<Entry<Ingredient, Integer>> it = recetteAcreer.entrySet().iterator();
+	while (it.hasNext()) {
+	    Entry<Ingredient, Integer> pair = it.next();
+	    Ingredient ingredient = (Ingredient) pair.getKey();
+	    int quantite = (int) pair.getValue();
+	    executerInsert("INSERT INTO restaurant.recette (quantite,ingredient,plat) VALUES (" + quantite + ","
+		    + ingredient.getId() + "," + idPlat + ")");
 	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-	return null;
+	return new Plat(idPlat, nomPlat, prixPlat, dureePreparation, disponibleCarte, type, categorie, recetteAcreer);
     }
 
     public void initialiserPlats() {
-	// Initialisation de la liste d'étages à retrouner
+	// On créer l'arraylist de plat et on la retourne
 	ArrayList<Plat> plats = new ArrayList<>();
-	// Sélection de tous les étages présents dans la DB
+	// Sélection de tous les plats présents dans la DB
 	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.plat");
 	// Pour chaque plat existant, on créé un objet Plat et on l'ajoute à la liste
 	// retournée
 	try {
 	    while (resultSet.next()) {
-		HashMap<Ingredient, Integer> recetter = new HashMap<Ingredient, Integer>();
-		ResultSet resultSetIngredients = executerSelect("SELECT * FROM restaurant.ingredient WHERE ");
-		// TODO Liste d'ingredients a ajouter
+		HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
+		ResultSet resultSetLignesRecette = executerSelect(
+			"SELECT * FROM restaurant.recette WHERE plat=" + resultSet.getInt("id"));
+		while (resultSetLignesRecette.next()) {
+		    Ingredient ingredient = Restaurant.getIngredients().stream().filter(ingredientCurrent -> {
+			try {
+			    return ingredientCurrent.getId() == resultSetLignesRecette.getInt("ingredient");
+			}
+			catch (SQLException e) {
+			    e.printStackTrace();
+			    return false;
+			}
+		    }).collect(Collectors.toList()).get(0);
+		    int quantite = resultSetLignesRecette.getInt("quantite");
+		    recette.put(ingredient, quantite);
+		}
 		plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
 			Double.parseDouble(resultSet.getString("prix")),
 			Integer.parseInt(resultSet.getString("dureePreparation")),
 			resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
-			Categorie.valueOf(resultSet.getString("typeIngredient")), recetter));
+			Categorie.valueOf(resultSet.getString("typeIngredient")), recette));
 	    }
 	}
 	catch (NumberFormatException | SQLException e) {
@@ -633,17 +737,13 @@ public class Sql {
     }
 
     public Affectation creationAffectation(Date dateDebut, int nbPersonne, Table table) {
-	try {
-	    executerInsert("INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe) VALUES ('"
-		    + dateDebut + "',null," + nbPersonne + "," + table.getId() + ")");
-	    int idAffectation = demanderDernierId("affectation");
-	    Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, null, 0.00, table);
-	    return affectation;
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-	return null;
+	executerInsert(
+		"INSERT INTO restaurant.affectation (datedebut,datefin,nombrepersonne,tableoccupe,facture) VALUES ('"
+			+ dateDebut + "',null," + nbPersonne + "," + table.getId() + ",0)");
+	int idAffectation = demanderDernierId("affectation");
+	Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, new ArrayList<Commande>(), 0.00,
+		table);
+	return affectation;
     }
 
     // Le montant de la facture est égale à la somme de toutes les commandes de
@@ -703,24 +803,23 @@ public class Sql {
      * @param table
      */
     public void affecterTableServeur(Serveur serveur, Table table) {
-	executerUpdate("UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	if (serveur != null) {
+	    executerUpdate(
+		    "UPDATE restaurant.tables SET serveur = " + serveur.getId() + " WHERE id = " + table.getId());
+	}
+	else {
+	    executerUpdate("UPDATE restaurant.tables SET serveur = null WHERE id = " + table.getId());
+	}
     }
 
     public Reservation creationReservation(Date dateAppel, Date dateReserve, int nbPersonne, Table tableAreserver) {
-
-	try {
-	    executerInsert(
-		    "INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
-			    + dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
-			    + ")");
-	    int id = demanderDernierId("reservation");
-	    Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
-	    return reservation;
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-	return null;
+	executerInsert(
+		"INSERT INTO restaurant.reservation (dateappel, datereservation, nombrepersonne, valide, tablereserve) VALUES ('"
+			+ dateAppel + "','" + dateReserve + "'," + nbPersonne + ",true," + tableAreserver.getId()
+			+ ")");
+	int id = demanderDernierId("reservation");
+	Reservation reservation = new Reservation(id, true, dateAppel, dateReserve, nbPersonne, tableAreserver);
+	return reservation;
     }
 
     public void supprimerReservation(Reservation asuppr) {
@@ -764,24 +863,30 @@ public class Sql {
     }
 
     public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
-	try {
-	    executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
-		    + dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
-		    + Etat.COMMANDEE.name() + "'" + ")");
-	    int idCommande = demanderDernierId("commande");
-	    return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
-	return null;
+	// Ajout de la commande en base
+	executerInsert("INSERT INTO restaurant.commande (datedemande, estenfant, plat, affectation, etat) VALUES ('"
+		+ dateCommande + "'," + estEnfant + "," + plat.getId() + "," + affectation.getId() + ",'"
+		+ Etat.COMMANDEE.name() + "'" + ")");
+	// Retrait des quantités nécessaires à la commande
+	HashMap<Ingredient, Integer> recette = plat.getRecette();
+	recette.forEach((ingredient, quantiteNecessaire) -> {
+	    int quantiteRestante = ingredient.getQuantite() - quantiteNecessaire;
+	    // Mise à jour quantité en base
+	    executerUpdate("UPDATE restaurant.ingredient SET quantite=" + quantiteRestante + " WHERE id = "
+		    + ingredient.getId());
+	    // Mise à jour quantité en objet
+	    ingredient.setQuantite(quantiteRestante);
+	});
+	int idCommande = demanderDernierId("commande");
+	return new Commande(idCommande, dateCommande, estEnfant, plat, affectation, Etat.COMMANDEE);
     }
 
     public void initialiserReservation() {
 	try {
 	    // On récupère toutes les futures réservations
 	    Date now = new Timestamp(new Date().getTime());
-	    ResultSet resultset = executerSelect("SELECT * FROM restaurant.reservation WHERE datereservation>'" + now+"'");
+	    ResultSet resultset = executerSelect(
+		    "SELECT * FROM restaurant.reservation WHERE datereservation>'" + now + "'");
 	    while (resultset.next()) {
 		ResultSet resultsetTableReserve = executerSelect(
 			"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
@@ -799,7 +904,122 @@ public class Sql {
 	catch (SQLException e) {
 	    e.printStackTrace();
 	}
-
     }
 
+    // Les constantes ne sont utilisées qu'en java, pas dans la base de données
+    public void initialiserConstantes() {
+	try {
+	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
+	    prop.load(inputStream);
+	    Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
+	}
+	catch (IOException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public int hardReset(String database) {
+	return executerUpdate(database);
+    }
+
+    public Double revenuHebdomadaire() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuMensuel() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double revenuQuotidien() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+	    rs.next();
+	    return rs.getDouble("revenu");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double popularitePlats() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus");
+	    // TODO
+	    rs.next();
+	    return rs.getDouble("nbVendus");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double tempsPreparationMoyen() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id");
+	    rs.next();
+	    return rs.getDouble("tempsPrepaMoyen");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDejeuner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune");
+	    rs.next();
+	    return rs.getDouble("profit");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public Double profitDiner() {
+	try {
+	    ResultSet rs = executerSelect(
+		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner");
+	    rs.next();
+	    return rs.getDouble("profit");
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    public void modifierEtatCommande(Commande commande, Etat etat) {
+	executerUpdate("UPDATE restaurant.commande SET etat = '" + etat.name() + "' WHERE id = " + commande.getId());
+    }
+
+    public void creerFacture(Affectation affectation, double prixFacture) {
+	executerUpdate(
+		"UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
+    }
 }
