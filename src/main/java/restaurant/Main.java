@@ -114,6 +114,31 @@ public class Main {
 		}
 		return Integer.parseInt(choix);
 	}
+	
+	// Affiche la liste des étages
+	public static String listingEtages() {
+		String liste = "";
+		for (int i = 0; i < Restaurant.getEtages().size(); i++) {
+			liste += "\n " + i + ": niveau" + Restaurant.getEtages().get(i).getNiveau();
+		}
+		return liste;
+	}
+	
+	// Affiche la liste des tables
+	public static String listingTables() {
+		String liste = "";
+		int i = 0; //numero de la table dans le menu
+		
+		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+			liste = "<Etage " + Restaurant.getEtages().get(etage).getNiveau() + " >";
+			for (int table = 0; table <Restaurant.getEtages().get(etage).getTables().size(); table++) {
+				liste += "\n"+ i  + " : table " + Restaurant.getEtages().get(etage).getTables().get(table).getNumero()
+						+ "avec une capacite de : " + Restaurant.getEtages().get(etage).getTables().get(table).getCapacite() + " personnes";
+			i+=1;
+			}
+		}
+		return liste;
+	}
 
 	// Affiche la liste des ingrédients disponibles
 	public static String listingIngredients() {
@@ -180,14 +205,123 @@ public class Main {
 						Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
 				System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
 			}
+ 	}
+ 	
+ 	
+	// Permet d'ajouter un étage au restaurant
+ 	public static void ajouterEtage() throws ClassNotFoundException, SQLException, IOException {
+
+ 			// Affichage menu
+ 			System.out.println("----------------------------------"
+ 						   + "\n-------Ajouter un étage-----------"
+ 					+ "\nListe des étages : " + listingEtages()
+ 					+ "\n----------------------------------"
+ 					+ "\n1 pour valider, 0 pour annuler");
  			
- 		
+ 			if (Main.choixUtilisateur(1) == 1) {
+ 				((Directeur) persConnectee).ajouterEtage();
+			}
+ 			System.out.println("Etage ajouté");
+ 			
+ 	}
+ 	
+	// Permet de supprimer le dernier étage du restaurant
+ 	public static void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
+
+ 			// Affichage menu
+ 			System.out.println("----------------------------------"
+ 						     + "\n--------Supprimer un étage--------"
+		 					 + "\nListe des étages : " + listingEtages()
+		 					 + "\n----------------------------------"
+		 					 + "\n1 pour valider, 0 pour annuler");
+ 			
+ 			if (Main.choixUtilisateur(1) == 1) {
+ 				((Directeur) persConnectee).supprimerDernierEtage();
+			}
+ 			System.out.println("Dernier étage supprimé");
+ 	}
+ 	
+ 	//Permet de trouver une table via son numéro
+ 	public static Table trouverTable(int numero) {
+		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
+				if (Restaurant.getEtages().get(etage).getTables().get(table).getNumero() ==  numero ) {
+					return Restaurant.getEtages().get(etage).getTables().get(table);
+				}
+				
+			}
+		}
+ 		return null;
+ 	}
+ 	
+ 	//Permet de trouver un étage via une table
+ 	public static Etage trouverEtage(Table tab) {
+ 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+ 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
+	 			if (Restaurant.getEtages().get(etage).getTables().get(table).equals(tab)) {
+					return Restaurant.getEtages().get(etage);
+				}
+ 			}
+ 		}
+ 		return null;
+ 	}
+ 	
+ 	
+ 	// Permet de supprimer une table d'un étage
+  	public static void supprimerTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+
+		// Affichage menu
+		System.out.println("----------------------------------"
+					     + "\n-----Supprimer une table--------"
+	 					 + "\nListe des tables : " + listingTables()
+	 					 + "\n----------------------------------"
+	 					 + "\nVeuillez choisir le numero (menu) correspondant à la table à supprimer");
+
+		//numero de la table
+		System.out.println("\nNuméro de la table :");
+		
+		int nbTables = 0; //numero de la table dans le menu
+		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
+				nbTables+=1;
+			}
+		}
+		
+		int numero = Main.choixUtilisateur(nbTables); //numero du menu
+
+		((Directeur) persConnectee).supprimerTable(trouverTable(numero), trouverEtage(trouverTable(numero)).getTables() );
+		System.out.println("Table supprimée");
+  			
+  	}
+ 	
+	// Permet d'ajouter une table à un étage
+ 	public static void ajouterTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+
+		// Affichage menu
+		System.out.println("----------------------------------"
+					     + "\n-------Ajouter une table--------"
+	 					 + "\nListe des tables : " + listingTables()
+	 					 + "\n----------------------------------"
+	 					 + "\nVeuillez choisir l'étage de la table à ajouter");
+		
+		int etage = Main.choixUtilisateur(Restaurant.getEtages().size()-1);
+		//numero de la table
+		System.out.println("\nNuméro de la table : ");
+		int numero = Main.choixUtilisateur(Restaurant.NUMERO_MAX_TABLE);
+		//capacite de la table
+		System.out.println("\nVeuillez saisir sa capacité, ou 0 pour annuler et revenir au menu");
+		int capacite = Main.choixUtilisateur(Restaurant.CAPACITE_MAX_TABLE);
+		
+		if (capacite != 0) {
+			((Directeur) persConnectee).ajouterTable(numero, capacite, Restaurant.getEtages().get(etage) );
+			System.out.println("Table ajoutée");
+		}	
  	}
  	
  	
  	// Permet de vider la base de données pour réinitialiser le restaurant
  	public static void viderBddDirecteur() throws ClassNotFoundException, SQLException, IOException {
- 		
+ 		//Sql.hardReset("hardResetPostgres");
  	}
  	
  // Menu principal du directeur
@@ -201,7 +335,7 @@ public class Main {
   					+ "\n3: Modifier personnel"
   					+ "\n4: Supprimer personnel"
   					+ "\n5: Ajouter etage"
-  					+ "\n6: Supprimer etage"
+  					+ "\n6: Supprimer dernier etage"
   					+ "\n7: Ajouter table"
   					+ "\n8: Modifier table"
   					+ "\n9: Supprimer table"
@@ -222,7 +356,7 @@ public class Main {
   					+ "\n24: Vider la BDD"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(24)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
@@ -249,24 +383,28 @@ public class Main {
   		case 4:
   			supprimerPersonnelDirecteur();
   			break;
-
+  			
+  		// Ajouter etage
   		case 5:
-
+  			ajouterEtage();
   			break;
-
+  		
+  		// Supprimer etage
   		case 6:
-
+  			supprimerDernierEtage();
   			break;
+  		// Ajouter une table
   		case 7:
-  			viderBddDirecteur();
+  			ajouterTableDirecteur();
   			break;
 
+  		// Modifier table
   		case 8:
 
   			break;
-
+  		// Supprimer une table
   		case 9:
-
+  			supprimerTableDirecteur();
 			break;
 
   		case 10:
@@ -320,8 +458,9 @@ public class Main {
   		case 23:
 
 			break;
+		//Vider la BDD
   		case 24:
-
+  			viderBddDirecteur();
 			break;
 
   		default:

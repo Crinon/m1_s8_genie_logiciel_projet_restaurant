@@ -15,6 +15,8 @@ public final class Restaurant {
 	final static int TAILLE_MAX_NOM_INGREDIENT = 30; //Nombre de caractères max du nom d'un ingrédient
 	final static int TAILLE_MAX_NOM_PERSONNE = 30; //Nombre de caractères max du nom d'une personne
 	final static int QUANTITE_MAX_COMMANDE = 500; //quantité maximale pour une commande
+	final static int NUMERO_MAX_TABLE = 500; //quantité maximale de tables
+	final static int CAPACITE_MAX_TABLE = 500; //quantité maximale de tables
 
     private static ArrayList<Etage>	  etages;
     private static ArrayList<Personne>	  personnel;
@@ -31,6 +33,7 @@ public final class Restaurant {
     private static int	     nbTableMax;
     private static int	     QUANTITE_MAX_STOCK;    // quantité maximale de stock pour un ingrédient
 
+    
     public static void initialisation() {
 	Sql sql;
 	sql = new Sql();
