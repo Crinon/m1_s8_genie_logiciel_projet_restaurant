@@ -19,7 +19,7 @@ public class Main {
 
 		// Requête qui vérifie
 		try {
-
+ 
 			System.out.println(
 					"Veuillez saisir 0 pour quitter l'application,\nou votre identifiant pour vous connecter.");
 			String identifiant = scanner.nextLine();
@@ -125,10 +125,10 @@ public class Main {
 		return liste;
 	}
 	
-	// Affiche la liste des ingrédients disponibles
+	// Affiche les membres du personnel (sans le directeur)
 	public static String listingPersonnel() {
 		String liste = "";
-		for (int i = 0; i < Restaurant.getPersonnel().size(); i++) {
+		for (int i = 1; i < Restaurant.getPersonnel().size(); i++) { //On n'inclut pas le directeur
 			liste += "\n " + i + ":" + Restaurant.getPersonnel().get(i).getNom() + "; role : "
 					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11);
 		}
@@ -137,7 +137,7 @@ public class Main {
 	
 	
 	
-	 // Permet de commander un ingrédient pour l'ajouter au stock
+	// Permet de commander un ingrédient pour l'ajouter au stock
  	public static void commanderIngredientDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
  			// Affichage menu
@@ -184,6 +184,12 @@ public class Main {
  		
  	}
  	
+ 	
+ 	// Permet de vider la base de données pour réinitialiser le restaurant
+ 	public static void viderBddDirecteur() throws ClassNotFoundException, SQLException, IOException {
+ 		
+ 	}
+ 	
  // Menu principal du directeur
   	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
@@ -194,13 +200,29 @@ public class Main {
   					+ "\n2: Ajouter personnel"
   					+ "\n3: Modifier personnel"
   					+ "\n4: Supprimer personnel"
-  					+ "\n5: Suivi serveur"
-  					+ "\n6: Statistiques"
-  					+ "\n7: Vider la BDD"
-  					+ "\n8: AJOUTER METHODES DES AUTRES ROLES"
+  					+ "\n5: Ajouter etage"
+  					+ "\n6: Supprimer etage"
+  					+ "\n7: Ajouter table"
+  					+ "\n8: Modifier table"
+  					+ "\n9: Supprimer table"
+  					+ "\n10: Ajouter plat"
+  					+ "\n11: Modifier plat"
+  					+ "\n12: Modifier carte"
+  					+ "\n13: Supprimer plat"
+  					+ "\n14: Ajouter réservation"
+  					+ "\n15: Supprimer réservation"
+  					+ "\n16: Ajouter affectation"
+  					+ "\n17: Ajouter commande"
+  					+ "\n18: Ajouter facture"
+  					+ "\n19: Ajouter affectation"
+  					+ "\n20: Cuisiner un plat"
+  					+ "\n21: Servir un plat"
+  					+ "\n22: Nettoyer table"
+  					+ "\n23: Statistiques"
+  					+ "\n24: Vider la BDD"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(24)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
@@ -225,27 +247,82 @@ public class Main {
 
   		// Supprimer personnel
   		case 4:
-
+  			supprimerPersonnelDirecteur();
   			break;
 
-  		// Suivi serveur
   		case 5:
 
   			break;
 
-  		// Statistiques
   		case 6:
 
   			break;
-  		//Hard reset -> vider BDD
   		case 7:
-
+  			viderBddDirecteur();
   			break;
 
-  		// Méthodes des autres rôles....
   		case 8:
 
   			break;
+
+  		case 9:
+
+			break;
+
+  		case 10:
+
+			break;
+
+  		case 11:
+
+			break;
+
+  		case 12:
+
+			break;
+
+  		case 13:
+
+			break;
+
+  		case 14:
+
+			break;
+
+  		case 15:
+
+			break;
+
+  		case 16:
+
+			break;
+
+  		case 17:
+
+			break;
+
+  		case 19:
+
+			break;
+
+  		case 20:
+
+			break;
+
+  		case 21:
+
+			break;
+
+  		case 22:
+
+			break;
+
+  		case 23:
+
+			break;
+  		case 24:
+
+			break;
 
   		default:
   			break;
@@ -253,6 +330,34 @@ public class Main {
 
   	}
   	
+ 
+  	// Modifier le rôle d'un membre du personnel
+    private static void supprimerPersonnelDirecteur() {
+    	// Affichage
+		System.out.println("----------------------------------"
+					   + "\n-----Supprimer du personnel------"
+					   + "\nListe du personnel : " + listingPersonnel()
+					   + "\n----------------------------------"
+					   + "\nVeuillez saisir le numéro du membre à supprimer, ou 0 pour revenir au menu");
+		//numéro
+		String numPersonne = scanner.nextLine();
+		//Contrôle de l'entrée
+		while ( estNullOuVide(numPersonne) //vide
+				|| !uniquementChiffres(numPersonne) //pas que des chiffres
+				|| !(uniquementChiffres(numPersonne) && (valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1)  //personne n'existe pas
+														|| numPersonne.equals("0")) ) //valeur de retour
+				){
+			System.out.println("Erreur, veuillez réessayer");
+			numPersonne = scanner.nextLine();
+		}	
+		
+		//Permet de revenir au menu (annuler)
+		if (!numPersonne.equals("0")) {
+			
+			((Directeur) persConnectee).supprimerPersonnel(Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)), Restaurant.getPersonnel());
+			System.out.println("Membre supprimé");
+		}
+  	}
   	
   	// Modifier le rôle d'un membre du personnel
     private static void modifierPersonnelDirecteur() {
@@ -261,33 +366,38 @@ public class Main {
 				+ "\n-----Modifier du personnel------"
 				+ "\nListe du personnel : " + listingPersonnel()
 				+ "\n----------------------------------"
-				+ "\nVeuillez saisir le numéro de la personne à modifier");
-		//nom
+				+ "\nVeuillez saisir le numéro de la personne à modifier, ou 0 pour revenir au menu");
+		//numéro
 		String numPersonne = scanner.nextLine();
 		//Contrôle de l'entrée
 		while ( estNullOuVide(numPersonne) //vide
 				|| !uniquementChiffres(numPersonne) //pas que des chiffres
-				|| (uniquementChiffres(numPersonne) && valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1) ) //personne n'existe pas
-			  ){
+				|| (uniquementChiffres(numPersonne) && (!valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1)  //personne n'existe pas
+														|| !numPersonne.equals("0")) ) //valeur de retour
+				){
 			
 			System.out.println("Erreur, veuillez réessayer");
 			numPersonne = scanner.nextLine();
 		}
+		//Permet de revenir au menu (annuler)
+		if (!numPersonne.equals("0")) {
 
-		System.out.println("\nVeuillez saisir le nouveau role de " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getNom()
-				 + " qui est actuellement " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getClass().getName().substring(11));
-		String role = scanner.nextLine();
-		//Contrôle de l'entrée
-		while ( estNullOuVide(role) //vide
-				|| !uniquementLettres(role) //pas que des lettres
-				|| !estUnRole(role)  //n'est pas un rôle
-			  ){
-			System.out.println("Erreur, veuillez réessayer");
-			role = scanner.nextLine();
-		}
+			System.out.println("\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nVeuillez saisir le nouveau role de " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getNom()
+					 + " qui est actuellement " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getClass().getName().substring(11));
+			String role = scanner.nextLine();
+			//Contrôle de l'entrée
+			while ( estNullOuVide(role) //vide
+					|| !uniquementLettres(role) //pas que des lettres
+					|| !estUnRole(role)  //n'est pas un rôle
+				  ){
+				System.out.println("Erreur, veuillez réessayer");
+				role = scanner.nextLine();
+			}
+			
+			((Directeur) persConnectee).modifierPersonnel(Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)), role);
+			System.out.println("Rôle modifié");
 		
-		((Directeur) persConnectee).modifierPersonnel(Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)), role);
-		System.out.println("Rôle modifié");
+		}
   	}
     
     
@@ -314,7 +424,7 @@ public class Main {
 		//Si l'utilisateur ne veut pas annuler
 		if (!nom.equals("0")) {
 			
-			System.out.println("\nVeuillez saisir le role de " + nom);
+			System.out.println("\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nveuillez saisir le role de " + nom);
 			String role = scanner.nextLine();
 			//Contrôle de l'entrée
  			while ( estNullOuVide(role) //vide
@@ -484,27 +594,22 @@ public class Main {
 			// Menu en fonction du rôle
 			switch (persConnectee.getClass().getName()) {
 			case "restaurant.Directeur":
-				persConnectee = (Directeur) persConnectee;
 				menuPrincipalDirecteur();
 				break;
 
 			case "restaurant.Maitrehotel":
-				persConnectee = (Maitrehotel) persConnectee;
 				menuPrincipalMaitredhotel();
 				break;
 
 			case "restaurant.Cuisinier":
-				persConnectee = (Cuisinier) persConnectee;
 				menuPrincipalCuisinier();
 				break;
 
 			case "restaurant.Serveur":
-				persConnectee = (Serveur) persConnectee;
 				menuPrincipalServeur();
 				break;
 
 			case "restaurant.Assistant": // Assistant de service
-				persConnectee = (Assistant) persConnectee;
 				menuPrincipalAssistant();
 				break;
 
