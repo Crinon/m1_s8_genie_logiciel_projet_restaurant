@@ -41,6 +41,21 @@ public class Main {
 		System.out.println("Cet utilisateur n'existe pas, veuillez réessayer");
 		return null;
 	}
+	
+	// Vérifie que les caractères de "valeur" crrespondent  un rôle
+	// parmi : assistant ; serveur ; maitrehotel ; directeur ; cuisinier
+	public static boolean estUnRole(String valeur) {
+
+		if (valeur.equals("assistant")
+			|| valeur.equals("serveur")
+			|| valeur.equals("maitrehotel")
+			|| valeur.equals("directeur")
+			|| valeur.equals("cuisinier")
+			) {
+			return true;
+		}
+		return false;
+	}
 
 	// Vérifie la valeur entree au clavier
 	public static boolean valeurIntOk(int valeur, int max) {
@@ -71,16 +86,17 @@ public class Main {
 	// On n'accepte pas les caractères spéciaux (accents, etc)
 	public static boolean uniquementLettres(String valeur) {
 
-		if (valeur.matches("[a-zA-Z]+") == true) {
+		if (valeur.matches("[a-zA-Z]+")) {
 			return true;
 		}
 		return false;
 	}
 
+
 	// Méthode qui permet de vérifier que "valeur" ne contient que des chiffres
 	public static boolean uniquementChiffres(String valeur) {
 
-		if (valeur.matches("[0-9]+") == true) {
+		if (valeur.matches("[0-9]+")) {
 			return true;
 		}
 		return false;
@@ -109,6 +125,18 @@ public class Main {
 		return liste;
 	}
 	
+	// Affiche la liste des ingrédients disponibles
+	public static String listingPersonnel() {
+		String liste = "";
+		for (int i = 0; i < Restaurant.getPersonnel().size(); i++) {
+			liste += "\n " + i + ":" + Restaurant.getPersonnel().get(i).getNom() + "; role : "
+					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11);
+		}
+		return liste;
+	}
+	
+	
+	
 	 // Permet de commander un ingrédient pour l'ajouter au stock
  	public static void commanderIngredientDirecteur() throws ClassNotFoundException, SQLException, IOException {
 
@@ -122,31 +150,37 @@ public class Main {
  			
  			String choix;
  			int qtIngredient = 0;
- 			do {
+ 			choix = scanner.nextLine();
+ 			//Contrôle de l'entrée
+ 			while ( estNullOuVide(choix) //vide
+ 					|| (!uniquementLettres(choix) && !uniquementChiffres(choix))  // mélange de lettres/chiffres ou caractères spéciaux
+ 					|| (uniquementLettres(choix) && choix.length() > Restaurant.TAILLE_MAX_NOM_INGREDIENT) //chaine et ne respecte pas la longueur maximale
+ 					|| (uniquementChiffres(choix) && (Restaurant.getIngredients().size() == 0 //pas d'ingrédients dans la BDD
+ 					                             	|| !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) ) //valeur qui n'existe pas
+ 				  ){
+ 				System.out.println("Erreur, veuillez réessayer");
  				choix = scanner.nextLine();
- 				if (!estNullOuVide(choix) && uniquementLettres(choix) && choix.length() <= Restaurant.TAILLE_MAX_NOM_INGREDIENT) {
- 					// Nouvel ingrédient
- 					String nomIngredient = choix.toLowerCase();
- 					System.out.println(">Quantité de " + choix + " à commander ?");
- 					qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
- 					((Directeur) persConnectee).ajouterIngredient(nomIngredient);
- 					((Directeur) persConnectee).commanderIngredient(
- 							Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
- 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
+ 			} 
+			
+ 			if (uniquementLettres(choix)) {
+				// Nouvel ingrédient
+				String nomIngredient = choix.toLowerCase();
+				System.out.println(">Quantité de " + choix + " à commander ?");
+				qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				((Directeur) persConnectee).ajouterIngredient(nomIngredient);
+				((Directeur) persConnectee).commanderIngredient(
+						Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
+				System.out.println("Commande passée (quantite : " + qtIngredient + ")");														// inséré
 
- 				} else if (Restaurant.getIngredients().size() > 0 && !estNullOuVide(choix) && uniquementChiffres(choix)
- 						&& valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) {
- 					// MAJ quantite d'un ingrédient existant
- 					System.out.println(">Quantité à commander ?");
- 					qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
- 					((Directeur) persConnectee).commanderIngredient(
- 							Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
- 					System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
-
- 				} else {
- 					System.out.println("Erreur, veuillez réessayer");
- 				}
- 			} while (estNullOuVide(choix) || !uniquementLettres(choix) || (uniquementChiffres(choix) && !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) );
+			} else if (uniquementChiffres(choix)) {
+				// MAJ quantite d'un ingrédient existant
+				System.out.println(">Quantité à commander ?");
+				qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				((Directeur) persConnectee).commanderIngredient(
+						Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
+				System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
+			}
+ 			
  		
  	}
  	
@@ -156,11 +190,14 @@ public class Main {
   		// Affichage menu
   		System.out.println("----------------------------------"
   					+ "\n0: Déconnexion"
-  				+ "\n1: Commander un ingredient"
-  					+ "\n2: Ajouter personnel" + "\n3: Modifier personnel"
+  					+ "\n1: Commander un ingredient"
+  					+ "\n2: Ajouter personnel"
+  					+ "\n3: Modifier personnel"
   					+ "\n4: Supprimer personnel"
-  					+ "\n5: Suivi serveur" + "\n6: Statistiques"
-  					+ "\n7: AJOUTER METHODES DES AUTRES ROLES"
+  					+ "\n5: Suivi serveur"
+  					+ "\n6: Statistiques"
+  					+ "\n7: Vider la BDD"
+  					+ "\n8: AJOUTER METHODES DES AUTRES ROLES"
   					+ "\n----------------------------------\n");
 
   		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
@@ -178,12 +215,12 @@ public class Main {
 
   		// Ajouter personnel
   		case 2:
-
+  			ajouterPersonnelDirecteur();
   			break;
 
-  		// Modifier personnel
+  		//  Modifier le rôle d'un membre du personnel
   		case 3:
-
+  			modifierPersonnelDirecteur();
   			break;
 
   		// Supprimer personnel
@@ -200,9 +237,13 @@ public class Main {
   		case 6:
 
   			break;
+  		//Hard reset -> vider BDD
+  		case 7:
+
+  			break;
 
   		// Méthodes des autres rôles....
-  		case 7:
+  		case 8:
 
   			break;
 
@@ -212,7 +253,84 @@ public class Main {
 
   	}
   	
-    // Menu principal du maitre d hotel
+  	
+  	// Modifier le rôle d'un membre du personnel
+    private static void modifierPersonnelDirecteur() {
+    	// Affichage
+		System.out.println("----------------------------------"
+				+ "\n-----Modifier du personnel------"
+				+ "\nListe du personnel : " + listingPersonnel()
+				+ "\n----------------------------------"
+				+ "\nVeuillez saisir le numéro de la personne à modifier");
+		//nom
+		String numPersonne = scanner.nextLine();
+		//Contrôle de l'entrée
+		while ( estNullOuVide(numPersonne) //vide
+				|| !uniquementChiffres(numPersonne) //pas que des chiffres
+				|| (uniquementChiffres(numPersonne) && !valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1) ) //personne n'existe pas
+			  ){
+			
+			System.out.println("Erreur, veuillez réessayer");
+			numPersonne = scanner.nextLine();
+		}
+
+		System.out.println("\nVeuillez saisir le nouveau role de " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getNom()
+				 + " qui est actuellement " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getClass().getName().substring(11));
+		String role = scanner.nextLine();
+		//Contrôle de l'entrée
+		while ( estNullOuVide(role) //vide
+				|| !uniquementLettres(role) //pas que des lettres
+				|| !estUnRole(role)  //n'est pas un rôle
+			  ){
+			System.out.println("Erreur, veuillez réessayer");
+			role = scanner.nextLine();
+		}
+		
+		((Directeur) persConnectee).modifierPersonnel(Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)), role);
+		System.out.println("Rôle modifié");
+  	}
+    
+    
+  	// Ajouter un membre au personnel
+    private static void ajouterPersonnelDirecteur() {
+
+		// Affichage
+		System.out.println("----------------------------------"
+				+ "\n-----Ajouter du personnel------"
+				+ "\nListe du personnel : " + listingPersonnel()
+				+ "\n----------------------------------"
+				+ "\nVeuillez saisir le nom de la personne à ajouter ou 0 pour annuler ");
+		//nom
+		String nom = scanner.nextLine();
+		//Contrôle de l'entrée
+		while ( estNullOuVide(nom) //vide
+				|| (!uniquementLettres(nom) && !uniquementChiffres(nom))  // mélange de lettres/chiffres ou caractères spéciaux
+				|| (uniquementLettres(nom) && nom.length() > Restaurant.TAILLE_MAX_NOM_PERSONNE) //chaine et ne respecte pas la longueur maximale
+				|| (uniquementChiffres(nom) && !nom.equals("0") ) ){ //valeur de retour
+			 
+			System.out.println("Erreur, veuillez réessayer");
+			nom = scanner.nextLine();
+		}
+		//Si l'utilisateur ne veut pas annuler
+		if (!nom.equals("0")) {
+			
+			System.out.println("\nVeuillez saisir le role de " + nom);
+			String role = scanner.nextLine();
+			//Contrôle de l'entrée
+ 			while ( estNullOuVide(role) //vide
+ 					|| !uniquementLettres(role) //pas que des lettres
+ 					|| !estUnRole(role)  //n'est pas un rôle
+ 				  ){
+ 				System.out.println("Erreur, veuillez réessayer");
+ 				role = scanner.nextLine();
+ 			}
+			
+			((Directeur) persConnectee).ajouterPersonnel(nom, role);
+			System.out.println(nom + " (" + role + ") ajouté");
+		}
+}
+
+	// Menu principal du maitre d hotel
  	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
 
  		// Affichage menu

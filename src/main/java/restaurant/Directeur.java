@@ -23,9 +23,6 @@ public class Directeur extends Personne {
     }
     
     
- 	
-
-
     public Personne ajouterPersonnel(String nom, String role) {
 	Personne personne = null;
 	// Objet pour intéragir avec la base de données
