@@ -241,6 +241,13 @@ public class Directeur extends Personne {
 //		return null;
 //	}
 
+    public void supprimerReservation(Reservation asuppr) {
+        Sql sql = new Sql();
+        sql.supprimerReservation(asuppr);
+        int index = Restaurant.getReservationsJour().indexOf(asuppr);
+        Restaurant.getReservationsJour().remove(index);
+    }
+
     public void modifierEtatTable(Table table, EtatTable etat) {
 	Sql sql;
 	sql = new Sql();
@@ -257,13 +264,6 @@ public class Directeur extends Personne {
 	}
 	serveur.getTablesAffectees().add(table);
 	table.setServeur(serveur);
-    }
-
-    public void supprimerReservation(Reservation asuppr) {
-	Sql sql = new Sql();
-	sql.supprimerReservation(asuppr);
-	int index = Restaurant.getReservationsJour().indexOf(asuppr);
-	Restaurant.getReservationsJour().remove(index);
     }
 
     public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
