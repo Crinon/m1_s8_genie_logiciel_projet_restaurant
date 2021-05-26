@@ -939,14 +939,16 @@ public class TestUnitaire {
 	    Reservation res3 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 3);
 	    Reservation res4 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
 	    Reservation res5 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
-	    Reservation res6 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 9);
+	    Reservation res6 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 4);
+	    Reservation res7 = directeur.creationReservation(dateAppelSQL, dateReservationSQL, 2);
 	    System.out.println(res.getTable());
 	    System.out.println(res2.getTable());
 	    System.out.println(res3.getTable());
 	    System.out.println(res4.getTable());
 	    System.out.println(res5.getTable());
 	    System.out.println(res6.getTable());
-	    assertTrue(false);
+	    System.out.println(res7.getTable());
+	    assertEquals(numero2, res7.getTable().getNumero());
 	}
 	catch (ParseException e) {
 	    e.printStackTrace();
