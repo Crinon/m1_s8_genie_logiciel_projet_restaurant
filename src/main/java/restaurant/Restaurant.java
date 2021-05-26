@@ -95,7 +95,8 @@ public final class Restaurant {
 	List<Table> toutesLesTables = getToutesLesTables();
 	// Supression des tables deja reservees
 	reservationsJour.stream().filter(reservation -> !memeDate(reservation.getDateVenue(), dateReservation))
-		.forEach(reservation -> toutesLesTables.remove(reservation.getTable()));
+	.filter(reservation -> reservation.isEffetive())
+	.forEach(reservation -> toutesLesTables.remove(reservation.getTable()));
 	// Filtre des tables selon la capacite et tri dans l'ordre croissant
 	List<Table> tablesPossibles = toutesLesTables.stream()
 		.filter(table -> table.getCapacite() >= nombreParticipants)

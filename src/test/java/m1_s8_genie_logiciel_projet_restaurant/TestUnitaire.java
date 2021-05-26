@@ -1097,6 +1097,67 @@ public class TestUnitaire {
 	    e.printStackTrace();
 	}
     }
+    
+    @Test
+    @DisplayName("Annulation d'une réservation dans la mémoire")
+    public void annulerReservationJava() {
+	System.out.println("\nTest en cours : Annulation d'une réservation dans la mémoire");
+	try {
+	    int numero = incr();
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    Table tableActuelle = directeur.ajouterTable(numero, 10, etage);
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1992 22:55:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5);
+	    
+	    // Annulation de la réservation
+	    directeur.annulerReservation(asuppr);
+	    assertFalse(asuppr.isEffetive());
+	}
+	catch (ParseException e) {
+	    e.printStackTrace();
+	}
+    }
+    
+    @Test
+    @DisplayName("Annulation d'une réservation dans la base de données")
+    public void annulerReservationDB() {
+	System.out.println("\nTest en cours : Annulation d'une réservation dans la base de données");
+	try {
+	    int numero = incr();
+	    directeur.ajouterEtage();
+	    // Etage qui va recevoir une table
+	    Etage etage = Restaurant.getEtages().get(Restaurant.getEtages().size() - 1);
+	    // On ajoute la table
+	    directeur.ajouterTable(numero, 10, etage);
+	    // La date de l'appel est immédiate
+	    Date dateAppel = new Timestamp(new Date().getTime());
+	    // Date demandée par le client
+	    String dateReservation = "27/12/1992 22:55:00";
+	    Date date1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReservation);
+	    Date dateReservationSQL = new Timestamp(date1.getTime());
+	    // Création de la réservation
+	    Reservation asuppr = directeur.creationReservation(dateAppel, dateReservationSQL, 5);
+	    
+	    // Annulation de la réservation
+	    directeur.annulerReservation(asuppr);
+	    
+	    ResultSet resultset = sql.executerSelect("SELECT valide FROM restaurant.reservation WHERE id="+asuppr.getId());
+	    resultset.next();
+	    assertFalse(resultset.getBoolean("valide"));
+	}
+	catch (ParseException | SQLException e) {
+	    e.printStackTrace();
+	}
+    }
 
     @Test
     @DisplayName("Vérification de l'initialisation des horaires dans la base de données")

@@ -1028,4 +1028,8 @@ public class Sql {
 	executerUpdate(
 		"UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
     }
+
+	public void annulerReservation(Reservation reservation) {
+		executerUpdate("UPDATE restaurant.reservation SET valide=false WHERE id = " + reservation.getId());
+	}
 }

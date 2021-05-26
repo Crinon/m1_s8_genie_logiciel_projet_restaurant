@@ -306,4 +306,10 @@ public class Directeur extends Personne {
 	return new Sql().profitDiner();
     }
 
+	public void annulerReservation(Reservation reservation) {
+		Sql sql = new Sql();
+		sql.annulerReservation(reservation);
+		reservation.setEffetive(false);
+	}
+
 }
