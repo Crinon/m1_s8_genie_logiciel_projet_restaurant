@@ -216,7 +216,7 @@ public class Main {
   					+ "\n24: Vider la BDD"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(24)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
