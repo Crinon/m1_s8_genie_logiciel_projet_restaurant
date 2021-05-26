@@ -19,7 +19,7 @@ public class Main {
 
 		// Requête qui vérifie
 		try {
-
+ 
 			System.out.println(
 					"Veuillez saisir 0 pour quitter l'application,\nou votre identifiant pour vous connecter.");
 			String identifiant = scanner.nextLine();
@@ -194,10 +194,26 @@ public class Main {
   					+ "\n2: Ajouter personnel"
   					+ "\n3: Modifier personnel"
   					+ "\n4: Supprimer personnel"
-  					+ "\n5: Suivi serveur"
-  					+ "\n6: Statistiques"
-  					+ "\n7: Vider la BDD"
-  					+ "\n8: AJOUTER METHODES DES AUTRES ROLES"
+  					+ "\n5: Ajouter etage"
+  					+ "\n6: Supprimer etage"
+  					+ "\n7: Ajouter table"
+  					+ "\n8: Modifier table"
+  					+ "\n9: Supprimer table"
+  					+ "\n10: Ajouter plat"
+  					+ "\n11: Modifier plat"
+  					+ "\n12: Modifier carte"
+  					+ "\n13: Supprimer plat"
+  					+ "\n14: Ajouter réservation"
+  					+ "\n15: Supprimer réservation"
+  					+ "\n16: Ajouter affectation"
+  					+ "\n17: Ajouter commande"
+  					+ "\n18: Ajouter facture"
+  					+ "\n19: Ajouter affectation"
+  					+ "\n20: Cuisiner un plat"
+  					+ "\n21: Servir un plat"
+  					+ "\n22: Nettoyer table"
+  					+ "\n23: Statistiques"
+  					+ "\n24: Vider la BDD"
   					+ "\n----------------------------------\n");
 
   		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
@@ -228,25 +244,81 @@ public class Main {
 
   			break;
 
-  		// Suivi serveur
   		case 5:
 
   			break;
 
-  		// Statistiques
   		case 6:
 
   			break;
-  		//Hard reset -> vider BDD
   		case 7:
 
   			break;
 
-  		// Méthodes des autres rôles....
   		case 8:
 
   			break;
 
+  		case 9:
+
+			break;
+
+  		case 10:
+
+			break;
+
+  		case 11:
+
+			break;
+
+  		case 12:
+
+			break;
+
+  		case 13:
+
+			break;
+
+  		case 14:
+
+			break;
+
+  		case 15:
+
+			break;
+
+  		case 16:
+
+			break;
+
+  		case 17:
+
+			break;
+
+  		case 19:
+
+			break;
+
+  		case 20:
+
+			break;
+
+  		case 21:
+
+			break;
+
+  		case 22:
+
+			break;
+
+  		case 23:
+
+			break;
+  		case 24:
+
+			break;
+
+			
   		default:
   			break;
   		}
