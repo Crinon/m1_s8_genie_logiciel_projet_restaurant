@@ -1571,7 +1571,7 @@ public class TestUnitaire {
 	    while (rs.next()) {
 		System.out.println(rs.getInt("niveau"));
 	    }
-	    sql.hardReset(sql.hardResetH2);
+	    sql.hardResetH2(sql.hardResetH2);
 	    System.out.println("Recherche d'étages après suppression");
 	    ResultSet rs2 = sql.executerSelect("SELECT * FROM restaurant.etage");
 	    while (rs2.next()) {

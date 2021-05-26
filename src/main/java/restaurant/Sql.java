@@ -1,7 +1,11 @@
 package restaurant;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,29 +27,7 @@ public class Sql {
     private Statement	       stmt		  = null;
     public final String	       propertiesFilename = "properties";
     private Properties	       prop		  = new Properties();
-    public static final String hardResetPostgres  = "DELETE FROM restaurant.commande;\r\n"
-	    + "DELETE FROM restaurant.affectation;\r\n" + "DELETE FROM restaurant.reservation;\r\n"
-	    + "DELETE FROM restaurant.tables;\r\n" + "DELETE FROM restaurant.serveur;\r\n"
-	    + "DELETE FROM restaurant.recette;\r\n" + "DELETE FROM restaurant.ingredient;\r\n"
-	    + "DELETE FROM restaurant.assistant;\r\n" + "DELETE FROM restaurant.cuisinier;\r\n"
-	    + "DELETE FROM restaurant.directeur;\r\n" + "DELETE FROM restaurant.etage;\r\n"
-	    + "DELETE FROM restaurant.maitrehotel;\r\n" + "DELETE FROM restaurant.plat;\r\n"
-	    + "DELETE FROM restaurant.restaurant;\r\n" + "DELETE FROM restaurant.personne;\r\n"
-	    + "ALTER SEQUENCE restaurant.affectation_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.assistant_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.commande_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.cuisinier_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.directeur_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.etage_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.ingredient_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.maitrehotel_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.personne_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.plat_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.recette_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.reservation_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
-	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
+    public static final String hardResetPostgres  = "DROP SCHEMA restaurant CASCADE;";
 
     public static final String hardResetH2		      = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
 	    + "TRUNCATE TABLE restaurant.affectation;\r\n"
@@ -232,6 +214,7 @@ public class Sql {
 	    this.stmt = c.createStatement();
 	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
+	    c.commit();
 	    return res;
 	}
 	catch (SQLException e) {
@@ -242,17 +225,17 @@ public class Sql {
 
     }
 
-    private int executerUpdate(String requete) {
+    private boolean executerUpdate(String requete) {
 	try {
 	    this.stmt = c.createStatement();
 	    System.out.println("Update : " + requete);
-	    int nbAffecte = stmt.executeUpdate(requete);
+	    stmt.executeUpdate(requete);
 	    c.commit();
-	    return nbAffecte;
+	    return true;
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
-	    return 0;
+	    return false;
 	}
     }
 
@@ -918,8 +901,26 @@ public class Sql {
 	}
     }
 
-    public int hardReset(String database) {
-	return executerUpdate(database);
+    public void hardResetH2(String database) {
+    	executerUpdate(database);
+    }
+    // Cette fonction drop le schéma restaurant et le reconstruit
+    public void hardResetPg(String database) {
+    	executerUpdate(database);
+    	// On ajout le drop de schéma avant le script de génération de la base de données
+    	  InputStream inputStream = getClass().getClassLoader().getResourceAsStream("restaurant.sql");
+    	  ByteArrayOutputStream result = new ByteArrayOutputStream();
+    	  byte[] buffer = new byte[1024];
+    	  try {
+			for (int length; (length = inputStream.read(buffer)) != -1; ) {
+			      result.write(buffer, 0, length);
+			  }
+	    	String rebuild = result.toString("UTF-8");
+	    	System.err.println("Schema restaurant dropped");
+	    	executerUpdate(rebuild);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
     public Double revenuHebdomadaire() {
