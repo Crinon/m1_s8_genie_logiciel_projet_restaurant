@@ -1032,4 +1032,29 @@ public class Sql {
 	public void annulerReservation(Reservation reservation) {
 		executerUpdate("UPDATE restaurant.reservation SET valide=false WHERE id = " + reservation.getId());
 	}
+
+	public void modifierHoraire(String nomHoraire, int horaire) {
+		switch (nomHoraire) {
+		case "ouverture midi":
+			executerUpdate("UPDATE restaurant.restaurant SET heureouverturedejeune="+horaire);
+			Restaurant.setHeureDejeunerOuverture(LocalTime.ofSecondOfDay(horaire));
+			break;
+		case "fermeture midi":
+			executerUpdate("UPDATE restaurant.restaurant SET heurelimitedejeune="+horaire);
+			Restaurant.setHeureDejeunerLimite(LocalTime.ofSecondOfDay(horaire));
+			break;
+		case "ouverture soir":
+			executerUpdate("UPDATE restaurant.restaurant SET heureouverturediner="+horaire);
+			Restaurant.setHeureDinerOuverture(LocalTime.ofSecondOfDay(horaire));
+			break;
+		case "fermeture soir":
+			executerUpdate("UPDATE restaurant.restaurant SET heurelimitediner="+horaire);
+			Restaurant.setHeureDinerLimite(LocalTime.ofSecondOfDay(horaire));
+			break;
+		default:
+			break;
+		}
+
+	}
+
 }

@@ -1164,7 +1164,6 @@ public class TestUnitaire {
     public void verifierInitialisationHorairesDB() {
 	System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la base de données");
 	try {
-	    directeur.ajouterEtage();
 	    ResultSet resultSet = sql.executerSelect("SELECT * FROM restaurant.restaurant");
 	    resultSet.next();
 	    // Récupération des valeurs par défaut
@@ -1187,7 +1186,6 @@ public class TestUnitaire {
     public void verifierInitialisationHorairesJava() {
 	System.out.println("\nTest en cours : Vérification de l'initialisation des horaires dans la mémoire");
 	try {
-	    directeur.ajouterEtage();
 	    // Récupération des valeurs par défaut
 	    Properties prop = new Properties();
 	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
@@ -1198,6 +1196,38 @@ public class TestUnitaire {
 	catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
+	}
+    }
+    
+    @Test
+    @DisplayName("Modification d'un horaire du restaurant dans la mémoire")
+    public void modificationHoraireJava() {
+	System.out.println("\nTest en cours : Modification d'un horaire du restaurant dans la mémoire");
+	int heure = 13;
+	int minute = 11;
+	int nbSecondes = LocalTime.of(heure,minute).getSecond();
+	directeur.modifierHoraire("ouverture midi", nbSecondes);
+	System.err.println(LocalTime.of(heure,minute).getSecond());
+	System.err.println(Restaurant.getHeureDejeunerOuverture());
+	assertEquals(nbSecondes, Restaurant.getHeureDejeunerOuverture().getSecond());
+    }
+    
+    @Test
+    @DisplayName("Modification d'un horaire du restaurant dans la base de données")
+    public void modificationHoraireDB() {
+	System.out.println("\nTest en cours : Modification d'un horaire du restaurant dans la base de données");
+	try {
+		int heure = 21;
+		int minute = 11;
+		int nbSecondes = LocalTime.of(heure,minute).getSecond();
+		directeur.modifierHoraire("ouverture soir", nbSecondes);
+		System.err.println(LocalTime.of(heure,minute).getSecond());
+		System.err.println(Restaurant.getHeureDejeunerOuverture());
+		ResultSet resultset = sql.executerSelect("SELECT heureouverturediner FROM restaurant.restaurant");
+		resultset.next();
+		assertEquals(nbSecondes, resultset.getInt("heureouverturediner"));
+	} catch (SQLException e) {
+		e.printStackTrace();
 	}
     }
 

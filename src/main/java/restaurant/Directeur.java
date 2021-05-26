@@ -1,5 +1,6 @@
 package restaurant;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -311,5 +312,12 @@ public class Directeur extends Personne {
 		sql.annulerReservation(reservation);
 		reservation.setEffetive(false);
 	}
+
+	public void modifierHoraire(String string, int horaire) {
+		Sql sql = new Sql();
+		sql.modifierHoraire(string,horaire);		
+	}
+
+
 
 }
