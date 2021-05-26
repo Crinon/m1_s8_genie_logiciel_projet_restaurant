@@ -1,3 +1,5 @@
+DROP SCHEMA IF EXISTS restaurant CASCADE;
+
 --
 -- PostgreSQL database dump
 --
@@ -1054,3 +1056,20 @@ ALTER TABLE ONLY restaurant.tables
 -- PostgreSQL database dump complete
 --
 
+
+TRUNCATE TABLE restaurant.affectation,
+restaurant.assistant,
+restaurant.commande,
+restaurant.cuisinier,
+restaurant.directeur,
+restaurant.etage,
+restaurant.ingredient,
+restaurant.maitrehotel,
+restaurant.personne,
+restaurant.plat,
+restaurant.recette,
+restaurant.reservation,
+restaurant.restaurant,
+restaurant.serveur,
+restaurant.tables
+RESTART IDENTITY;

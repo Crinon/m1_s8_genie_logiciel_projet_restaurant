@@ -225,10 +225,10 @@ public class Sql {
 
     }
 
-    private boolean executerUpdate(String requete) {
+    public boolean executerUpdate(String requete) {
 	try {
 	    this.stmt = c.createStatement();
-	    System.out.println("Update : " + requete);
+//	    System.out.println("Update : " + requete);
 	    stmt.executeUpdate(requete);
 	    c.commit();
 	    return true;
@@ -530,11 +530,12 @@ public class Sql {
 
     public void initialiserTables(Etage etage) {
 	// On récupère toutes les tables affecté à l'étage demandé
-	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.tables WHERE id = " + etage.getId());
+	ResultSet resultSet = executerSelect("SELECT * FROM restaurant.tables WHERE etage = " + etage.getId());
 	// Pour chaque table trouvée, on créé un objet table que l'on ajoute à l'étage
 	// en cours
 	try {
 	    while (resultSet.next()) {
+	    	System.err.println("table trouve : " + resultSet.getString("id"));
 		etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
 			Integer.parseInt(resultSet.getString("numero")),
 			Integer.parseInt(resultSet.getString("capacite")),
@@ -875,6 +876,10 @@ public class Sql {
 			"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
 		resultsetTableReserve.next();
 		int idTable = resultsetTableReserve.getInt("id");
+		System.err.println("id de la table en cours : " + idTable);
+		System.err.println(Restaurant.getEtages().toString());
+		System.err.println(Restaurant.getToutesLesTables().toString());
+		
 		// On récupère la table avec le bon id
 		Table tableReserve = Restaurant.getToutesLesTables().stream()
 			.filter(tableCurrent -> tableCurrent.getId() == idTable).collect(Collectors.toList()).get(0);
@@ -916,7 +921,7 @@ public class Sql {
 			      result.write(buffer, 0, length);
 			  }
 	    	String rebuild = result.toString("UTF-8");
-	    	System.err.println("Schema restaurant dropped");
+	    	System.err.println("Schema postgresql restaurant dropé");
 	    	executerUpdate(rebuild);
 		} catch (IOException e) {
 			e.printStackTrace();

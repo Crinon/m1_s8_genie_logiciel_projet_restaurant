@@ -203,10 +203,8 @@ public class Directeur extends Personne {
 
     public void creerFacture(Affectation affectation) {
 	Sql sql = new Sql();
-	System.err.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3");
 	double prixFacture = affectation.getCommandes().stream().mapToDouble(commande -> commande.getPlat().getPrix())
 		.sum();
-	System.err.println(prixFacture);
 	sql.creerFacture(affectation, prixFacture);
 	affectation.setFacture(prixFacture);
     }

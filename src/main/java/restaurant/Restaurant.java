@@ -47,6 +47,7 @@ public final class Restaurant {
 	sql.initialiserEtages();
 	System.out.println("Chargement des tables par étage");
 	for (Etage etage : etages) {
+		System.err.println("etage init : " + etage.getId());
 	    etage.initialiserTables();
 	}
 	System.out.println("Chargement du personnel");
@@ -55,6 +56,22 @@ public final class Restaurant {
 	sql.initialiserPlats();
 	System.out.println("Chargement des réservations");
 	sql.initialiserReservation();
+    }
+    
+    public static void resetRestaurant() {
+       etages = new ArrayList<Etage>();
+       personnel = new ArrayList<Personne>();
+       ingredients = new ArrayList<Ingredient>();
+       plats = new ArrayList<Plat>();
+       affectationsJour = new ArrayList<Affectation>();
+       reservationsJour = new ArrayList<Reservation>();
+       commandes = new ArrayList<Commande>();;
+       heureDejeunerOuverture = null;
+       heureDejeunerLimite = null;
+       heureDinerOuverture = null;
+       heureDinerLimite = null;
+       nbTableMax = 0;
+       QUANTITE_MAX_STOCK = 0;
     }
 
 //	public static void premierDemarrage(Sql sql) {

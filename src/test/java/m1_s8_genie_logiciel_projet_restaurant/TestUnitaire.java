@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import restaurant.Affectation;
@@ -70,150 +73,42 @@ public class TestUnitaire {
     public static void initialisation() {
 	numeroGlobal = 0;
 	sql = new Sql();
-	System.out.println("\nBEFORE : création BDD");
-	sql.executerTests("DROP ALL OBJECTS");
-	sql.executerTests("CREATE SCHEMA IF NOT EXISTS restaurant");
-	sql.executerTests("create user if not exists restaurant_user password '' admin");
-
-	// Ingrédients
-	sql.executerTests("CREATE SEQUENCE restaurant.ingredient_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.ingredient\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.ingredient_id_seq'),\r\n"
-		+ "    nom character varying NOT NULL,\r\n" + "    quantite integer NOT NULL DEFAULT 0,\r\n"
-		+ "    CONSTRAINT ingredient_pkey PRIMARY KEY (id)\r\n" + ");");
-	// Etages
-	sql.executerTests("CREATE SEQUENCE restaurant.etage_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.etage\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.etage_id_seq'),\r\n"
-		+ "    niveau integer NOT NULL,\r\n" + "    CONSTRAINT etage_pkey PRIMARY KEY (id)\r\n" + ");");
-	// Personne
-	sql.executerTests("CREATE SEQUENCE restaurant.personne_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.personne\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.personne_id_seq'),\r\n"
-		+ "    nom character varying  NOT NULL,\r\n" + "    login character varying  NOT NULL,\r\n"
-		+ "    CONSTRAINT personne_pkey PRIMARY KEY (id)\r\n" + ")");
-	// Directeur
-	sql.executerTests("CREATE SEQUENCE restaurant.directeur_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.directeur\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.directeur_id_seq'),\r\n"
-		+ "    personne integer NOT NULL,\r\n" + "    CONSTRAINT directeur_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT directeur_personne_fkey FOREIGN KEY (personne)\r\n"
-		+ "        REFERENCES restaurant.personne (id) \r\n" + ")");
-	// Cuisinier
-	sql.executerTests("CREATE SEQUENCE restaurant.cuisinier_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.cuisinier\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.cuisinier_id_seq'),\r\n"
-		+ "    personne integer NOT NULL,\r\n" + "    CONSTRAINT cuisinier_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT cuisinier_personne_fkey FOREIGN KEY (personne)\r\n"
-		+ "        REFERENCES restaurant.personne (id) \r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION\r\n" + ")");
-	// Assistant
-	sql.executerTests("CREATE SEQUENCE restaurant.assistant_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.assistant\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.assistant_id_seq'),\r\n"
-		+ "    personne integer NOT NULL,\r\n" + "    CONSTRAINT assistant_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT assistant_personne_fkey FOREIGN KEY (personne)\r\n"
-		+ "        REFERENCES restaurant.personne (id))");
-	// Serveur
-	sql.executerTests("CREATE SEQUENCE restaurant.serveur_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.serveur\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.serveur_id_seq'),\r\n"
-		+ "    personne integer NOT NULL,\r\n" + "    CONSTRAINT serveur_pkey PRIMARY KEY (id)\r\n" + ")");
-	// Maitre d'hôtel
-	sql.executerTests("CREATE SEQUENCE restaurant.maitrehotel_id_seq\r\n" + "    INCREMENT 1\r\n"
-		+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.maitrehotel\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.maitrehotel_id_seq'),\r\n"
-		+ "    personne integer NOT NULL,\r\n" + "    CONSTRAINT maitrehotel_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT maitrehotel_personne_fkey FOREIGN KEY (personne)\r\n"
-		+ "        REFERENCES restaurant.personne (id) \r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION\r\n" + ")");
-	// Tables
-	sql.executerTests("CREATE SEQUENCE restaurant.tables_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.tables\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.tables_id_seq'),\r\n"
-		+ "    capacite integer NOT NULL,\r\n" + "    etat character varying NOT NULL,\r\n"
-		+ "    serveur integer,\r\n" + "    etage integer NOT NULL,\r\n" + "    numero integer NOT NULL,\r\n"
-		+ "    check (etat in ('Libre', 'Sale', 'Occupe', 'Reserve')),\r\n"
-		+ "    CONSTRAINT tables_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT tables_etage_fkey FOREIGN KEY (etage)\r\n"
-		+ "        REFERENCES restaurant.etage (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION,\r\n" + "    CONSTRAINT tables_serveur_fkey FOREIGN KEY (serveur)\r\n"
-		+ "        REFERENCES restaurant.serveur (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION\r\n" + ")");
-	// Plat
-	sql.executerTests("CREATE SEQUENCE restaurant.plat_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.plat\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.plat_id_seq'),\r\n"
-		+ "    nom character varying NOT NULL,\r\n" + "    typeplat character varying NOT NULL,\r\n"
-		+ "    typeingredient character varying NOT NULL,\r\n" + "    prix double precision NOT NULL,\r\n"
-		+ "    disponiblecarte boolean NOT NULL,\r\n" + "    dureepreparation integer NOT NULL,\r\n"
-		+ "    CONSTRAINT plat_pkey PRIMARY KEY (id),\r\n"
-		+ "    check (typeplat in ('Entree', 'Plat', 'Dessert')),\r\n"
-		+ "    check (typeingredient in ('Vegetarien', 'Viande', 'Poisson', 'Sucre', 'Sale'))\r\n" + ")");
-	// Recette de plat
-	sql.executerTests("CREATE SEQUENCE restaurant.recette_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.recette\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.recette_id_seq'),\r\n"
-		+ "    quantite double precision NOT NULL,\r\n" + "    ingredient integer NOT NULL,\r\n"
-		+ "    plat integer NOT NULL,\r\n" + "    CONSTRAINT recette_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT recette_ingredient_fkey FOREIGN KEY (ingredient)\r\n"
-		+ "        REFERENCES restaurant.ingredient (id)\r\n" + "        ON UPDATE NO ACTION\r\n"
-		+ "        ON DELETE NO ACTION,\r\n" + "    CONSTRAINT recette_plat_fkey FOREIGN KEY (plat)\r\n"
-		+ "        REFERENCES restaurant.plat (id)\r\n" + ")");
-	// Affectation
-	sql.executerTests("CREATE SEQUENCE restaurant.affectation_id_seq\r\n" + "    INCREMENT 1\r\n"
-		+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.affectation\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.affectation_id_seq'),\r\n"
-		+ "    datedebut TIMESTAMP NOT NULL,\r\n" + "    datefin TIMESTAMP,\r\n"
-		+ "    nombrepersonne integer NOT NULL,\r\n" + "    tableoccupe integer NOT NULL,\r\n"
-		+ "    facture double precision NOT NULL,\r\n" + "    CONSTRAINT affectation_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)\r\n"
-		+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
-	// Reservation
-	sql.executerTests("CREATE SEQUENCE restaurant.reservation_id_seq\r\n" + "    INCREMENT 1\r\n"
-		+ "    START 1\r\n" + "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.reservation\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.reservation_id_seq'),\r\n"
-		+ "    dateappel TIMESTAMP NOT NULL,\r\n" + "    datereservation TIMESTAMP NOT NULL,\r\n"
-		+ "    nombrepersonne integer NOT NULL,\r\n" + "    valide boolean NOT NULL,\r\n"
-		+ "    tablereserve integer NOT NULL,\r\n" + "    CONSTRAINT reservation_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT reservation_tablereserve_fkey FOREIGN KEY (tablereserve)\r\n"
-		+ "        REFERENCES restaurant.tables (id)\r\n" + ")");
-	// Restaurant
-	sql.executerTests("CREATE SEQUENCE restaurant.restaurant_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.restaurant\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.restaurant_id_seq'),\r\n"
-		+ "    heurelimitediner integer NOT NULL,\r\n" + "    heureouverturediner integer NOT NULL,\r\n"
-		+ "    heurelimitedejeune integer NOT NULL,\r\n" + "    heureouverturedejeune integer NOT NULL,\r\n"
-		+ "    CONSTRAINT restaurant_pkey PRIMARY KEY (id)\r\n" + ")");
-	// Commande
-	sql.executerTests("CREATE SEQUENCE restaurant.commande_id_seq\r\n" + "    INCREMENT 1\r\n" + "    START 1\r\n"
-		+ "    MINVALUE 1\r\n" + "    MAXVALUE 2147483647\r\n" + "    CACHE 1;");
-	sql.executerTests("CREATE TABLE restaurant.commande\r\n" + "(\r\n"
-		+ "    id integer NOT NULL DEFAULT nextval('restaurant.commande_id_seq'),\r\n"
-		+ "    datedemande TIMESTAMP NOT NULL,\r\n" + "    estenfant boolean NOT NULL,\r\n"
-		+ "    plat integer NOT NULL,\r\n" + "    affectation integer NOT NULL,\r\n"
-		+ "    etat character varying NOT NULL,\r\n"
-		+ "    check (etat in ('COMMANDEE', 'EN_PREPARATION', 'PRETE', 'SERVIE')),\r\n"
-		+ "    CONSTRAINT commande_pkey PRIMARY KEY (id),\r\n"
-		+ "    CONSTRAINT commande_affectation_fkey FOREIGN KEY (affectation)\r\n"
-		+ "        REFERENCES restaurant.affectation (id),\r\n"
-		+ "    CONSTRAINT commande_plat_fkey FOREIGN KEY (plat)\r\n"
-		+ "        REFERENCES restaurant.plat (id)\r\n" + ")");
+	System.out.println("\nBEFORE ALL : création BDD");
+  	System.err.println("Exécution du script de création de la base de données H2.");
+	// On récupère le fichier SQL au format string
+	  InputStream inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("jeudonnees.sql");
+	  ByteArrayOutputStream result = new ByteArrayOutputStream();
+	  byte[] buffer = new byte[1024];
+	  try {
+		for (int length; (length = inputStream.read(buffer)) != -1; ) {
+		      result.write(buffer, 0, length);
+		  }
+  	String sqlbuildscript = result.toString("UTF-8");
+	sql.executerUpdate(sqlbuildscript);
+	
+	// Insertion d'un jeu de données
+  	System.err.println("Insertion du jeu de données");
+	// On récupère le fichier SQL au format string
+	  inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("jeudonnees.sql");
+	  result = new ByteArrayOutputStream();
+	  byte[] buffer2 = new byte[1024];
+		for (int length; (length = inputStream.read(buffer2)) != -1; ) {
+		      result.write(buffer2, 0, length);
+		  }
+  	String jeudedonnees = result.toString("UTF-8");
+	sql.executerUpdate(jeudedonnees);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
 	Restaurant.initialisation();
+    }
+    
+    
+    @BeforeEach
+    public void resetDB() {
+	    sql.hardResetH2(sql.hardResetH2);
+	    Restaurant.resetRestaurant();
+	    Restaurant.initialisation();
     }
 
     @Test
@@ -245,13 +140,21 @@ public class TestUnitaire {
 
     @Test
     @DisplayName("Commander un ingrédient : modification de la quantité dans la base de données")
-    public void commanderIngredientDB() throws ClassNotFoundException, SQLException, IOException {
-	System.out.println("\nTest en cours : commande d'ingrédient");
-	directeur.commanderIngredient(Restaurant.getIngredients().get(0), 10);
-	ResultSet resultSet = sql.executerSelect("SELECT nom,quantite from restaurant.ingredient where id = "
-		+ Restaurant.getIngredients().get(0).getId());
-	resultSet.next();
-	assertEquals(10, Integer.parseInt(resultSet.getString("quantite")));
+    public void commanderIngredientDB() {
+		System.out.println("\nTest en cours : commande d'ingrédient");
+		try {
+			Ingredient ingredient = directeur.ajouterIngredient("Oxygène");
+			directeur.commanderIngredient(ingredient, 10);
+			directeur.commanderIngredient(ingredient, 10);
+			directeur.commanderIngredient(ingredient, 10);
+			ResultSet resultSet = sql.executerSelect("SELECT quantite FROM restaurant.ingredient where id = "
+					+ ingredient.getId());
+			resultSet.next();
+			int stock = Integer.parseInt(resultSet.getString("quantite"));
+			assertEquals(30, stock);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 
     @Test
@@ -979,6 +882,7 @@ public class TestUnitaire {
 	catch (SQLException e) {
 	    e.printStackTrace();
 	}
+	
     }
 
     @Test

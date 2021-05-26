@@ -42,17 +42,17 @@ INSERT INTO restaurant.etage(niveau) VALUES (2);
 INSERT INTO restaurant.etage(niveau) VALUES (3);
 
 -- Tables 1 et 2 de l'étage au niveau 1 numéroTable 1 et 7 du serveur 1 Jérémy
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (2, 'libre', 1, 1, 1);
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (4, 'libre', 1, 7, 1);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (2, 'Libre', 1, 1, 1);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (4, 'Libre', 1, 7, 1);
 -- Tables 3 et 4 de l'étage au niveau 2 numéroTable 2 et 5 du serveur 2 Anthony
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (6, 'libre', 2, 2, 2);
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (10, 'libre', 2, 5, 2);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (6, 'Libre', 2, 2, 2);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (10, 'Libre', 2, 5, 2);
 -- Tables 5 et 6 de l'étage au niveau 3 numéroTable 3 et 4 du serveur 3 Romain
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (6, 'libre', 3, 3, 3);
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (10, 'libre', 3, 4, 3);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (6, 'Libre', 3, 3, 3);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (10, 'Libre', 3, 4, 3);
 -- Tables 7 et 8 de des étages 2 et 3 numéroTable 45 et 54 du serveur 4 Alain
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (8, 'libre', 2, 45, 4);
-INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (8, 'libre', 3, 54, 4);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (8, 'Libre', 2, 45, 4);
+INSERT INTO restaurant.tables(capacite, etat, etage, numero, serveur) VALUES (8, 'Libre', 3, 54, 4);
 
 -- Ingrédient 1
 INSERT INTO restaurant.ingredient(nom, quantite) VALUES ('jambon', 250);
