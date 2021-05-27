@@ -285,9 +285,7 @@ public class Main {
 		
 		int nbTables = 0; //numero de la table dans le menu
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
-			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
-				nbTables+=1;
-			}
+				nbTables+= Restaurant.getEtages().get(etage).getTables().size();
 		}
 		
 		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
@@ -295,9 +293,37 @@ public class Main {
 			((Directeur) persConnectee).supprimerTable(trouverTable(numero-1), trouverEtage(trouverTable(numero-1)).getTables() );
 			System.out.println("Table supprimée");
 		}
-
-  			
+	
   	}
+  	
+  	
+	// Permet de modifier le numéro d'une table
+ 	public static void modifierTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+
+		// Affichage menu
+		System.out.println("----------------------------------"
+					   + "\n-------Modifier une table---------"
+	 					 + "\nListe des tables : " + listingTables()
+	 					 + "\n----------------------------------"
+	 					 + "\nVeuillez choisir le numero (menu) correspondant à la table à modifier, ou 0 pour retourner au menu");
+
+		// Numero de la table
+		System.out.println("\nTable à modifier :");
+		
+		int nbTables = 0; //numero de la table dans le menu
+		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+				nbTables+= Restaurant.getEtages().get(etage).getTables().size();
+		}
+		
+		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
+		if (numero != 0) {
+			// Nouveau numero de la table
+			System.out.println("\nNouveau numéro de la table :");
+			int nouveauNumero = Main.choixUtilisateur(1,Restaurant.NUMERO_MAX_TABLE);
+			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero-1), nouveauNumero );
+			System.out.println("Table " + (numero-1) + " modifiée en " + nouveauNumero);
+		}
+ 	}
  	
 	// Permet d'ajouter une table à un étage
  	public static void ajouterTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
@@ -398,23 +424,24 @@ public class Main {
   		case 6:
   			supprimerDernierEtage();
   			break;
+  			
   		// Ajouter une table
   		case 7:
   			ajouterTableDirecteur();
-
   			break;
 
-  		// Modifier table
+  		// Modifier le numéro d'une table
   		case 8:
-
+  			modifierTableDirecteur();
   			break;
+  			
   		// Supprimer une table
   		case 9:
   			supprimerTableDirecteur();
 			break;
 
   		case 10:
-  		    	ajouterPlatDirecteur();
+  		    ajouterPlatDirecteur();
 			break;
 
   		case 11:
@@ -695,7 +722,9 @@ public class Main {
 	 				//Affichage des tables de son étage + couleurs (état) associées
 	 		 		//TODO
  					+ "\n0: Déconnexion"
- 					+ "\n1: Affecter un serveur à une table"
+ 					+ "\n1: Voir l'état des tables"
+ 					+ "\n2: Prendre les commandes d'une table"
+ 					+ "\n3: Transmettre facture"
  					+ "\n----------------------------------\n");
 
  		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
@@ -728,7 +757,7 @@ public class Main {
  		// Affichage menu
  		System.out.println("----------------------------------"
  					+ "\n0: Déconnexion"
- 					+ "\n1: Signaler table nettoyée"
+ 					+ "\n1: Nettoyer une table"
  					+ "\n----------------------------------\n");
 
  		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
