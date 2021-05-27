@@ -512,7 +512,6 @@ public class Main {
 	}
 	((Directeur) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat), false,
 		Type.valueOf(type), Categorie.valueOf(categorie), recette);
-
     }
 
     // Modifier le rôle d'un membre du personnel
