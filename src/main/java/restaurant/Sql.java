@@ -1015,7 +1015,8 @@ public class Sql {
     public Double tempsPreparationMoyen() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id");
+		    "SELECT SUM(plat.dureePreparation)/COUNT(comm.id) AS tempsPrepaMoyen \r\n"
+		    + "FROM restaurant.commande comm LEFT JOIN restaurant.plat plat ON comm.plat = plat.id");
 	    rs.next();
 	    return rs.getDouble("tempsPrepaMoyen");
 	}
@@ -1141,7 +1142,16 @@ public class Sql {
 	}
 
 	public Double tempsRotationMoyen() {
-		// TODO Auto-generated method stub
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT (SUM(extract(epoch FROM aff.datefin::time)-extract(epoch FROM aff.datedebut::time))/COUNT(aff.id))/60 AS tempsRotationMoyen \r\n"
+			    + "FROM restaurant.affectation aff");
+		    rs.next();
+		    return rs.getDouble("profitDinerDejeunerAlltime");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
 		return null;
 	}
 

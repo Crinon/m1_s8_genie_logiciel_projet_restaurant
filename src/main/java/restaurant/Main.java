@@ -530,12 +530,12 @@ public class Main {
 		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
 		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour());
 		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
-				
-		// TODO
 		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime());
 		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
-		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen());
-		System.out.println("Temps de préparation moyen des plats : " + sql.tempsRotationMoyen());
+		System.out.println("Temps de préparation moyen des plats (en secondes) : " + sql.tempsPreparationMoyen());
+		System.out.println("Temps de rotation moyen des clients (en minutes) : " + sql.tempsRotationMoyen());
+
+		// TODO
 		System.out.println("Plats les plus populaires : " + sql.popularitePlats());
 		System.out.println("Part des recettes provient de quel plat : " + sql.partPlatRecette());
 	}
