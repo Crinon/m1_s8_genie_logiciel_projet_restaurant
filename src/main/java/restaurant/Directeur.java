@@ -112,14 +112,20 @@ public class Directeur extends Personne {
 	}
     }
 
-    public void supprimerTable(Table tableToremove, ArrayList<Table> tables) {
+    public boolean supprimerTable(Table tableToremove, ArrayList<Table> tables) {
+    	if (tableToremove.getEtat() != EtatTable.Libre || tableToremove.getEtat() != EtatTable.Sale) {
+    		System.err.println("Vous avez tenté de supprimer une table qui est occupé.");
+    		return false;
+    	}
 	boolean success;
 	Sql sql;
 	sql = new Sql();
 	success = sql.deleteTable(tableToremove);
 	if (success) {
 	    tables.remove(tableToremove);
+	    return true;
 	}
+	return false; 
     }
 
     public Ingredient ajouterIngredient(String nom) {
