@@ -1025,9 +1025,10 @@ public class Sql {
     }
 
     public void creerFacture(Affectation affectation, double prixFacture) {
-	executerUpdate(
-		"UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
+	executerUpdate("UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
 	modifierEtatTable(affectation.getTable(), EtatTable.Sale);
+	executerUpdate("UPDATE restaurant.tables SET etat = 'Sale' WHERE id = " + affectation.getTable().getId());
+	executerUpdate("UPDATE restaurant.affectation SET tableoccupe =null WHERE id = " + affectation.getId());
     }
 
 	public void annulerReservation(Reservation reservation) {

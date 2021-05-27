@@ -96,7 +96,7 @@ CREATE TABLE restaurant.affectation (
     datedebut timestamp with time zone NOT NULL,
     datefin timestamp with time zone,
     nombrepersonne integer NOT NULL,
-    tableoccupe integer NOT NULL,
+    tableoccupe integer,
     facture double precision NOT NULL
 );
 
