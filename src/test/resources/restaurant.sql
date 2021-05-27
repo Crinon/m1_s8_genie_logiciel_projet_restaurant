@@ -192,7 +192,6 @@ CREATE TABLE restaurant.affectation;
     tableoccupe integer NOT NULL,
     facture double precision NOT NULL,;
     CONSTRAINT affectation_pkey PRIMARY KEY (id),
-    CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe)
         REFERENCES restaurant.tables (id);
 
 -- Reservation

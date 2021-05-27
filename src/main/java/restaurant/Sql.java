@@ -3,6 +3,8 @@ package restaurant;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -216,13 +218,10 @@ public class Sql {
 	    res = stmt.executeQuery(requete);
 	    c.commit();
 	    return res;
+	} catch (SQLException e) {
+		    e.printStackTrace();
 	}
-	catch (SQLException e) {
-	    System.err.println("executerSelect de Sql.java a échoué.");
-	    e.printStackTrace();
-	    return null;
-	}
-
+	return null;
     }
 
     public boolean executerUpdate(String requete) {
@@ -234,8 +233,8 @@ public class Sql {
 	    return true;
 	}
 	catch (SQLException e) {
-	    e.printStackTrace();
-	    return false;
+		    e.printStackTrace();
+		    return false;
 	}
     }
 
@@ -583,7 +582,7 @@ public class Sql {
 
     public void premierDemarrage() {
 	try {
-	    // Regarde si c'est le premier démarrage de l'application
+	    // Regarde si il y a au moins un directeur
 	    ResultSet resultSet = executerSelect("SELECT * FROM restaurant.directeur");
 	    if (resultSet.next() == false) {
 		// il faut créer un directeur automatiquement
@@ -912,7 +911,7 @@ public class Sql {
     // Cette fonction drop le schéma restaurant et le reconstruit
     public void hardResetPg(String database) {
     	executerUpdate(database);
-    	// On ajout le drop de schéma avant le script de génération de la base de données
+    	// Drop de schéma avant de re-générer de la base de données
     	  InputStream inputStream = getClass().getClassLoader().getResourceAsStream("restaurant.sql");
     	  ByteArrayOutputStream result = new ByteArrayOutputStream();
     	  byte[] buffer = new byte[1024];
@@ -1028,7 +1027,6 @@ public class Sql {
 	executerUpdate("UPDATE restaurant.affectation SET facture = " + prixFacture + " WHERE id = " + affectation.getId());
 	modifierEtatTable(affectation.getTable(), EtatTable.Sale);
 	executerUpdate("UPDATE restaurant.tables SET etat = 'Sale' WHERE id = " + affectation.getTable().getId());
-	executerUpdate("UPDATE restaurant.affectation SET tableoccupe =null WHERE id = " + affectation.getId());
     }
 
 	public void annulerReservation(Reservation reservation) {

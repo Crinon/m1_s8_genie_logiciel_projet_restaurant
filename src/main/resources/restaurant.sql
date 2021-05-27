@@ -96,7 +96,7 @@ CREATE TABLE restaurant.affectation (
     datedebut timestamp with time zone NOT NULL,
     datefin timestamp with time zone,
     nombrepersonne integer NOT NULL,
-    tableoccupe integer,
+    tableoccupe integer NOT NULL,
     facture double precision NOT NULL
 );
 
@@ -955,13 +955,6 @@ ALTER TABLE ONLY restaurant.serveur
 ALTER TABLE ONLY restaurant.tables
     ADD CONSTRAINT tables_pkey PRIMARY KEY (id);
 
-
---
--- Name: affectation affectation_tableoccupe_fkey; Type: FK CONSTRAINT; Schema: restaurant; Owner: restaurant_user
---
-
-ALTER TABLE ONLY restaurant.affectation
-    ADD CONSTRAINT affectation_tableoccupe_fkey FOREIGN KEY (tableoccupe) REFERENCES restaurant.tables(id);
 
 
 --

@@ -71,7 +71,7 @@ public class TestUnitaire {
 
     @BeforeAll
     public static void initialisation() {
-	numeroGlobal = 0;
+	numeroGlobal = 30;
 	sql = new Sql();
 	System.out.println("\nBEFORE ALL : création BDD");
   	System.err.println("Exécution du script de création de la base de données H2.");
