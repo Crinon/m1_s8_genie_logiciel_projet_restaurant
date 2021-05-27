@@ -113,7 +113,8 @@ public class Directeur extends Personne {
     }
 
     public boolean supprimerTable(Table tableToremove, ArrayList<Table> tables) {
-    	if (tableToremove.getEtat() != EtatTable.Libre || tableToremove.getEtat() != EtatTable.Sale) {
+    	System.out.println(tableToremove.getEtat());
+    	if (!(tableToremove.getEtat() == EtatTable.Libre || tableToremove.getEtat() == EtatTable.Sale)) {
     		System.err.println("Vous avez tenté de supprimer une table qui est occupé.");
     		return false;
     	}
