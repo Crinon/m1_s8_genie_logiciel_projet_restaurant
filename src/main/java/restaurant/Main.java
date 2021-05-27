@@ -520,13 +520,21 @@ public class Main {
 	private static void montrerStats() {
 		Sql sql = new Sql();
 		System.out.println("Statistiques du restaurant : ");
-		System.out.println("Profit réalisé sur le Déjeuner : " + sql.profitDejeuner());
-		System.out.println("Profit réalisé sur le dîner : " + sql.profitDiner());
-		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen());
-		System.out.println("Plats les plus populaires : " + sql.popularitePlats());
+		
+		// CLEAR
 		System.out.println("Revenu quotidien : " + sql.revenuQuotidien());
 		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire());
 		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
+		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour());
+
+		// TODO
+		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
+		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime());
+		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
+		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen());
+		System.out.println("Temps de préparation moyen des plats : " + sql.tempsRotationMoyen());
+		System.out.println("Plats les plus populaires : " + sql.popularitePlats());
+		System.out.println("Part des recettes provient de quel plat : " + sql.partPlatRecette());
 	}
 
 	private static void ajouterPlatDirecteur() {

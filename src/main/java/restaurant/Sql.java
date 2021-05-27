@@ -1025,12 +1025,22 @@ public class Sql {
 	return null;
     }
 
-    public Double profitDejeuner() {
+    public Double profitDejeunerJour() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune");
+		    "SELECT SUM(plat.prix) AS profitJourDejeuner\r\n"
+		    + "FROM restaurant.commande cmd \r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datedebut) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datedebut) = date_part('month', CURRENT_DATE)\r\n"
+		    + "AND date_part('day', aff.datedebut) = date_part('day', CURRENT_DATE)\r\n"
+		    + "AND extract(epoch FROM datedebut::time) >= (SELECT heureouverturedejeune FROM restaurant.restaurant WHERE id=1)\r\n"
+		    + "AND extract(epoch FROM datedebut::time) < (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)\r\n"
+		    + "\r\n"
+		    + "");
 	    rs.next();
-	    return rs.getDouble("profit");
+	    return rs.getDouble("profitJour");
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -1038,7 +1048,7 @@ public class Sql {
 	return null;
     }
 
-    public Double profitDiner() {
+    public Double profitDinerJour() {
 	try {
 	    ResultSet rs = executerSelect(
 		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner");
@@ -1087,6 +1097,26 @@ public class Sql {
 			break;
 		}
 
+	}
+
+	public Double profitDejeunerAlltime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double profitDinerAlltime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double tempsRotationMoyen() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double partPlatRecette() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
