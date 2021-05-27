@@ -1106,12 +1106,37 @@ public class Sql {
 	}
 
 	public Double profitDejeunerAlltime() {
-		// TODO Auto-generated method stub
+		try {
+		    ResultSet rs = executerSelect(
+	    "SELECT SUM(plat.prix) AS profitJourDejeunerAlltime\r\n"
+	    + "FROM restaurant.commande cmd \r\n"
+	    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+	    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+	    + "WHERE extract(epoch FROM datedebut::time) >= (SELECT heureouverturedejeune FROM restaurant.restaurant WHERE id=1)\r\n"
+	    + "AND extract(epoch FROM datedebut::time) < (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)\r\n");
+		    rs.next();
+		    return rs.getDouble("profitJourDejeunerAlltime");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
 		return null;
 	}
 
 	public Double profitDinerAlltime() {
-		// TODO Auto-generated method stub
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT SUM(plat.prix) AS profitDinerDejeunerAlltime\r\n"
+			    + "FROM restaurant.commande cmd \r\n"
+			    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+			    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+			    + "WHERE extract(epoch FROM datedebut::time) >= (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)");
+		    rs.next();
+		    return rs.getDouble("profitDinerDejeunerAlltime");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
 		return null;
 	}
 
