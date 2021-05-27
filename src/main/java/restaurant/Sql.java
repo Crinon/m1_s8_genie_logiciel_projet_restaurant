@@ -926,11 +926,32 @@ public class Sql {
 			e.printStackTrace();
 		}
     }
+    
+    public void insererJeuDonnees() {
+    	  InputStream inputStream = getClass().getClassLoader().getResourceAsStream("jeudonnees.sql");
+    	  ByteArrayOutputStream result = new ByteArrayOutputStream();
+    	  byte[] buffer = new byte[1024];
+    	  try {
+			for (int length; (length = inputStream.read(buffer)) != -1; ) {
+			      result.write(buffer, 0, length);
+			  }
+	    	String data = result.toString("UTF-8");
+	    	System.err.println("Jeu de données inséré");
+	    	executerUpdate(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 
     public Double revenuHebdomadaire() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND  to_char(CURRENT_DATE, 'IYYY-IW') = to_char(aff.datefin, 'IYYY-IW')");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}
@@ -943,7 +964,12 @@ public class Sql {
     public Double revenuMensuel() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datefin) = date_part('month', CURRENT_DATE)");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}
@@ -956,7 +982,13 @@ public class Sql {
     public Double revenuQuotidien() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datefin) = date_part('month', CURRENT_DATE)\r\n"
+		    + "AND date_part('day', aff.datefin) = date_part('day', CURRENT_DATE)");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}

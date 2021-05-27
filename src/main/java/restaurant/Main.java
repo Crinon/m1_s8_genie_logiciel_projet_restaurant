@@ -351,9 +351,16 @@ public class Main {
  	
  	
  	// Permet de vider la base de données pour réinitialiser le restaurant
- 	public static void viderBddDirecteur() throws ClassNotFoundException, SQLException, IOException {
- 		//Sql.hardReset("hardResetPostgres");
+ 	public static void viderBddDirecteur() {
+ 		Sql sql = new Sql();
+ 		sql.hardResetPg(Sql.hardResetPostgres);
  	}
+ 	
+	private static void viderBddDirecteurAvecJeudonnees() {
+ 		Sql sql = new Sql();
+ 		sql.hardResetPg(Sql.hardResetPostgres);
+ 		sql.insererJeuDonnees();
+	}
  	
  // Menu principal du directeur
   	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
@@ -385,9 +392,10 @@ public class Main {
   					+ "\n22: Nettoyer table"
   					+ "\n23: Statistiques"
   					+ "\n24: Vider la BDD"
+  					+ "\n25: Vider la BDD et ajouter un jeu de données"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(0,24)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(0,25)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
@@ -489,13 +497,17 @@ public class Main {
 			break;
 
   		case 23:
-
+  			// Afficher les statistiques
+  			montrerStats();
 			break;
 		//Vider la BDD
   		case 24:
   			viderBddDirecteur();
 			break;
-
+			//Vider la BDD
+  		case 25:
+  			viderBddDirecteurAvecJeudonnees();
+			break;
   		default:
   			break;
   		}
@@ -503,6 +515,20 @@ public class Main {
   	}
   	
  
+
+
+	private static void montrerStats() {
+		Sql sql = new Sql();
+		System.out.println("Statistiques du restaurant : ");
+		System.out.println("Profit réalisé sur le Déjeuner : " + sql.profitDejeuner());
+		System.out.println("Profit réalisé sur le dîner : " + sql.profitDiner());
+		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen());
+		System.out.println("Plats les plus populaires : " + sql.popularitePlats());
+		System.out.println("Revenu quotidien : " + sql.revenuQuotidien());
+		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire());
+		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
+	}
+
 	private static void ajouterPlatDirecteur() {
 	    System.out.println("----------------------------------"
 			+ "\n-----Ajouter un plat------"
