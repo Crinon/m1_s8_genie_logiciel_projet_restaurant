@@ -58,8 +58,8 @@ public class Main {
 	}
 
 	// Vérifie la valeur entree au clavier
-	public static boolean valeurIntOk(int valeur, int max) {
-		if (valeur < 0 || valeur > max) {
+	public static boolean valeurIntOk(int valeur, int min, int max) {
+		if (valeur < min || valeur > max) {
 			return false;
 		}
 		return true;
@@ -103,13 +103,13 @@ public class Main {
 	}
 
 	// Méthode qui permet de vérifier l'entrée pour un choix de l'utilisateur
-	public static int choixUtilisateur(int valeurChoixMax) {
+	public static int choixUtilisateur(int valeurChoixMin, int valeurChoixMax) {
 
 		String choix = "";
 
 		while (estNullOuVide(choix) || !uniquementChiffres(choix)
-				|| !valeurIntOk(Integer.parseInt(choix), valeurChoixMax)) {
-			System.out.println(">Veuillez saisir votre choix (valeur allant de 0 à " + valeurChoixMax + ")");
+				|| !valeurIntOk(Integer.parseInt(choix),valeurChoixMin, valeurChoixMax)) {
+			System.out.println(">Veuillez saisir votre choix (valeur allant de " + valeurChoixMin + " à " + valeurChoixMax + ")");
 			choix = scanner.nextLine();
 		}
 		return Integer.parseInt(choix);
@@ -127,13 +127,14 @@ public class Main {
 	// Affiche la liste des tables
 	public static String listingTables() {
 		String liste = "";
-		int i = 0; //numero de la table dans le menu
+		int i = 1; //numero de la table dans le menu (0 étant réservé au retour)
 		
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
-			liste = "<Etage " + Restaurant.getEtages().get(etage).getNiveau() + " >";
+			liste += "\n<Etage " + Restaurant.getEtages().get(etage).getNiveau() + " >";
 			for (int table = 0; table <Restaurant.getEtages().get(etage).getTables().size(); table++) {
 				liste += "\n"+ i  + " : table " + Restaurant.getEtages().get(etage).getTables().get(table).getNumero()
-						+ "avec une capacite de : " + Restaurant.getEtages().get(etage).getTables().get(table).getCapacite() + " personnes";
+						+ " avec une capacite de : " + Restaurant.getEtages().get(etage).getTables().get(table).getCapacite() + " personnes"
+						+ " (état : " + Restaurant.getEtages().get(etage).getTables().get(table).getEtat() + ")";
 			i+=1;
 			}
 		}
@@ -181,7 +182,7 @@ public class Main {
  					|| (!uniquementLettres(choix) && !uniquementChiffres(choix))  // mélange de lettres/chiffres ou caractères spéciaux
  					|| (uniquementLettres(choix) && choix.length() > Restaurant.TAILLE_MAX_NOM_INGREDIENT) //chaine et ne respecte pas la longueur maximale
  					|| (uniquementChiffres(choix) && (Restaurant.getIngredients().size() == 0 //pas d'ingrédients dans la BDD
- 					                             	|| !valeurIntOk(Integer.parseInt(choix), Restaurant.getIngredients().size()-1)) ) //valeur qui n'existe pas
+ 					                             	|| !valeurIntOk(Integer.parseInt(choix),0, Restaurant.getIngredients().size()-1)) ) //valeur qui n'existe pas
  				  ){
  				System.out.println("Erreur, veuillez réessayer");
  				choix = scanner.nextLine();
@@ -191,7 +192,7 @@ public class Main {
 				// Nouvel ingrédient
 				String nomIngredient = choix.toLowerCase();
 				System.out.println(">Quantité de " + choix + " à commander ?");
-				qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				qtIngredient = choixUtilisateur(1,Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
 				((Directeur) persConnectee).ajouterIngredient(nomIngredient);
 				((Directeur) persConnectee).commanderIngredient(
 						Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
@@ -200,7 +201,7 @@ public class Main {
 			} else if (uniquementChiffres(choix)) {
 				// MAJ quantite d'un ingrédient existant
 				System.out.println(">Quantité à commander ?");
-				qtIngredient = choixUtilisateur(Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				qtIngredient = choixUtilisateur(1, Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
 				((Directeur) persConnectee).commanderIngredient(
 						Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
 				System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
@@ -218,7 +219,7 @@ public class Main {
  					+ "\n----------------------------------"
  					+ "\n1 pour valider, 0 pour annuler");
  			
- 			if (Main.choixUtilisateur(1) == 1) {
+ 			if (Main.choixUtilisateur(0,1) == 1) {
  				((Directeur) persConnectee).ajouterEtage();
 			}
  			System.out.println("Etage ajouté");
@@ -235,7 +236,7 @@ public class Main {
 		 					 + "\n----------------------------------"
 		 					 + "\n1 pour valider, 0 pour annuler");
  			
- 			if (Main.choixUtilisateur(1) == 1) {
+ 			if (Main.choixUtilisateur(0,1) == 1) {
  				((Directeur) persConnectee).supprimerDernierEtage();
 			}
  			System.out.println("Dernier étage supprimé");
@@ -243,11 +244,13 @@ public class Main {
  	
  	//Permet de trouver une table via son numéro
  	public static Table trouverTable(int numero) {
+ 		int nbTable = 1;
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
-				if (Restaurant.getEtages().get(etage).getTables().get(table).getNumero() ==  numero ) {
+				if (nbTable ==  numero) {
 					return Restaurant.getEtages().get(etage).getTables().get(table);
 				}
+				nbTable +=1;
 				
 			}
 		}
@@ -275,24 +278,52 @@ public class Main {
 					     + "\n-----Supprimer une table--------"
 	 					 + "\nListe des tables : " + listingTables()
 	 					 + "\n----------------------------------"
-	 					 + "\nVeuillez choisir le numero (menu) correspondant à la table à supprimer");
+	 					 + "\nVeuillez choisir le numero (menu) correspondant à la table à supprimer, ou 0 pour retourner au menu");
 
 		//numero de la table
 		System.out.println("\nNuméro de la table :");
 		
 		int nbTables = 0; //numero de la table dans le menu
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
-			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
-				nbTables+=1;
-			}
+				nbTables+= Restaurant.getEtages().get(etage).getTables().size();
 		}
 		
-		int numero = Main.choixUtilisateur(nbTables); //numero du menu
-
-		((Directeur) persConnectee).supprimerTable(trouverTable(numero), trouverEtage(trouverTable(numero)).getTables() );
-		System.out.println("Table supprimée");
-  			
+		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
+		if (numero != 0) {
+			((Directeur) persConnectee).supprimerTable(trouverTable(numero), trouverEtage(trouverTable(numero)).getTables() );
+			System.out.println("Table supprimée");
+		}
+	
   	}
+  	
+  	
+	// Permet de modifier le numéro d'une table
+ 	public static void modifierTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+
+		// Affichage menu
+		System.out.println("----------------------------------"
+					   + "\n-------Modifier une table---------"
+	 					 + "\nListe des tables : " + listingTables()
+	 					 + "\n----------------------------------"
+	 					 + "\nVeuillez choisir le numero (menu) correspondant à la table à modifier, ou 0 pour retourner au menu");
+
+		// Numero de la table
+		System.out.println("\nTable à modifier :");
+		
+		int nbTables = 0; //numero de la table dans le menu
+		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+			nbTables+= Restaurant.getEtages().get(etage).getTables().size();
+		}
+		
+		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
+		if (numero != 0) {
+			// Nouveau numero de la table
+			System.out.println("\nNouveau numéro de la table :");
+			int nouveauNumero = Main.choixUtilisateur(1,Restaurant.NUMERO_MAX_TABLE);
+			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero), nouveauNumero );
+			System.out.println("Table " + (numero-1) + " modifiée en " + nouveauNumero);
+		}
+ 	}
  	
 	// Permet d'ajouter une table à un étage
  	public static void ajouterTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
@@ -304,13 +335,13 @@ public class Main {
 	 					 + "\n----------------------------------"
 	 					 + "\nVeuillez choisir l'étage de la table à ajouter");
 		
-		int etage = Main.choixUtilisateur(Restaurant.getEtages().size()-1);
+		int etage = Main.choixUtilisateur(0, Restaurant.getEtages().size()-1);
 		//numero de la table
 		System.out.println("\nNuméro de la table : ");
-		int numero = Main.choixUtilisateur(Restaurant.NUMERO_MAX_TABLE);
+		int numero = Main.choixUtilisateur(0,Restaurant.NUMERO_MAX_TABLE);
 		//capacite de la table
 		System.out.println("\nVeuillez saisir sa capacité, ou 0 pour annuler et revenir au menu");
-		int capacite = Main.choixUtilisateur(Restaurant.CAPACITE_MAX_TABLE);
+		int capacite = Main.choixUtilisateur(0,Restaurant.CAPACITE_MAX_TABLE);
 		
 		if (capacite != 0) {
 			((Directeur) persConnectee).ajouterTable(numero, capacite, Restaurant.getEtages().get(etage) );
@@ -348,15 +379,14 @@ public class Main {
   					+ "\n16: Ajouter affectation"
   					+ "\n17: Ajouter commande"
   					+ "\n18: Ajouter facture"
-  					+ "\n19: Ajouter affectation"
-  					+ "\n20: Cuisiner un plat"
-  					+ "\n21: Servir un plat"
-  					+ "\n22: Nettoyer table"
-  					+ "\n23: Statistiques"
-  					+ "\n24: Vider la BDD"
+  					+ "\n19: Cuisiner un plat"
+  					+ "\n20: Servir un plat"
+  					+ "\n21: Nettoyer table"
+  					+ "\n22: Statistiques"
+  					+ "\n23: Vider la BDD"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(24)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(0,24)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
@@ -393,23 +423,24 @@ public class Main {
   		case 6:
   			supprimerDernierEtage();
   			break;
+  			
   		// Ajouter une table
   		case 7:
   			ajouterTableDirecteur();
-
   			break;
 
-  		// Modifier table
+  		// Modifier le numéro d'une table
   		case 8:
-
+  			modifierTableDirecteur();
   			break;
+  			
   		// Supprimer une table
   		case 9:
   			supprimerTableDirecteur();
 			break;
 
   		case 10:
-  		    	ajouterPlatDirecteur();
+  		    ajouterPlatDirecteur();
 			break;
 
   		case 11:
@@ -511,7 +542,7 @@ public class Main {
 		//Contrôle de l'entrée
 		while ( estNullOuVide(numPersonne) //vide
 				|| !uniquementChiffres(numPersonne) //pas que des chiffres
-				|| !(uniquementChiffres(numPersonne) && (valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1)  //personne n'existe pas
+				|| !(uniquementChiffres(numPersonne) && (valeurIntOk(Integer.parseInt(numPersonne),0, Restaurant.getPersonnel().size()-1)  //personne n'existe pas
 														|| numPersonne.equals("0")) ) //valeur de retour
 				){
 			System.out.println("Erreur, veuillez réessayer");
@@ -539,7 +570,7 @@ public class Main {
 		//Contrôle de l'entrée
 		while ( estNullOuVide(numPersonne) //vide
 				|| !uniquementChiffres(numPersonne) //pas que des chiffres
-				|| (uniquementChiffres(numPersonne) && (!valeurIntOk(Integer.parseInt(numPersonne), Restaurant.getPersonnel().size()-1)  //personne n'existe pas
+				|| (uniquementChiffres(numPersonne) && (!valeurIntOk(Integer.parseInt(numPersonne),0, Restaurant.getPersonnel().size()-1)  //personne n'existe pas
 														|| !numPersonne.equals("0")) ) //valeur de retour
 				){
 			
@@ -617,7 +648,7 @@ public class Main {
  					+ "\n2: AJOUTER METHODES DU ROLE SERVEUR ?????"
  					+ "\n----------------------------------\n");
 
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+ 		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
 
  		// Déconnexion
  		case 0:
@@ -652,7 +683,7 @@ public class Main {
  					+ "\n3: Passer une commande à \"terminée\""
  					+ "\n----------------------------------\n");
 
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+ 		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
 
  		// Déconnexion
  		case 0:
@@ -690,10 +721,12 @@ public class Main {
 	 				//Affichage des tables de son étage + couleurs (état) associées
 	 		 		//TODO
  					+ "\n0: Déconnexion"
- 					+ "\n1: Affecter un serveur à une table"
+ 					+ "\n1: Voir l'état des tables"
+ 					+ "\n2: Prendre les commandes d'une table"
+ 					+ "\n3: Transmettre facture"
  					+ "\n----------------------------------\n");
 
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+ 		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
 
  		// Déconnexion
  		case 0:
@@ -723,10 +756,10 @@ public class Main {
  		// Affichage menu
  		System.out.println("----------------------------------"
  					+ "\n0: Déconnexion"
- 					+ "\n1: Signaler table nettoyée"
+ 					+ "\n1: Nettoyer une table"
  					+ "\n----------------------------------\n");
 
- 		switch (Main.choixUtilisateur(7)) { // valeurChoixMin = 0
+ 		switch (Main.choixUtilisateur(0,7)) { // valeurChoixMin = 0
 
  		// Déconnexion
  		case 0:
