@@ -376,14 +376,15 @@ public class Main {
   					+ "\n13: Supprimer plat"
   					+ "\n14: Ajouter réservation"
   					+ "\n15: Supprimer réservation"
-  					+ "\n16: Ajouter affectation"
-  					+ "\n17: Ajouter commande"
-  					+ "\n18: Ajouter facture"
-  					+ "\n19: Cuisiner un plat"
-  					+ "\n20: Servir un plat"
-  					+ "\n21: Nettoyer table"
-  					+ "\n22: Statistiques"
-  					+ "\n23: Vider la BDD"
+  					+ "\n16: Affecter des clients à une table"
+  					+ "\n17: Affecter un serveur à une table"
+  					+ "\n18: Prendre une commande"
+  					+ "\n19: Editer une facture"
+  					+ "\n20: Cuisiner un plat"
+  					+ "\n21: Servir un plat"
+  					+ "\n22: Nettoyer table"
+  					+ "\n23: Statistiques"
+  					+ "\n24: Vider la BDD"
   					+ "\n----------------------------------\n");
 
   		switch (Main.choixUtilisateur(0,24)) { // valeurChoixMin = 0
