@@ -526,9 +526,9 @@ public class Main {
 		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire());
 		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
 		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour());
+		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
 
 		// TODO
-		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
 		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime());
 		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
 		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen());
