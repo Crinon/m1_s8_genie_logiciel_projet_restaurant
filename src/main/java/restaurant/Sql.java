@@ -214,7 +214,7 @@ public class Sql {
 	try {
 	    ResultSet res = null;
 	    this.stmt = c.createStatement();
-	    System.out.println("Select : " + requete);
+//	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
 	    c.commit();
 	    return res;
@@ -998,13 +998,15 @@ public class Sql {
 	return null;
     }
 
-    public Double popularitePlats() {
+    public HashMap<String, Double> popularitePlats() {
+    	HashMap<String, Double> resultats = new HashMap<String,Double>();
 	try {
 	    ResultSet rs = executerSelect(
 		    "SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus");
-	    // TODO
-	    rs.next();
-	    return rs.getDouble("nbVendus");
+	    while(rs.next()) {
+	    	resultats.put(rs.getString("nom"),rs.getDouble("nbVendus"));
+	    }
+	    return resultats;
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -1147,7 +1149,7 @@ public class Sql {
 			    "SELECT (SUM(extract(epoch FROM aff.datefin::time)-extract(epoch FROM aff.datedebut::time))/COUNT(aff.id))/60 AS tempsRotationMoyen \r\n"
 			    + "FROM restaurant.affectation aff");
 		    rs.next();
-		    return rs.getDouble("profitDinerDejeunerAlltime");
+		    return rs.getDouble("tempsRotationMoyen");
 		}
 		catch (SQLException e) {
 		    e.printStackTrace();
@@ -1155,9 +1157,24 @@ public class Sql {
 		return null;
 	}
 
-	public Double partPlatRecette() {
-		// TODO Auto-generated method stub
+	    public HashMap<String, Double> partPlatRecette() {
+	    	HashMap<String, Double> resultats = new HashMap<String,Double>();
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT p.nom, (COUNT(c.id)*p.prix) AS recettePlat "
+			    + "FROM restaurant.commande c "
+			    + "LEFT JOIN restaurant.plat p ON c.plat = p.id "
+			    + "GROUP BY p.nom,p.prix "
+			    + "ORDER BY recettePlat DESC");
+		    while(rs.next()) {
+		    	resultats.put(rs.getString("nom"),rs.getDouble("recettePlat"));
+		    }
+		    return resultats;
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
 		return null;
-	}
+	    }
 
 }

@@ -534,10 +534,16 @@ public class Main {
 		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
 		System.out.println("Temps de préparation moyen des plats (en secondes) : " + sql.tempsPreparationMoyen());
 		System.out.println("Temps de rotation moyen des clients (en minutes) : " + sql.tempsRotationMoyen());
-
-		// TODO
-		System.out.println("Plats les plus populaires : " + sql.popularitePlats());
-		System.out.println("Part des recettes provient de quel plat : " + sql.partPlatRecette());
+		System.out.println("Plats les plus populaires : ");
+		System.out.println("Nom du plat \t\t\t\t\t\t\t\t\t Nombre de vente");
+		sql.popularitePlats().forEach((nom,nombreVentes)->{
+			System.out.println(nom+" : "+nombreVentes);
+		});
+		System.out.println("Somme gagnée par plat : ");
+		sql.partPlatRecette().forEach((nom,nombreVentes)->{
+			System.out.println(nom+" : "+nombreVentes);
+		});
+		
 	}
 
 	private static void ajouterPlatDirecteur() {
