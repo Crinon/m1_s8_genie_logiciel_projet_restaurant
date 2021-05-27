@@ -290,7 +290,7 @@ public class Main {
 		
 		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
 		if (numero != 0) {
-			((Directeur) persConnectee).supprimerTable(trouverTable(numero-1), trouverEtage(trouverTable(numero-1)).getTables() );
+			((Directeur) persConnectee).supprimerTable(trouverTable(numero), trouverEtage(trouverTable(numero)).getTables() );
 			System.out.println("Table supprimée");
 		}
 	
@@ -312,7 +312,7 @@ public class Main {
 		
 		int nbTables = 0; //numero de la table dans le menu
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
-				nbTables+= Restaurant.getEtages().get(etage).getTables().size();
+			nbTables+= Restaurant.getEtages().get(etage).getTables().size();
 		}
 		
 		int numero = Main.choixUtilisateur(0,nbTables); //numero du menu
@@ -320,7 +320,7 @@ public class Main {
 			// Nouveau numero de la table
 			System.out.println("\nNouveau numéro de la table :");
 			int nouveauNumero = Main.choixUtilisateur(1,Restaurant.NUMERO_MAX_TABLE);
-			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero-1), nouveauNumero );
+			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero), nouveauNumero );
 			System.out.println("Table " + (numero-1) + " modifiée en " + nouveauNumero);
 		}
  	}
@@ -379,12 +379,11 @@ public class Main {
   					+ "\n16: Ajouter affectation"
   					+ "\n17: Ajouter commande"
   					+ "\n18: Ajouter facture"
-  					+ "\n19: Ajouter affectation"
-  					+ "\n20: Cuisiner un plat"
-  					+ "\n21: Servir un plat"
-  					+ "\n22: Nettoyer table"
-  					+ "\n23: Statistiques"
-  					+ "\n24: Vider la BDD"
+  					+ "\n19: Cuisiner un plat"
+  					+ "\n20: Servir un plat"
+  					+ "\n21: Nettoyer table"
+  					+ "\n22: Statistiques"
+  					+ "\n23: Vider la BDD"
   					+ "\n----------------------------------\n");
 
   		switch (Main.choixUtilisateur(0,24)) { // valeurChoixMin = 0
