@@ -418,7 +418,7 @@ public class Main {
 	    break;
 
 	    case 11:
-
+		modifierPlatDirecteur();
 	    break;
 
 	    case 12:
@@ -472,6 +472,10 @@ public class Main {
 	    default:
 	    break;
 	}
+
+    }
+
+    private static void modifierPlatDirecteur() {
 
     }
 
