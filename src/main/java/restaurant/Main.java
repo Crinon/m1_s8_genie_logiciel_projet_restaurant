@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Scanner;
-import java.util.TimeZone;
+
 
 public class Main {
 
@@ -366,26 +370,26 @@ public class Main {
 	}
  	
  // Menu principal du directeur
-  	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException {
+  	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException, ParseException {
 
   		// Affichage menu
   		System.out.println("----------------------------------"
-  					+ "\n0: Déconnexion"
-  					+ "\n1: Commander un ingredient"
-  					+ "\n2: Ajouter personnel"
-  					+ "\n3: Modifier personnel"
-  					+ "\n4: Supprimer personnel"
-  					+ "\n5: Ajouter etage"
-  					+ "\n6: Supprimer dernier etage"
-  					+ "\n7: Ajouter table"
-  					+ "\n8: Modifier table"
-  					+ "\n9: Supprimer table"
-  					+ "\n10: Ajouter plat"
+  					+ "\n0 : Déconnexion"
+  					+ "\n1 : Commander un ingredient"
+  					+ "\n2 : Ajouter personnel"
+  					+ "\n3 : Modifier personnel"
+  					+ "\n4 : Supprimer personnel"
+  					+ "\n5 : Ajouter etage"
+  					+ "\n6 : Supprimer dernier etage"
+  					+ "\n7 : Ajouter une table"
+  					+ "\n8 : Modifier une table"
+  					+ "\n9 : Supprimer une table"
+  					+ "\n10: Ajouter un plat"
   					+ "\n11: Modifier plat"
   					+ "\n12: Modifier carte"
   					+ "\n13: Supprimer plat"
-  					+ "\n14: Ajouter réservation"
-  					+ "\n15: Supprimer réservation"
+  					+ "\n14: Ajouter une réservation"
+  					+ "\n15: Supprimer une réservation"
   					+ "\n16: Affecter des clients à une table"
   					+ "\n17: Affecter un serveur à une table"
   					+ "\n18: Prendre une commande"
@@ -393,8 +397,8 @@ public class Main {
   					+ "\n20: Cuisiner un plat"
   					+ "\n21: Servir un plat"
   					+ "\n22: Nettoyer table"
-  					+ "\n23: Statistiques"
-  					+ "\n24: Vider la BDD"
+  					+ "\n23: Voir les statistiques"
+  					+ "\n24: Vider la base de données"
   					+ "\n25: Vider la BDD et ajouter un jeu de données"
   					+ "\n----------------------------------\n");
 
@@ -450,13 +454,13 @@ public class Main {
   		case 9:
   			supprimerTableDirecteur();
 			break;
-
+		// Ajouter un plat
   		case 10:
   		    ajouterPlatDirecteur();
 			break;
 
   		case 11:
-
+  		  modifierPlatDirecteur();
 			break;
 
   		case 12:
@@ -466,19 +470,21 @@ public class Main {
   		case 13:
 
 			break;
-
+		// Ajouter une réservation
   		case 14:
-
+  			ajouterReservation();
 			break;
-
+		// Supprimer une réservation
   		case 15:
-
+  			supprimerReservation();
 			break;
-
+			
+		// Affecter des clients à une table
   		case 16:
 
 			break;
-
+		
+		// Affecter un serveur à une table
   		case 17:
 
 			break;
@@ -518,8 +524,6 @@ public class Main {
   	}
   	
  
-
-
 	private static void montrerStats() {
 		Sql sql = new Sql();
 		System.out.println("Statistiques du restaurant : ");
@@ -546,33 +550,49 @@ public class Main {
 		
 	}
 
-	private static void ajouterPlatDirecteur() {
-	    System.out.println("----------------------------------"
-			+ "\n-----Ajouter un plat------"
-			+ "\n----------------------------------");
-	    System.out.println("Veuillez saisir le nom du plat");
-	    String nomPlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir le prix du plat");
-	    String prixPlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir la durée de préparation du plat");
-	    String dureePlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir le type du plat");
-	    for (int i = 0; i < Type.values().length; i++) {
-		System.out.println(i+1+": "+Type.values()[i].name());
-	    }
-	    String type = scanner.nextLine();
-	    System.out.println("Veuillez saisir la catégorie du plat");
-	    for (int i = 0; i < Categorie.values().length; i++) {
-		System.out.println(i+1+": "+Type.values()[i].name());
-	    }
-	    String categorie = scanner.nextLine();
-	    System.out.println("Veuillez saisir les ingédients de la recette");
-	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-		System.out.println(i+1+": "+Restaurant.getIngredients().get(i).getNom());
-	    }
+  	private static void ajouterPlatDirecteur() {
+  		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
+  			+ "\n----------------------------------");
+  		System.out.println("Veuillez saisir le nom du plat");
+  		String nomPlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir le prix du plat");
+  		String prixPlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir la durée de préparation du plat");
+  		String dureePlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir le type du plat");
+  		for (int i = 0; i < Type.values().length; i++) {
+  		    System.out.println(i + 1 + ": " + Type.values()[i].name());
+  		}
+  		String type = scanner.nextLine();
+  		System.out.println("Veuillez saisir la catégorie du plat");
+  		for (int i = 0; i < Categorie.values().length; i++) {
+  		    System.out.println(i + 1 + ": " + Type.values()[i].name());
+  		}
+  		String categorie = scanner.nextLine();
+  		String ingredient = "1";
+  		HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
+  		while (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+  		    System.out.println("Veuillez saisir les ingédients de la recette");
+  		    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+  			System.out.println(i + 1 + ": " + Restaurant.getIngredients().get(i).getNom());
+  		    }
+  		    System.out.println(Restaurant.getIngredients().size() + ": Valiser");
+  		    ingredient = scanner.nextLine();
+  		    if (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+  			System.out.println("Veuillez saisir la quantité");
+  			String quantite = scanner.nextLine();
+  			recette.put(Restaurant.getIngredients().get(Integer.parseInt(ingredient) + 1),
+  				Integer.parseInt(quantite));
+  		    }
+  		}
+  		((Directeur) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat), false,
+  			Type.valueOf(type), Categorie.valueOf(categorie), recette);
+  	    }
 
-	}
+  	private static void modifierPlatDirecteur() {
 
+  	}
+  	
     // Modifier le rôle d'un membre du personnel
     private static void supprimerPersonnelDirecteur() {
     // Affichage
@@ -643,6 +663,106 @@ public class Main {
   	}
     
     
+    // Renvoie la plus grande capacité parmi les tables du restaurant
+    private static int capaciteMaxTables() {
+    	int max = 0;
+    	for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
+ 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
+	 			if (Restaurant.getEtages().get(etage).getTables().get(table).getCapacite() > max) {
+					max = Restaurant.getEtages().get(etage).getTables().get(table).getCapacite();
+				}
+ 			}
+ 		}
+    	return max;
+    }
+    
+    // Renvoie le nombre de jours d'un mois
+    private static int nombredejours(int annee, int mois) {
+    	if(mois == 1
+    	|| mois == 3
+    	|| mois == 5
+    	|| mois == 7
+    	|| mois == 8
+    	|| mois == 10
+    	|| mois == 12) {
+    	    return 31;
+    	}
+    	if (mois == 2) {
+			if (annee % 4 != 0 || (annee % 100 == 0 && annee % 400 != 0 )) { //Année non bissextile
+				return 28;
+			}
+			return 29; // Année bissextile
+		}
+    	return 30;
+    	
+    }
+    
+    // Transforme un entier en string et ajoute un 0 s'il est compris entre 0 et 9 (inclus)
+    private static String infDixEnString(int nb) {
+    	if (nb >= 0 && nb <= 10) {
+			return "0" + nb;
+		}
+    	return String.valueOf(nb);
+    }
+    
+    
+    // Ajouter la réservation d'une table par un client
+	private static void ajouterReservation() throws ParseException {
+
+    	String dateReserve = "";
+    	System.out.println("Veuillez entrer l'année");
+    	
+    	int annee = choixUtilisateur(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.YEAR) + 1); //Année en cours ou année suivante    	
+    	
+    	System.out.println("Veuillez entrer le mois");
+    	int mois = choixUtilisateur(1, 12);
+    	
+    	System.out.println("Veuillez entrer le jour");
+    	dateReserve += infDixEnString(choixUtilisateur(1, nombredejours(annee,mois)) ); //vérifier en fonction des horaires de service
+    	dateReserve += "/" + infDixEnString(mois);
+    	dateReserve += "/" + String.valueOf(annee);
+    	        
+        System.out.println("Voulez-vous réserver lors du déjeuner (0) ou du diner (1) ?");
+        int service = choixUtilisateur(0, 1);
+        
+        //vérifier en fonction des horaires de service
+        System.out.println("Veuillez entrer l'heure");
+        if (service == 0) {
+        	dateReserve += " " +infDixEnString(choixUtilisateur(Restaurant.getHeureDejeunerOuverture().getHour(), Restaurant.getHeureDejeunerLimite().getHour()-1));
+		}else {
+			dateReserve += " " +infDixEnString(choixUtilisateur(Restaurant.getHeureDinerOuverture().getHour(), Restaurant.getHeureDinerLimite().getHour()-1));
+		}
+    	
+    	System.out.println("Veuillez entrer les minutes");
+    	dateReserve += ":" + infDixEnString(choixUtilisateur(0, 59)) + ":00";
+    	
+        // Date demandée par le client : exemple "27/12/2020 22:55:00"
+        Date dateReservationSQL = new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReserve).getTime());
+        // La date de l'appel est immédiate
+        Date dateAppel = new Timestamp(new Date().getTime());
+        
+        System.out.println("Veuillez saisir le nombre de personnes");
+        int nbPersonne = choixUtilisateur(1, capaciteMaxTables());
+    	((Directeur) persConnectee).creationReservation(dateAppel, dateReservationSQL, nbPersonne);
+    }
+	
+    // Supprimer une réservation 
+	private static void supprimerReservation() {
+        
+		for (int i = 1; i < Restaurant.getReservationsJour().size(); i++) {
+			System.out.println(i + " : Table numero " + Restaurant.getReservationsJour().get(i).getTable().getNumero()
+					+ " réservée le " + Restaurant.getReservationsJour().get(i).getDateReservation()
+					+ " pour " + Restaurant.getReservationsJour().get(i).getTable().getCapacite() + " personnes"
+					);
+		}
+		System.out.println("Veuillez taper le numero de la réservation à supprimer ou 0 pour revenir au menu");
+        int reservation = choixUtilisateur(0, Restaurant.getReservationsJour().size()-1);
+        if (reservation != 0) {
+        	((Directeur) persConnectee).supprimerReservation(Restaurant.getReservationsJour().get(reservation - 1));
+		}
+    	
+    }
+    	
   	// Ajouter un membre au personnel
     private static void ajouterPersonnelDirecteur() {
 
