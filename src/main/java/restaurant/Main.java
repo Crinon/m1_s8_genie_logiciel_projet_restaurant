@@ -462,7 +462,6 @@ public class Main {
 		//Vider la BDD
   		case 24:
   			viderBddDirecteur();
-
 			break;
 
   		default:
@@ -478,40 +477,20 @@ public class Main {
 			+ "\n----------------------------------");
 	    System.out.println("Veuillez saisir le nom du plat");
 	    String nomPlat = scanner.nextLine();
-	    while (false){
-		System.out.println("Erreur, veuillez réessayer");
-		nomPlat = scanner.nextLine();
-	    }
 	    System.out.println("Veuillez saisir le prix du plat");
 	    String prixPlat = scanner.nextLine();
-	    while (false){
-		System.out.println("Erreur, veuillez réessayer");
-		prixPlat = scanner.nextLine();
-	    }
 	    System.out.println("Veuillez saisir la durée de préparation du plat");
 	    String dureePlat = scanner.nextLine();
-	    while (false){
-		System.out.println("Erreur, veuillez réessayer");
-		dureePlat = scanner.nextLine();
-	    }
 	    System.out.println("Veuillez saisir le type du plat");
 	    for (int i = 0; i < Type.values().length; i++) {
 		System.out.println(i+1+": "+Type.values()[i].name());
 	    }
 	    String type = scanner.nextLine();
-	    while (false){
-		System.out.println("Erreur, veuillez réessayer");
-		type = scanner.nextLine();
-	    }
 	    System.out.println("Veuillez saisir la catégorie du plat");
 	    for (int i = 0; i < Categorie.values().length; i++) {
 		System.out.println(i+1+": "+Type.values()[i].name());
 	    }
 	    String categorie = scanner.nextLine();
-	    while (false){
-		System.out.println("Erreur, veuillez réessayer");
-		categorie = scanner.nextLine();
-	    }
 	    System.out.println("Veuillez saisir les ingédients de la recette");
 	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
 		System.out.println(i+1+": "+Restaurant.getIngredients().get(i).getNom());
