@@ -1059,7 +1059,7 @@ public class Sql {
 	    		+ "AND date_part('day', aff.datedebut) = date_part('day', CURRENT_DATE)\r\n"
 	    		+ "AND extract(epoch FROM datedebut::time) >= (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)");
 	    rs.next();
-	    return rs.getDouble("profit");
+	    return rs.getDouble("profitDinerDejeuner");
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();

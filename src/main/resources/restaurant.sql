@@ -17,7 +17,7 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
+SET TIMEZONE='Europe/Paris';
 --
 -- Name: restaurant; Type: SCHEMA; Schema: -; Owner: restaurant_user
 --
@@ -93,8 +93,8 @@ SET default_with_oids = false;
 
 CREATE TABLE restaurant.affectation (
     id integer NOT NULL,
-    datedebut timestamp with time zone NOT NULL,
-    datefin timestamp with time zone,
+    datedebut timestamp NOT NULL,
+    datefin timestamp,
     nombrepersonne integer NOT NULL,
     tableoccupe integer NOT NULL,
     facture double precision NOT NULL
@@ -165,7 +165,7 @@ ALTER SEQUENCE restaurant.assistant_id_seq OWNED BY restaurant.assistant.id;
 
 CREATE TABLE restaurant.commande (
     id integer NOT NULL,
-    datedemande timestamp with time zone NOT NULL,
+    datedemande timestamp NOT NULL,
     estenfant boolean NOT NULL,
     plat integer NOT NULL,
     affectation integer NOT NULL,
@@ -484,8 +484,8 @@ ALTER SEQUENCE restaurant.recette_id_seq OWNED BY restaurant.recette.id;
 
 CREATE TABLE restaurant.reservation (
     id integer NOT NULL,
-    dateappel timestamp with time zone NOT NULL,
-    datereservation timestamp with time zone NOT NULL,
+    dateappel timestamp NOT NULL,
+    datereservation timestamp NOT NULL,
     nombrepersonne integer NOT NULL,
     valide boolean NOT NULL,
     tablereserve integer NOT NULL

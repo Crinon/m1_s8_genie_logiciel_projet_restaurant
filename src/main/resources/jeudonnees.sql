@@ -1,3 +1,4 @@
+SET TIMEZONE='Europe/Paris';
 -- Horaires du restaurant
 INSERT INTO restaurant.restaurant(heurelimitediner, heureouverturediner, heurelimitedejeune, heureouverturedejeune) VALUES (79200, 68400, 54000, 43200);
 
