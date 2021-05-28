@@ -1031,9 +1031,12 @@ public class Main {
 			           + "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n" + listingCommandes());
 		
 		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
-		Commande commande = Restaurant.getCommandes().get(numCommande);
-		//EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
-		((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE); 
+		if (numCommande != 0) {
+			Commande commande = Restaurant.getCommandes().get(numCommande);
+			//EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
+			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE); 
+		}
+		
 	}
 	
 	
@@ -1041,11 +1044,14 @@ public class Main {
 	private static void servirUnPlat() {
 		System.out.println("-----------------------------------"
 		       	   + "\n---------Servir un plat----------"
-		           + "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n" + listingCommandes());
+		           + "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à servir :\n" + listingCommandes());
 	
-	int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
-	Commande commande = Restaurant.getCommandes().get(numCommande);
-	((Directeur) persConnectee).modifierEtatCommande(commande, Etat.EN_PREPARATION);
+		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
+		if (numCommande != 0) {
+			Commande commande = Restaurant.getCommandes().get(numCommande);
+			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
+		}
+
 	}
 	
   	// Ajouter un membre au personnel
