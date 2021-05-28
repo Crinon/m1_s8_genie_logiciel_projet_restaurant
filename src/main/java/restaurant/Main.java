@@ -620,9 +620,9 @@ public class Main {
   		case 19:
   			editerFacture();
 			break;
-
+		// Cuisiner un plat
   		case 20:
-
+  			cuisinerUnPlat();
 			break;
 			
   		case 21:
@@ -987,7 +987,7 @@ public class Main {
 	           		 ,trouverPlat(plat), estEnfant, aff);
 	           	System.out.println("Commande effectuée (" + plat + ")");
 			}else {
-				System.out.println("mauvaise table sélectionnée");
+				System.out.println("Mauvaise table sélectionnée");
 			}
         	
 		 }
@@ -1002,11 +1002,22 @@ public class Main {
 				       + " ou saisir " +Restaurant.getToutesLesTables().size() + " pour revenir au menu");
         int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
         
-        if (numTable != Restaurant.getToutesLesTables().size()) {            
-    		((Directeur) persConnectee).creerFacture(trouverAffectation(numTable, new Timestamp(new Date().getTime())));
-    		System.out.println("Facture éditée");
-		}
-        
+        if (numTable != Restaurant.getToutesLesTables().size()) {
+        	Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
+        	if (aff != null) { // Si l'affectation existe bien
+        		((Directeur) persConnectee).creerFacture(aff);
+        		System.out.println("Facture éditée");
+			}else {
+				System.out.println("Actuellement pas d'affectation pour cet table ");
+			}
+
+		} 
+	}
+	
+	
+	// Cuisiner un plat
+	private static void cuisinerUnPlat() {
+		
 	}
 	
   	// Ajouter un membre au personnel
