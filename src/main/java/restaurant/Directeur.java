@@ -275,6 +275,7 @@ public class Directeur extends Personne {
 	Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
 	affectation.getCommandes().add(commande);
 	Restaurant.getCommandes().add(commande);
+	sql.platDoitEtreIndisponible(commande.getPlat());
 	return commande;
     }
 

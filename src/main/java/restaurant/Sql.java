@@ -611,11 +611,14 @@ public class Sql {
 		    int quantite = resultSetLignesRecette.getInt("quantite");
 		    recette.put(ingredient, quantite);
 		}
-		plats.add(new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
-			Double.parseDouble(resultSet.getString("prix")),
-			Integer.parseInt(resultSet.getString("dureePreparation")),
-			resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
-			Categorie.valueOf(resultSet.getString("typeIngredient")), recette));
+		Plat PlatAajouter = new Plat(Integer.parseInt(resultSet.getString("id")), resultSet.getString("nom"),
+				Double.parseDouble(resultSet.getString("prix")),
+				Integer.parseInt(resultSet.getString("dureePreparation")),
+				resultSet.getBoolean("disponibleCarte"), Type.valueOf(resultSet.getString("typePlat")),
+				Categorie.valueOf(resultSet.getString("typeIngredient")), recette);
+		plats.add(PlatAajouter);
+		// On regarde si on a assez de stock pour faire le plat, si non alors il n'est plus disponible sur la carte
+		platDoitEtreIndisponible(PlatAajouter);
 	    }
 	}
 	catch (NumberFormatException | SQLException e) {
@@ -624,7 +627,20 @@ public class Sql {
 	Restaurant.setPlats(plats);
     }
 
-    /**
+    public void platDoitEtreIndisponible(Plat platAajouter) {
+    	platAajouter.getRecette().forEach((ingredient,quantite)->{
+    		// Si le plat est encore sur la carte
+    		if(platAajouter.isDisponibleCarte()) {
+    			// Mais qu'il n'y a maintenant plus assez de stock
+        		if(ingredient.getQuantite()<quantite) {
+        			// Alors on le retire de la carte
+            		modifierCartePlat(platAajouter, false);
+        		}
+    		}
+    	});
+	}
+
+	/**
      * @param plat
      */
     public void supprimerPlat(Plat plat) {
