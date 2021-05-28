@@ -630,7 +630,7 @@ public class Main {
 			break;
 		// Cuisiner un plat
   		case 20:
-  			cuisinerUnPlat(); //TODO
+  			cuisinerUnPlat();
 			break;
 		// Servir un plat
   		case 21:
@@ -1032,13 +1032,20 @@ public class Main {
 		
 		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
 		Commande commande = Restaurant.getCommandes().get(numCommande);
-		((Directeur) persConnectee).modifierEtatCommande(commande, Etat.EN_PREPARATION);
+		//EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
+		((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE); 
 	}
 	
 	
-	// Servir un plat
+	// Servir un plat : modification de l'état de la commande à "servie" (plat commandé)
 	private static void servirUnPlat() {
-		
+		System.out.println("-----------------------------------"
+		       	   + "\n---------Servir un plat----------"
+		           + "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n" + listingCommandes());
+	
+	int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
+	Commande commande = Restaurant.getCommandes().get(numCommande);
+	((Directeur) persConnectee).modifierEtatCommande(commande, Etat.EN_PREPARATION);
 	}
 	
   	// Ajouter un membre au personnel
