@@ -3,10 +3,10 @@ package restaurant;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -616,8 +616,9 @@ public class Main {
   			prendreCommande();
 			break;
 
+		// Editer une facture
   		case 19:
-
+  			editerFacture();
 			break;
 
   		case 20:
@@ -991,6 +992,22 @@ public class Main {
         	
 		 }
     }
+	
+	
+	// Editer une facture
+	private static void editerFacture() {
+		System.out.println("-----------------------------------"
+				       + "\n--------Editer une facture---------"
+				       + "\nVeuillez choisir votre numéro de table : " + listingTables()
+				       + " ou saisir " +Restaurant.getToutesLesTables().size() + " pour revenir au menu");
+        int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
+        
+        if (numTable != Restaurant.getToutesLesTables().size()) {            
+    		((Directeur) persConnectee).creerFacture(trouverAffectation(numTable, new Timestamp(new Date().getTime())));
+    		System.out.println("Facture éditée");
+		}
+        
+	}
 	
   	// Ajouter un membre au personnel
     private static void ajouterPersonnelDirecteur() {
