@@ -680,8 +680,41 @@ public class Main {
   	    }
 
   	private static void modifierPlatDirecteur() {
+  		System.out.println("----------------------------------" + "\n-----Modifier un plat------"
+  			+ "\n----------------------------------");
+  		String plat = "1";
+  		while (Integer.parseInt(plat) != 0) {
+  		    System.out.println("Veuillez sélectionner un plat");
+  		    for (int i = 0; i < Restaurant.getPlats().size(); i++) {
+  			System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
+  		    }
+  		    plat = scanner.nextLine();
+  		    System.out.println("Modifier le prix ou la durée de préparation ?");
+  		    System.out.println("1: Prix");
+  		    System.out.println("2: Durée de préparation");
+  		    String choix = "1";
+  		    String nombre;
+  		    choix = scanner.nextLine();
+  		    switch (Integer.parseInt(choix)) {
+  			case 1:
+  			    System.out.println("Veuillez saisir le nouveau prix");
+  			    nombre = scanner.nextLine();
+  			    ((Directeur) persConnectee).modifierPrixPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1),
+  				    Double.parseDouble(nombre));
+  			break;
 
-  	}
+  			case 2:
+  			    System.out.println("Veuillez saisir la nouvelle durée de préparation");
+  			    nombre = scanner.nextLine();
+  			    ((Directeur) persConnectee).modifierPrixPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1),
+  				    Integer.parseInt(nombre));
+  			break;
+
+  			default:
+  			break;
+  		    }
+  		}
+  	    }
   	
     // Modifier le rôle d'un membre du personnel
     private static void supprimerPersonnelDirecteur() {
