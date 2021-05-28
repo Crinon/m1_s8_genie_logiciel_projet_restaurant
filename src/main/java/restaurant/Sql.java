@@ -649,6 +649,7 @@ public class Sql {
 	int idAffectation = demanderDernierId("affectation");
 	Affectation affectation = new Affectation(idAffectation, dateDebut, nbPersonne, new ArrayList<Commande>(), 0.00,
 		table);
+	modifierEtatTable(table, EtatTable.Occupe);
 	return affectation;
     }
 
@@ -702,6 +703,7 @@ public class Sql {
      */
     public void modifierEtatTable(Table table, EtatTable etat) {
 	executerUpdate("UPDATE restaurant.tables SET etat = '" + etat.name() + "' WHERE id = " + table.getId());
+	table.setEtat(etat);
     }
 
     /**

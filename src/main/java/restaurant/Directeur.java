@@ -257,7 +257,6 @@ public class Directeur extends Personne {
 	Sql sql;
 	sql = new Sql();
 	sql.modifierEtatTable(table, etat);
-	table.setEtat(etat);
     }
 
     public void affecterTableServeur(Serveur serveur, Table table) {
