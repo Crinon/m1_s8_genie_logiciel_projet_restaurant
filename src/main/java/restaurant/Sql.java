@@ -72,84 +72,7 @@ public class Sql {
 	    + "ALTER SEQUENCE restaurant.restaurant_id_seq RESTART WITH 1;\r\n"
 	    + "ALTER SEQUENCE restaurant.serveur_id_seq RESTART WITH 1;\r\n"
 	    + "ALTER SEQUENCE restaurant.tables_id_seq RESTART WITH 1;";
-    public static final String requete_insertion_personne     = "INSERT INTO restaurant.personne (nom,login) VALUES ('%s','%s')";
-    public static final String requete_insertion_personneRole = "INSERT INTO restaurant.%s (personne) VALUES ('%s')";
-    // V�rifie si le login existe lors de la connexion : renvoie 1 si vrai, 0 sinon
-    // (en sachant qu'il n'y a pas de doublons)
-    public static final String requete_login_existe = "SELECT COUNT(p.id) as existe FROM restaurant.personne p WHERE p.login = '%s'";
-    // Revenu hebdomadaire
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND WEEK(aff.datefin)) =
-     * WEEK(NOW())
-     */
 
-    // Revenu quotidien
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) =
-     * DAY(NOW())
-     */
-
-    // Revenu mensuel
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW())
-     */
-
-    // Revenu hebdomadaire
-    // Revenu quotidien
-    // Revenu mensuel
-    // Temps de preparation moyen
-    public static final String requete_temps_prepare_moyen = "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen\r\n"
-	    + "FROM restaurant.commande c\r\n" + "LEFT JOIN restaurant.plat p ON c.plat = p.id";
-
-    // Temps de preparation moyen
-    /*
-     * SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM
-     * restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id
-     */
-
-    // Temps moyen par client
-
-    // Profit dejeuner
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) =
-     * DAY(NOW()) AND HOUR(aff.datefin) >
-     * restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <=
-     * restaurant.restaurant.heurelimitedejeune
-     */
-
-    // Profit diner
-    /*
-     * SELECT SUM(plt.prix) FROM restaurant.commande cmd LEFT JOIN
-     * restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN
-     * restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) =
-     * YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) =
-     * DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner
-     * AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner
-     */
-
-    // Revenu par plat (plat + nbVentes + revenu)
-
-    // Popularit� plats (plat + nbVentes)
-    /*
-     * SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN
-     * restaurant.plat p ON c.plat = p.id GROUP BY plat ORDER BY nbVendus
-     */
-
-    // Temps moyen par client
-    // Profit dejeuner
-    // Profit diner
 
     public Sql() {
 	InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
@@ -214,7 +137,7 @@ public class Sql {
 	try {
 	    ResultSet res = null;
 	    this.stmt = c.createStatement();
-//	    System.out.println("Select : " + requete);
+	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
 	    c.commit();
 	    return res;
@@ -227,7 +150,7 @@ public class Sql {
     public boolean executerUpdate(String requete) {
 	try {
 	    this.stmt = c.createStatement();
-//	    System.out.println("Update : " + requete);
+	    System.out.println("Update : " + requete);
 	    stmt.executeUpdate(requete);
 	    c.commit();
 	    return true;

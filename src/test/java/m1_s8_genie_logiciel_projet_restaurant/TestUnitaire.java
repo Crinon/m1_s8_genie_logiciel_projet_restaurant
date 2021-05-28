@@ -76,8 +76,42 @@ public class TestUnitaire {
 	sql = new Sql();
 	System.out.println("\nBEFORE ALL : création BDD");
   	System.err.println("Exécution du script de création de la base de données H2.");
+  	sql.executerTests("DROP ALL OBJECTS");
+	sql.executerTests("CREATE SCHEMA IF NOT EXISTS restaurant");
+	sql.executerTests("create user if not exists restaurant_user password '' admin");
+
+
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
 	// On récupère le fichier SQL au format string
-	  InputStream inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("jeudonnees.sql");
+	  InputStream inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("restaurant.sql");
 	  ByteArrayOutputStream result = new ByteArrayOutputStream();
 	  byte[] buffer = new byte[1024];
 	  try {
@@ -88,16 +122,16 @@ public class TestUnitaire {
 	sql.executerUpdate(sqlbuildscript);
 	
 	// Insertion d'un jeu de données
-  	System.err.println("Insertion du jeu de données");
-	// On récupère le fichier SQL au format string
-	  inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("jeudonnees.sql");
-	  result = new ByteArrayOutputStream();
-	  byte[] buffer2 = new byte[1024];
-		for (int length; (length = inputStream.read(buffer2)) != -1; ) {
-		      result.write(buffer2, 0, length);
-		  }
-  	String jeudedonnees = result.toString("UTF-8");
-	sql.executerUpdate(jeudedonnees);
+//  	System.err.println("Insertion du jeu de données");
+//	// On récupère le fichier SQL au format string
+//	  inputStream = TestUnitaire.class.getClassLoader().getResourceAsStream("jeudonnees.sql");
+//	  result = new ByteArrayOutputStream();
+//	  byte[] buffer2 = new byte[1024];
+//		for (int length; (length = inputStream.read(buffer2)) != -1; ) {
+//		      result.write(buffer2, 0, length);
+//		  }
+//  	String jeudedonnees = result.toString("UTF-8");
+//	sql.executerUpdate(jeudedonnees);
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
