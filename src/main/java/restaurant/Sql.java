@@ -214,7 +214,7 @@ public class Sql {
 	try {
 	    ResultSet res = null;
 	    this.stmt = c.createStatement();
-	    System.out.println("Select : " + requete);
+//	    System.out.println("Select : " + requete);
 	    res = stmt.executeQuery(requete);
 	    c.commit();
 	    return res;
@@ -926,11 +926,32 @@ public class Sql {
 			e.printStackTrace();
 		}
     }
+    
+    public void insererJeuDonnees() {
+    	  InputStream inputStream = getClass().getClassLoader().getResourceAsStream("jeudonnees.sql");
+    	  ByteArrayOutputStream result = new ByteArrayOutputStream();
+    	  byte[] buffer = new byte[1024];
+    	  try {
+			for (int length; (length = inputStream.read(buffer)) != -1; ) {
+			      result.write(buffer, 0, length);
+			  }
+	    	String data = result.toString("UTF-8");
+	    	System.err.println("Jeu de données inséré");
+	    	executerUpdate(data);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 
     public Double revenuHebdomadaire() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND  to_char(CURRENT_DATE, 'IYYY-IW') = to_char(aff.datefin, 'IYYY-IW')");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}
@@ -943,7 +964,12 @@ public class Sql {
     public Double revenuMensuel() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datefin) = date_part('month', CURRENT_DATE)");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}
@@ -956,7 +982,13 @@ public class Sql {
     public Double revenuQuotidien() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS revenu FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW())");
+		    "SELECT SUM(plat.prix) AS revenu\r\n"
+		    + "FROM restaurant.commande cmd\r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datefin) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datefin) = date_part('month', CURRENT_DATE)\r\n"
+		    + "AND date_part('day', aff.datefin) = date_part('day', CURRENT_DATE)");
 	    rs.next();
 	    return rs.getDouble("revenu");
 	}
@@ -966,13 +998,15 @@ public class Sql {
 	return null;
     }
 
-    public Double popularitePlats() {
+    public HashMap<String, Double> popularitePlats() {
+    	HashMap<String, Double> resultats = new HashMap<String,Double>();
 	try {
 	    ResultSet rs = executerSelect(
 		    "SELECT p.nom, COUNT(c.id) AS nbVendus FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id GROUP BY p.nom ORDER BY nbVendus");
-	    // TODO
-	    rs.next();
-	    return rs.getDouble("nbVendus");
+	    while(rs.next()) {
+	    	resultats.put(rs.getString("nom"),rs.getDouble("nbVendus"));
+	    }
+	    return resultats;
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -983,7 +1017,8 @@ public class Sql {
     public Double tempsPreparationMoyen() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(p.dureePreparation)/COUNT(c.id) AS tempsPrepaMoyen FROM restaurant.commande c LEFT JOIN restaurant.plat p ON c.plat = p.id");
+		    "SELECT SUM(plat.dureePreparation)/COUNT(comm.id) AS tempsPrepaMoyen \r\n"
+		    + "FROM restaurant.commande comm LEFT JOIN restaurant.plat plat ON comm.plat = plat.id");
 	    rs.next();
 	    return rs.getDouble("tempsPrepaMoyen");
 	}
@@ -993,12 +1028,21 @@ public class Sql {
 	return null;
     }
 
-    public Double profitDejeuner() {
+    public Double profitDejeunerJour() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturedejeune AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitedejeune");
+		    "SELECT SUM(plat.prix) AS profitJourDejeuner\r\n"
+		    + "FROM restaurant.commande cmd \r\n"
+		    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+		    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+		    + "WHERE date_part('year', aff.datedebut) = date_part('year', CURRENT_DATE)\r\n"
+		    + "AND date_part('month', aff.datedebut) = date_part('month', CURRENT_DATE)\r\n"
+		    + "AND date_part('day', aff.datedebut) = date_part('day', CURRENT_DATE)\r\n"
+		    + "AND extract(epoch FROM datedebut::time) >= (SELECT heureouverturedejeune FROM restaurant.restaurant WHERE id=1)\r\n"
+		    + "AND extract(epoch FROM datedebut::time) < (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)\r\n");
+	    
 	    rs.next();
-	    return rs.getDouble("profit");
+	    return rs.getDouble("profitJourDejeuner");
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -1006,12 +1050,19 @@ public class Sql {
 	return null;
     }
 
-    public Double profitDiner() {
+    public Double profitDinerJour() {
 	try {
 	    ResultSet rs = executerSelect(
-		    "SELECT SUM(plt.prix) AS profit FROM restaurant.commande cmd LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation LEFT JOIN restaurant.plat plt ON plt.id = cmd.plat WHERE YEAR(aff.datefin) = YEAR(NOW()) AND MONTH(aff.datefin) = MONTH(NOW()) AND DAY(aff.datefin) = DAY(NOW()) AND HOUR(aff.datefin) > restaurant.restaurant.heureouverturediner AND HOUR(aff.datefin) <= restaurant.restaurant.heurelimitediner");
+	    		"SELECT SUM(plat.prix) AS profitDinerDejeuner\r\n"
+	    		+ "FROM restaurant.commande cmd \r\n"
+	    		+ "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+	    		+ "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+	    		+ "WHERE date_part('year', aff.datedebut) = date_part('year', CURRENT_DATE)\r\n"
+	    		+ "AND date_part('month', aff.datedebut) = date_part('month', CURRENT_DATE)\r\n"
+	    		+ "AND date_part('day', aff.datedebut) = date_part('day', CURRENT_DATE)\r\n"
+	    		+ "AND extract(epoch FROM datedebut::time) >= (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)");
 	    rs.next();
-	    return rs.getDouble("profit");
+	    return rs.getDouble("profitDinerDejeuner");
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -1056,5 +1107,74 @@ public class Sql {
 		}
 
 	}
+
+	public Double profitDejeunerAlltime() {
+		try {
+		    ResultSet rs = executerSelect(
+	    "SELECT SUM(plat.prix) AS profitJourDejeunerAlltime\r\n"
+	    + "FROM restaurant.commande cmd \r\n"
+	    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+	    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+	    + "WHERE extract(epoch FROM datedebut::time) >= (SELECT heureouverturedejeune FROM restaurant.restaurant WHERE id=1)\r\n"
+	    + "AND extract(epoch FROM datedebut::time) < (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)\r\n");
+		    rs.next();
+		    return rs.getDouble("profitJourDejeunerAlltime");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Double profitDinerAlltime() {
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT SUM(plat.prix) AS profitDinerDejeunerAlltime\r\n"
+			    + "FROM restaurant.commande cmd \r\n"
+			    + "LEFT JOIN restaurant.affectation aff ON aff.id = cmd.affectation \r\n"
+			    + "LEFT JOIN restaurant.plat plat ON plat.id = cmd.plat \r\n"
+			    + "WHERE extract(epoch FROM datedebut::time) >= (SELECT heureouverturediner FROM restaurant.restaurant WHERE id=1)");
+		    rs.next();
+		    return rs.getDouble("profitDinerDejeunerAlltime");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Double tempsRotationMoyen() {
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT (SUM(extract(epoch FROM aff.datefin::time)-extract(epoch FROM aff.datedebut::time))/COUNT(aff.id))/60 AS tempsRotationMoyen \r\n"
+			    + "FROM restaurant.affectation aff");
+		    rs.next();
+		    return rs.getDouble("tempsRotationMoyen");
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	}
+
+	    public HashMap<String, Double> partPlatRecette() {
+	    	HashMap<String, Double> resultats = new HashMap<String,Double>();
+		try {
+		    ResultSet rs = executerSelect(
+			    "SELECT p.nom, (COUNT(c.id)*p.prix) AS recettePlat "
+			    + "FROM restaurant.commande c "
+			    + "LEFT JOIN restaurant.plat p ON c.plat = p.id "
+			    + "GROUP BY p.nom,p.prix "
+			    + "ORDER BY recettePlat DESC");
+		    while(rs.next()) {
+		    	resultats.put(rs.getString("nom"),rs.getDouble("recettePlat"));
+		    }
+		    return resultats;
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
+		return null;
+	    }
 
 }

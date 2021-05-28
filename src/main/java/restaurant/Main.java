@@ -3,10 +3,11 @@ package restaurant;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
@@ -442,9 +443,16 @@ public class Main {
  	
  	
  	// Permet de vider la base de données pour réinitialiser le restaurant
- 	public static void viderBddDirecteur() throws ClassNotFoundException, SQLException, IOException {
- 		//Sql.hardReset("hardResetPostgres");
+ 	public static void viderBddDirecteur() {
+ 		Sql sql = new Sql();
+ 		sql.hardResetPg(Sql.hardResetPostgres);
  	}
+ 	
+	private static void viderBddDirecteurAvecJeudonnees() {
+ 		Sql sql = new Sql();
+ 		sql.hardResetPg(Sql.hardResetPostgres);
+ 		sql.insererJeuDonnees();
+	}
  	
  // Menu principal du directeur
   	public static void menuPrincipalDirecteur() throws ClassNotFoundException, SQLException, IOException, ParseException {
@@ -473,12 +481,13 @@ public class Main {
   					+ "\n19: Editer une facture"
   					+ "\n20: Cuisiner un plat"
   					+ "\n21: Servir un plat"
-  					+ "\n22: Nettoyer une table"
+  					+ "\n22: Nettoyer table"
   					+ "\n23: Voir les statistiques"
   					+ "\n24: Vider la base de données"
+  					+ "\n25: Vider la BDD et ajouter un jeu de données"
   					+ "\n----------------------------------\n");
 
-  		switch (Main.choixUtilisateur(0,24)) { // valeurChoixMin = 0
+  		switch (Main.choixUtilisateur(0,25)) { // valeurChoixMin = 0
 
   		// Déconnexion
   		case 0:
@@ -536,7 +545,7 @@ public class Main {
 			break;
 
   		case 11:
-
+  		  modifierPlatDirecteur();
 			break;
 
   		case 12:
@@ -587,13 +596,17 @@ public class Main {
 			break;
 
   		case 23:
-
+  			// Afficher les statistiques
+  			montrerStats();
 			break;
 		//Vider la BDD
   		case 24:
   			viderBddDirecteur();
 			break;
-
+			//Vider la BDD
+  		case 25:
+  			viderBddDirecteurAvecJeudonnees();
+			break;
   		default:
   			break;
   		}
@@ -601,33 +614,75 @@ public class Main {
   	}
   	
  
-	private static void ajouterPlatDirecteur() {
-	    System.out.println("----------------------------------"
-			+ "\n-----Ajouter un plat------"
-			+ "\n----------------------------------");
-	    System.out.println("Veuillez saisir le nom du plat");
-	    String nomPlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir le prix du plat");
-	    String prixPlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir la durée de préparation du plat");
-	    String dureePlat = scanner.nextLine();
-	    System.out.println("Veuillez saisir le type du plat");
-	    for (int i = 0; i < Type.values().length; i++) {
-		System.out.println(i+1+": "+Type.values()[i].name());
-	    }
-	    String type = scanner.nextLine();
-	    System.out.println("Veuillez saisir la catégorie du plat");
-	    for (int i = 0; i < Categorie.values().length; i++) {
-		System.out.println(i+1+": "+Type.values()[i].name());
-	    }
-	    String categorie = scanner.nextLine();
-	    System.out.println("Veuillez saisir les ingédients de la recette");
-	    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
-		System.out.println(i+1+": "+Restaurant.getIngredients().get(i).getNom());
-	    }
-
+	private static void montrerStats() {
+		Sql sql = new Sql();
+		System.out.println("Statistiques du restaurant : ");
+		
+		// CLEAR
+		System.out.println("Revenu quotidien : " + sql.revenuQuotidien());
+		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire());
+		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
+		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour());
+		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
+		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime());
+		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
+		System.out.println("Temps de préparation moyen des plats (en secondes) : " + sql.tempsPreparationMoyen());
+		System.out.println("Temps de rotation moyen des clients (en minutes) : " + sql.tempsRotationMoyen());
+		System.out.println("Plats les plus populaires : ");
+		System.out.println("Nom du plat \t\t\t\t\t\t\t\t\t Nombre de vente");
+		sql.popularitePlats().forEach((nom,nombreVentes)->{
+			System.out.println(nom+" : "+nombreVentes);
+		});
+		System.out.println("Somme gagnée par plat : ");
+		sql.partPlatRecette().forEach((nom,nombreVentes)->{
+			System.out.println(nom+" : "+nombreVentes);
+		});
+		
 	}
 
+  	private static void ajouterPlatDirecteur() {
+  		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
+  			+ "\n----------------------------------");
+  		System.out.println("Veuillez saisir le nom du plat");
+  		String nomPlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir le prix du plat");
+  		String prixPlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir la durée de préparation du plat");
+  		String dureePlat = scanner.nextLine();
+  		System.out.println("Veuillez saisir le type du plat");
+  		for (int i = 0; i < Type.values().length; i++) {
+  		    System.out.println(i + 1 + ": " + Type.values()[i].name());
+  		}
+  		String type = scanner.nextLine();
+  		System.out.println("Veuillez saisir la catégorie du plat");
+  		for (int i = 0; i < Categorie.values().length; i++) {
+  		    System.out.println(i + 1 + ": " + Type.values()[i].name());
+  		}
+  		String categorie = scanner.nextLine();
+  		String ingredient = "1";
+  		HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
+  		while (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+  		    System.out.println("Veuillez saisir les ingédients de la recette");
+  		    for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
+  			System.out.println(i + 1 + ": " + Restaurant.getIngredients().get(i).getNom());
+  		    }
+  		    System.out.println(Restaurant.getIngredients().size() + ": Valiser");
+  		    ingredient = scanner.nextLine();
+  		    if (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+  			System.out.println("Veuillez saisir la quantité");
+  			String quantite = scanner.nextLine();
+  			recette.put(Restaurant.getIngredients().get(Integer.parseInt(ingredient) + 1),
+  				Integer.parseInt(quantite));
+  		    }
+  		}
+  		((Directeur) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat), false,
+  			Type.valueOf(type), Categorie.valueOf(categorie), recette);
+  	    }
+
+  	private static void modifierPlatDirecteur() {
+
+  	}
+  	
     // Modifier le rôle d'un membre du personnel
     private static void supprimerPersonnelDirecteur() {
     // Affichage

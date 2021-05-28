@@ -301,16 +301,16 @@ public class Directeur extends Personne {
 	return new Sql().tempsPreparationMoyen();
     }
 
-    public Double popularitePlats() {
+    public HashMap<String, Double> popularitePlats() {
 	return new Sql().popularitePlats();
     }
 
-    public Double profitDejeuner() {
-	return new Sql().profitDejeuner();
+    public Double profitDejeunerJour() {
+	return new Sql().profitDejeunerJour();
     }
 
-    public Double profitDiner() {
-	return new Sql().profitDiner();
+    public Double profitDinerJour() {
+	return new Sql().profitDinerJour();
     }
 
 	public void annulerReservation(Reservation reservation) {
