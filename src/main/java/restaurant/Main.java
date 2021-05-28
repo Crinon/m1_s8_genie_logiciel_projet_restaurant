@@ -198,6 +198,19 @@ public class Main {
 		return liste;
 	}
 	
+	
+	// Affiche les plats de la carte
+	public static String listingPlats() {
+		String liste = "";
+		for (int i = 0; i < Restaurant.getPlats().size(); i++) {
+			if (Restaurant.getPlats().get(i).isDisponibleCarte()) {
+				liste += "\n " + i + ":" + Restaurant.getPlats().get(i).toString();
+			}
+			
+		}
+		return liste;
+	}
+	
 	// Compte le nombre de serveurs
 	public static int nbServeurs() {
 		int cpt = 0;
@@ -305,6 +318,16 @@ public class Main {
  		return null;
  	}
  	
+	// Permet de trouver un plat via son numero
+	public static Plat trouverPlat(int numPlat) {
+		for (int plat = 0; plat < Restaurant.getPlats().size(); plat++) {
+			if (numPlat == plat) {
+				return Restaurant.getPlats().get(plat);
+			}
+		}
+		return null;
+	}
+ 	
  	//Permet de trouver un étage via une table
  	public static Etage trouverEtage(Table tab) {
  		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
@@ -314,6 +337,22 @@ public class Main {
 				}
  			}
  		}
+ 		return null;
+ 	}
+ 	
+ 	
+ 	//Permet de trouver une affectation
+ 	public static Affectation trouverAffectation(int numTable, Date dateCommande) {
+ 		
+ 		Table table = trouverTable(numTable);
+ 		for (int i = 0; i < Restaurant.getAffectationsJour().size(); i++) {
+			
+ 			if (Restaurant.getAffectationsJour().get(i).getTable().equals(table)
+ 					&& Restaurant.getAffectationsJour().get(i).getDateDebut().before(dateCommande)
+ 					&& Restaurant.getAffectationsJour().get(i).getDateFin() == null) {
+				return Restaurant.getAffectationsJour().get(i);
+			}
+		}
  		return null;
  	}
  	
@@ -804,19 +843,27 @@ public class Main {
 	private static void prendreCommande() {
 		System.out.println("-----------------------------------"
 					   + "\n-------Prendre une commande--------"
-					   + "\nVeuillez choisir si c'est un enfant (1) ou non (2), ou 0 pour revenir au menu\n" + listingServeurs());
+					   + "\nVeuillez choisir si c'est un enfant (1) ou non (2), ou 0 pour revenir au menu\n");
 		 int choix = choixUtilisateur(0, 2);
 		 if (choix != 0) {
 			boolean estEnfant = false;
 			if (choix == 1) {
 				 estEnfant = true;
 			}
-		
-
+			System.out.println("Veuillez choisir votre plat parmi : " + listingPlats());
+	        int plat = choixUtilisateur(0, Restaurant.getPlats().size()-1);
 	        
-        	((Directeur) persConnectee).creationCommande(new Timestamp(new Date().getTime())
-        			, Plat plat, boolean estEnfant, Affectation affectation)
-        	System.out.println("Commande prise : ");
+	        System.out.println("Veuillez choisir votre numéro de table : " + listingTables());
+	        int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size()-1);
+	        Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
+	        if (aff != null) {
+	        	((Directeur) persConnectee).creationCommande(new Timestamp(new Date().getTime())
+	           		 ,trouverPlat(plat), estEnfant, aff);
+	           	System.out.println("Commande effectuée (" + plat + ")");
+			}else {
+				System.out.println("mauvaise table sélectionnée");
+			}
+        	
 		 }
     }
 	

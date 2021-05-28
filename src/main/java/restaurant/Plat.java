@@ -91,8 +91,6 @@ public class Plat {
 
 	@Override
 	public String toString() {
-		return "Plat [id=" + id + ", nom=" + nom + ", prix=" + prix + ", dureePreparation=" + dureePreparation
-				+ ", disponibleCarte=" + disponibleCarte + ", type=" + type + ", categorie=" + categorie + ", recette="
-				+ recette + "]";
+		return type + "(" + categorie + "): " + nom + ", (" + prix + "€)" ;
 	}
 }
