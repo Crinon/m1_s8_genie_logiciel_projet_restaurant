@@ -12,12 +12,6 @@ import java.util.stream.Collectors;
 public final class Restaurant {
 
 
-	final static int TAILLE_MAX_NOM_INGREDIENT = 30; //Nombre de caractères max du nom d'un ingrédient
-	final static int TAILLE_MAX_NOM_PERSONNE = 30; //Nombre de caractères max du nom d'une personne
-	final static int QUANTITE_MAX_COMMANDE = 500; //quantité maximale pour une commande
-	final static int NUMERO_MAX_TABLE = 500; //quantité maximale de tables
-	final static int CAPACITE_MAX_TABLE = 500; //quantité maximale de tables
-
     private static ArrayList<Etage>	  etages;
     private static ArrayList<Personne>	  personnel;
     private static ArrayList<Ingredient>  ingredients;
@@ -32,9 +26,53 @@ public final class Restaurant {
     private static LocalTime heureDinerLimite;
     private static int	     nbTableMax;
     private static int	     QUANTITE_MAX_STOCK;    // quantité maximale de stock pour un ingrédient
-
+    private static int TAILLE_MAX_NOM_INGREDIENT; //Nombre de caractères max du nom d'un ingrédient
+    private static int TAILLE_MAX_NOM_PERSONNE; //Nombre de caractères max du nom d'une personne
+    private static int QUANTITE_MAX_COMMANDE; //quantité maximale pour une commande
+    private static int NUMERO_MAX_TABLE; //quantité maximale de tables
+    private static int CAPACITE_MAX_TABLE; //quantité maximale de tables
     
-    public static void initialisation() {
+    public static int getTAILLE_MAX_NOM_INGREDIENT() {
+		return TAILLE_MAX_NOM_INGREDIENT;
+	}
+
+	public static void setTAILLE_MAX_NOM_INGREDIENT(int tAILLE_MAX_NOM_INGREDIENT) {
+		TAILLE_MAX_NOM_INGREDIENT = tAILLE_MAX_NOM_INGREDIENT;
+	}
+
+	public static int getTAILLE_MAX_NOM_PERSONNE() {
+		return TAILLE_MAX_NOM_PERSONNE;
+	}
+
+	public static void setTAILLE_MAX_NOM_PERSONNE(int tAILLE_MAX_NOM_PERSONNE) {
+		TAILLE_MAX_NOM_PERSONNE = tAILLE_MAX_NOM_PERSONNE;
+	}
+
+	public static int getQUANTITE_MAX_COMMANDE() {
+		return QUANTITE_MAX_COMMANDE;
+	}
+
+	public static void setQUANTITE_MAX_COMMANDE(int qUANTITE_MAX_COMMANDE) {
+		QUANTITE_MAX_COMMANDE = qUANTITE_MAX_COMMANDE;
+	}
+
+	public static int getNUMERO_MAX_TABLE() {
+		return NUMERO_MAX_TABLE;
+	}
+
+	public static void setNUMERO_MAX_TABLE(int nUMERO_MAX_TABLE) {
+		NUMERO_MAX_TABLE = nUMERO_MAX_TABLE;
+	}
+
+	public static int getCAPACITE_MAX_TABLE() {
+		return CAPACITE_MAX_TABLE;
+	}
+
+	public static void setCAPACITE_MAX_TABLE(int cAPACITE_MAX_TABLE) {
+		CAPACITE_MAX_TABLE = cAPACITE_MAX_TABLE;
+	}
+
+	public static void initialisation() {
 	Sql sql;
 	sql = new Sql();
 	// Ajout en base uniquement du directeur s'il n'y en a aucun dans la base

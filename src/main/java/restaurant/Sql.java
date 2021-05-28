@@ -899,6 +899,12 @@ public class Sql {
 	    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(this.propertiesFilename);
 	    prop.load(inputStream);
 	    Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
+        Restaurant.setQUANTITE_MAX_STOCK(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_STOCK")));
+        Restaurant.setTAILLE_MAX_NOM_INGREDIENT(Integer.parseInt(prop.getProperty("constant.TAILLE_MAX_NOM_INGREDIENT")));
+        Restaurant.setTAILLE_MAX_NOM_PERSONNE(Integer.parseInt(prop.getProperty("constant.TAILLE_MAX_NOM_PERSONNE")));
+        Restaurant.setQUANTITE_MAX_COMMANDE(Integer.parseInt(prop.getProperty("constant.QUANTITE_MAX_COMMANDE")));
+        Restaurant.setNUMERO_MAX_TABLE(Integer.parseInt(prop.getProperty("constant.NUMERO_MAX_TABLE")));
+        Restaurant.setCAPACITE_MAX_TABLE(Integer.parseInt(prop.getProperty("constant.CAPACITE_MAX_TABLE")));
 	}
 	catch (IOException e) {
 	    e.printStackTrace();

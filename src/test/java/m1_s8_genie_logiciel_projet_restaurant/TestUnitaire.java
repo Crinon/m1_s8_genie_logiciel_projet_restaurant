@@ -3,6 +3,7 @@ package m1_s8_genie_logiciel_projet_restaurant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -1557,6 +1558,54 @@ public class TestUnitaire {
 	directeur.creationCommande(dateCommande, plat, estEnfant, affectation);
 	int quantiteApresCommande = ingredient1.getQuantite();
 	assertTrue(quantiteAvantCommande > quantiteApresCommande);
+    }
+    
+    @Test
+    @DisplayName("Suppression d'un serveur (ayant plusieurs tables) dans la base de données")
+    public void suppressionPersonnelServeurDB() throws SQLException {
+    System.out.println("\nTest en cours : Suppression d'un serveur (ayant plusieurs tables) dans la base de données");
+    Etage etage1 = directeur.ajouterEtage();
+    int numero1 = incr();
+    Table table1 = directeur.ajouterTable(numero1, 10, etage1);
+    int numero2 = incr();
+    Table table2 = directeur.ajouterTable(numero2, 10, etage1);
+    int numero3 = incr();
+    Table table3 = directeur.ajouterTable(numero3, 10, etage1);
+    Etage etage2 = directeur.ajouterEtage();
+    int numero4 = incr();
+    Table table4 = directeur.ajouterTable(numero4, 10, etage2);
+    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Jordan", "serveur");
+    directeur.affecterTableServeur(serveur, table1);
+    directeur.affecterTableServeur(serveur, table2);
+    directeur.affecterTableServeur(serveur, table3);
+    directeur.affecterTableServeur(serveur, table4);
+    directeur.supprimerPersonnel(serveur, Restaurant.getPersonnel());
+    ResultSet rs = sql.executerSelect("SELECT serveur FROM restaurant.tables WHERE id = " + table4.getId());
+    rs.next();
+    assertEquals(0,rs.getInt("serveur"));
+    }
+    
+    @Test
+    @DisplayName("Suppression d'un serveur (ayant plusieurs tables) dans la mémoire")
+    public void suppressionPersonnelServeurJava() {
+    System.out.println("\nTest en cours : Suppression d'un serveur (ayant plusieurs tables) dans la mémoire");
+    Etage etage1 = directeur.ajouterEtage();
+    int numero1 = incr();
+    Table table1 = directeur.ajouterTable(numero1, 10, etage1);
+    int numero2 = incr();
+    Table table2 = directeur.ajouterTable(numero2, 10, etage1);
+    int numero3 = incr();
+    Table table3 = directeur.ajouterTable(numero3, 10, etage1);
+    Etage etage2 = directeur.ajouterEtage();
+    int numero4 = incr();
+    Table table4 = directeur.ajouterTable(numero4, 10, etage2);
+    Serveur serveur = (Serveur) directeur.ajouterPersonnel("Julien", "serveur");
+    directeur.affecterTableServeur(serveur, table1);
+    directeur.affecterTableServeur(serveur, table2);
+    directeur.affecterTableServeur(serveur, table3);
+    directeur.affecterTableServeur(serveur, table4);
+    directeur.supprimerPersonnel(serveur, Restaurant.getPersonnel());
+    assertNull(table4.getServeur());
     }
 
 }

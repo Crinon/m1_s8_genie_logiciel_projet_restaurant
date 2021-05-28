@@ -8,7 +8,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -242,7 +244,7 @@ public class Main {
  			//Contrôle de l'entrée
  			while ( estNullOuVide(choix) //vide
  					|| (!uniquementLettres(choix) && !uniquementChiffres(choix))  // mélange de lettres/chiffres ou caractères spéciaux
- 					|| (uniquementLettres(choix) && choix.length() > Restaurant.TAILLE_MAX_NOM_INGREDIENT) //chaine et ne respecte pas la longueur maximale
+ 					|| (uniquementLettres(choix) && choix.length() > Restaurant.getTAILLE_MAX_NOM_INGREDIENT()) //chaine et ne respecte pas la longueur maximale
  					|| (uniquementChiffres(choix) && (Restaurant.getIngredients().size() == 0 //pas d'ingrédients dans la BDD
  					                             	|| !valeurIntOk(Integer.parseInt(choix),0, Restaurant.getIngredients().size()-1)) ) //valeur qui n'existe pas
  				  ){
@@ -254,7 +256,7 @@ public class Main {
 				// Nouvel ingrédient
 				String nomIngredient = choix.toLowerCase();
 				System.out.println(">Quantité de " + choix + " à commander ?");
-				qtIngredient = choixUtilisateur(1,Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				qtIngredient = choixUtilisateur(1,Restaurant.getQUANTITE_MAX_COMMANDE()); // Quantite max par commande : 500
 				((Directeur) persConnectee).ajouterIngredient(nomIngredient);
 				((Directeur) persConnectee).commanderIngredient(
 						Restaurant.getIngredients().get(Restaurant.getIngredients().size() - 1), qtIngredient); // Dernier
@@ -263,7 +265,7 @@ public class Main {
 			} else if (uniquementChiffres(choix)) {
 				// MAJ quantite d'un ingrédient existant
 				System.out.println(">Quantité à commander ?");
-				qtIngredient = choixUtilisateur(1, Restaurant.QUANTITE_MAX_COMMANDE); // Quantite max par commande : 500
+				qtIngredient = choixUtilisateur(1, Restaurant.getQUANTITE_MAX_COMMANDE()); // Quantite max par commande : 500
 				((Directeur) persConnectee).commanderIngredient(
 						Restaurant.getIngredients().get(Integer.parseInt(choix)), qtIngredient); // Dernier
 				System.out.println("Commande passée (quantite : " + qtIngredient + ")");																						// inséré
@@ -327,6 +329,41 @@ public class Main {
 			}
 		}
 		return null;
+	}
+	
+	private static void modifierCarteDirecteur() {
+	    System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
+	      + "\n----------------------------------");
+	    String choix = "1";
+	      while (Integer.parseInt(choix) != 0) {
+	          System.out.println("Voulez vous ajouter ou supprimer un plat ?");
+	          System.out.println("1: Ajouter un plat à la carte");
+	        System.out.println("2: Supprimer un plat de la carte");
+	          choix = scanner.nextLine();
+	          List<Plat> carte = Restaurant.getPlats().stream().filter(plat -> plat.isDisponibleCarte()).collect(Collectors.toList());
+	          List<Plat> nonCarte = Restaurant.getPlats().stream().filter(plat -> !plat.isDisponibleCarte()).collect(Collectors.toList());
+	          String plat = "1";
+	          switch (Integer.parseInt(choix)) {
+	            case 1:
+	                for (int i = 0; i < nonCarte.size(); i++) {
+	                    System.out.println(i + 1 + ": " + nonCarte.get(i).getNom());
+	                  }
+	                plat = scanner.nextLine();
+	                ((Directeur) persConnectee).modifierCartePlat(nonCarte.get(Integer.parseInt(plat)-1), true);
+	            break;
+
+	            case 2:
+	            for (int i = 0; i < carte.size(); i++) {
+	                  System.out.println(i + 1 + ": " + carte.get(i).getNom());
+	              }
+	            plat = scanner.nextLine();
+	            ((Directeur) persConnectee).modifierCartePlat(carte.get(Integer.parseInt(plat)-1), false);
+	            break;
+
+	            default:
+	            break;
+	        }
+	    }
 	}
  	
  	//Permet de trouver un étage via une table
@@ -407,7 +444,7 @@ public class Main {
 		if (numero != 0) {
 			// Nouveau numero de la table
 			System.out.println("\nNouveau numéro de la table :");
-			int nouveauNumero = Main.choixUtilisateur(1,Restaurant.NUMERO_MAX_TABLE);
+			int nouveauNumero = Main.choixUtilisateur(1,Restaurant.getNUMERO_MAX_TABLE());
 			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero), nouveauNumero );
 			System.out.println("Table " + (numero-1) + " modifiée en " + nouveauNumero);
 		}
@@ -428,11 +465,11 @@ public class Main {
 			
 			//numero de la table
 			System.out.println("\nNuméro de la table : ");
-			int numero = Main.choixUtilisateur(0,Restaurant.NUMERO_MAX_TABLE);
+			int numero = Main.choixUtilisateur(0,Restaurant.getNUMERO_MAX_TABLE());
 			
 			//capacite de la table
 			System.out.println("\nVeuillez saisir sa capacité, ou 0 pour annuler et revenir au menu");
-			int capacite = Main.choixUtilisateur(0,Restaurant.CAPACITE_MAX_TABLE);
+			int capacite = Main.choixUtilisateur(0,Restaurant.getCAPACITE_MAX_TABLE());
 			
 			if (capacite != 0) {
 				((Directeur) persConnectee).ajouterTable(numero, capacite, Restaurant.getEtages().get(etage-1) );
@@ -549,7 +586,7 @@ public class Main {
 			break;
 
   		case 12:
-
+  			modifierCarteDirecteur();
 			break;
 
   		case 13:
@@ -969,7 +1006,7 @@ public class Main {
 		//Contrôle de l'entrée
 		while ( estNullOuVide(nom) //vide
 				|| (!uniquementLettres(nom) && !uniquementChiffres(nom))  // mélange de lettres/chiffres ou caractères spéciaux
-				|| (uniquementLettres(nom) && nom.length() > Restaurant.TAILLE_MAX_NOM_PERSONNE) //chaine et ne respecte pas la longueur maximale
+				|| (uniquementLettres(nom) && nom.length() > Restaurant.getTAILLE_MAX_NOM_PERSONNE()) //chaine et ne respecte pas la longueur maximale
 				|| (uniquementChiffres(nom) && !nom.equals("0") ) ){ //valeur de retour
 			 
 			System.out.println("Erreur, veuillez réessayer");
