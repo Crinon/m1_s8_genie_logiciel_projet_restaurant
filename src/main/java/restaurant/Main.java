@@ -131,6 +131,37 @@ public class Main {
 	}
 	
 	// Affiche la liste des tables
+	public static String listingServeurs() {
+		String liste = "";
+		int numero = 1;
+		for (int i = 0; i < Restaurant.getPersonnel().size(); i++) {
+			if (Restaurant.getPersonnel().get(i).getClass().getName().equals("restaurant.Serveur")) {
+				liste += numero + " :" + Restaurant.getPersonnel().get(i).getNom()
+						+ " (" + Restaurant.getPersonnel().get(i).getIdentifiant()+ ")\n";
+				numero+=1;
+			}	
+		}
+		return liste;
+	}
+		
+	
+	// Affiche la liste des tables
+	public static Serveur trouverServeur(int numServeur) {
+
+		System.out.println(Restaurant.getPersonnel().size());
+		int numero = 0;
+		for (int numPersonnel = 0; numPersonnel < Restaurant.getPersonnel().size(); numPersonnel++) { //0 = directeur
+			if (Restaurant.getPersonnel().get(numPersonnel).getClass().getName().equals("restaurant.Serveur")) {
+				numero+=1;
+			}
+			if (numero == numServeur) {
+				return (Serveur) Restaurant.getPersonnel().get(numPersonnel);
+			}
+		}
+		return null;
+	}
+	
+	// Affiche la liste des tables
 	public static String listingTables() {
 		String liste = "";
 		int i = 1; //numero de la table dans le menu (0 étant réservé au retour)
@@ -165,6 +196,17 @@ public class Main {
 					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11);
 		}
 		return liste;
+	}
+	
+	// Compte le nombre de serveurs
+	public static int nbServeurs() {
+		int cpt = 0;
+		for (int i = 0; i < Restaurant.getPersonnel().size(); i++) {
+			if (Restaurant.getPersonnel().get(i).getClass().getName().equals("restaurant.Serveur")) {
+				cpt+=1;
+			}	
+		}
+		return cpt;
 	}
 	
 	
@@ -339,20 +381,24 @@ public class Main {
 					     + "\n-------Ajouter une table--------"
 	 					 + "\nListe des tables : " + listingTables()
 	 					 + "\n----------------------------------"
-	 					 + "\nVeuillez choisir l'étage de la table à ajouter");
+	 					 + "\nVeuillez choisir l'étage de la table à ajouter, ou 0 pour retourner au menu");
+		int etage = Main.choixUtilisateur(0, Restaurant.getEtages().size());
 		
-		int etage = Main.choixUtilisateur(0, Restaurant.getEtages().size()-1);
-		//numero de la table
-		System.out.println("\nNuméro de la table : ");
-		int numero = Main.choixUtilisateur(0,Restaurant.NUMERO_MAX_TABLE);
-		//capacite de la table
-		System.out.println("\nVeuillez saisir sa capacité, ou 0 pour annuler et revenir au menu");
-		int capacite = Main.choixUtilisateur(0,Restaurant.CAPACITE_MAX_TABLE);
-		
-		if (capacite != 0) {
-			((Directeur) persConnectee).ajouterTable(numero, capacite, Restaurant.getEtages().get(etage) );
-			System.out.println("Table ajoutée");
-		}	
+		if (etage != 0) {
+			
+			//numero de la table
+			System.out.println("\nNuméro de la table : ");
+			int numero = Main.choixUtilisateur(0,Restaurant.NUMERO_MAX_TABLE);
+			
+			//capacite de la table
+			System.out.println("\nVeuillez saisir sa capacité, ou 0 pour annuler et revenir au menu");
+			int capacite = Main.choixUtilisateur(0,Restaurant.CAPACITE_MAX_TABLE);
+			
+			if (capacite != 0) {
+				((Directeur) persConnectee).ajouterTable(numero, capacite, Restaurant.getEtages().get(etage-1) );
+				System.out.println("Table ajoutée");
+			}
+		}
  	}
  	
  	
@@ -472,12 +518,17 @@ public class Main {
 			
 		// Affecter des clients à une table
   		case 16:
-
+  			affecterClients();
 			break;
 		
 		// Affecter un serveur à une table
   		case 17:
-
+  			affecterServeurTable();
+			break;
+			
+		// Prendre une commande
+  		case 18:
+  			prendreCommande();
 			break;
 
   		case 19:
@@ -487,7 +538,7 @@ public class Main {
   		case 20:
 
 			break;
-
+			
   		case 21:
 
 			break;
@@ -655,7 +706,9 @@ public class Main {
 	private static void ajouterReservation() throws ParseException {
 
     	String dateReserve = "";
-    	System.out.println("Veuillez entrer l'année");
+		System.out.println("----------------------------------"
+			 	       + "\n-----Ajouter une réservation -----"
+    				   + "\nVeuillez entrer l'année");
     	
     	int annee = choixUtilisateur(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.YEAR) + 1); //Année en cours ou année suivante    	
     	
@@ -684,16 +737,21 @@ public class Main {
         // Date demandée par le client : exemple "27/12/2020 22:55:00"
         Date dateReservationSQL = new Timestamp(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").parse(dateReserve).getTime());
         // La date de l'appel est immédiate
-        Date dateAppel = new Timestamp(new Date().getTime());
+       
         
-        System.out.println("Veuillez saisir le nombre de personnes");
-        int nbPersonne = choixUtilisateur(1, capaciteMaxTables());
-    	((Directeur) persConnectee).creationReservation(dateAppel, dateReservationSQL, nbPersonne);
-    }
+        System.out.println("Veuillez saisir le nombre de personnes, ou 0 pour retourner au menu");
+        int nbPersonne = choixUtilisateur(0, capaciteMaxTables());
+        if (nbPersonne != 0) {
+        	((Directeur) persConnectee).creationReservation(new Timestamp(new Date().getTime()), dateReservationSQL, nbPersonne);
+        	System.out.println("Réservation ajoutée");
+		}
+	}
 	
     // Supprimer une réservation 
 	private static void supprimerReservation() {
         
+		System.out.println("----------------------------------"
+				 	   + "\n---Supprimer une réservation -----");
 		for (int i = 1; i < Restaurant.getReservationsJour().size(); i++) {
 			System.out.println(i + " : Table numero " + Restaurant.getReservationsJour().get(i).getTable().getNumero()
 					+ " réservée le " + Restaurant.getReservationsJour().get(i).getDateReservation()
@@ -704,10 +762,64 @@ public class Main {
         int reservation = choixUtilisateur(0, Restaurant.getReservationsJour().size()-1);
         if (reservation != 0) {
         	((Directeur) persConnectee).supprimerReservation(Restaurant.getReservationsJour().get(reservation - 1));
-		}
+        	System.out.println("Réservation supprimée");
+        }
     	
     }
-    	
+		
+	// Affecter des clients à une table
+	private static void affecterClients() {
+		System.out.println("----------------------------------"
+						 + "\n-----Affecter des clients-------"
+						 + "\nVeuillez entrer le nombre de personnes ou 0 pour revenir au menu");
+        int nbPers = choixUtilisateur(0, capaciteMaxTables());
+        if (nbPers != 0) {
+        	((Directeur) persConnectee).creationAffectation(new Timestamp(new Date().getTime()), nbPers);
+        	System.out.println(nbPers + " affectées" );
+		}
+    }
+	
+	// Affecter un serveur à une table
+	private static void affecterServeurTable() {
+		System.out.println("-----------------------------------"
+					   + "\n--Affecter un serveur à une table--"
+					   + "\nVeuillez choisir le numero du serveur ou 0 pour revenir au menu\n" + listingServeurs());
+		 int numServeur = choixUtilisateur(0, nbServeurs());
+		 if (numServeur != 0) {
+			System.out.println("Parmi :\n"+ listingTables()
+						   + "\nVeuillez choisir le numero correspondant à la table");
+	        int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
+        
+	        Serveur serveur = trouverServeur(numServeur);
+	        System.out.println("num du serveur "+ numServeur +" correspond à " + serveur.getNom());
+	        Table table = trouverTable(numTable);
+        	((Directeur) persConnectee).affecterTableServeur(serveur, table);
+        	System.out.println("Serveur " + serveur.getNom()
+        					+ " affecté à la table numéro " + table.getNumero()
+        					+ " (" + table.getCapacite() + " personnes)");
+		 }
+    }
+	
+	// Prendre une commande
+	private static void prendreCommande() {
+		System.out.println("-----------------------------------"
+					   + "\n-------Prendre une commande--------"
+					   + "\nVeuillez choisir si c'est un enfant (1) ou non (2), ou 0 pour revenir au menu\n" + listingServeurs());
+		 int choix = choixUtilisateur(0, 2);
+		 if (choix != 0) {
+			boolean estEnfant = false;
+			if (choix == 1) {
+				 estEnfant = true;
+			}
+		
+
+	        
+        	((Directeur) persConnectee).creationCommande(new Timestamp(new Date().getTime())
+        			, Plat plat, boolean estEnfant, Affectation affectation)
+        	System.out.println("Commande prise : ");
+		 }
+    }
+	
   	// Ajouter un membre au personnel
     private static void ajouterPersonnelDirecteur() {
 
