@@ -180,6 +180,14 @@ public class Main {
 		}
 		return liste;
 	}
+	// Affiche la liste des tables
+	public static String listingCommandes() {
+		String liste = "";
+		for (int i = Restaurant.getCommandes().size()-1; i >= 0 ; i--) { //De la plus ancienne à la plus récente
+			liste += "Commande " + (i-1) + ": " + Restaurant.getCommandes().get(i).getPlat().toString(); //On réserve le 0 pour le retour
+		}
+		return liste;
+	}
 
 	// Affiche la liste des ingrédients disponibles
 	public static String listingIngredients() {
@@ -330,7 +338,7 @@ public class Main {
 		}
 		return null;
 	}
-	
+
 	private static void modifierCarteDirecteur() {
 	    System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
 	      + "\n----------------------------------");
@@ -622,13 +630,13 @@ public class Main {
 			break;
 		// Cuisiner un plat
   		case 20:
-  			cuisinerUnPlat();
+  			cuisinerUnPlat(); //TODO
 			break;
-			
+		// Servir un plat
   		case 21:
-
+  			servirUnPlat();
 			break;
-
+		// Nettoyer table
   		case 22:
 
 			break;
@@ -1015,8 +1023,21 @@ public class Main {
 	}
 	
 	
-	// Cuisiner un plat
+	// Cuisiner un plat : modification de l'état du plat commandé
 	private static void cuisinerUnPlat() {
+		
+		System.out.println("-----------------------------------"
+			       	   + "\n---------Cuisiner un plat----------"
+			           + "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n" + listingCommandes());
+		
+		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) -1;
+		Commande commande = Restaurant.getCommandes().get(numCommande);
+		((Directeur) persConnectee).modifierEtatCommande(commande, Etat.EN_PREPARATION);
+	}
+	
+	
+	// Servir un plat
+	private static void servirUnPlat() {
 		
 	}
 	
