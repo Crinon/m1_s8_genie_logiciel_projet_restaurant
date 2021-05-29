@@ -565,15 +565,15 @@ public class Main {
 		case 10:
 			ajouterPlat();
 			break;
-
+		// Modifier un plat
 		case 11:
 			modifierPlat();
 			break;
-
+		// Modifier la carte
 		case 12:
 			modifierCarte();
 			break;
-
+		// Supprimer un plat
 		case 13:
 			supprimerPlat();
 			break;
@@ -641,15 +641,15 @@ public class Main {
 		System.out.println("Statistiques du restaurant : ");
 
 		// CLEAR
-		System.out.println("Revenu quotidien : " + sql.revenuQuotidien());
-		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire());
-		System.out.println("Revenu mensuel : " + sql.revenuMensuel());
-		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour());
-		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour());
-		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime());
-		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime());
-		System.out.println("Temps de préparation moyen des plats (en secondes) : " + sql.tempsPreparationMoyen());
-		System.out.println("Temps de rotation moyen des clients (en minutes) : " + sql.tempsRotationMoyen());
+		System.out.println("Revenu quotidien : " + sql.revenuQuotidien() + "€");
+		System.out.println("Revenu hebdomadaire : " + sql.revenuHebdomadaire()+ "€");
+		System.out.println("Revenu mensuel : " + sql.revenuMensuel()+ "€");
+		System.out.println("Profit réalisé sur le déjeuner du jour : " + sql.profitDejeunerJour()+ "€");
+		System.out.println("Profit réalisé sur le dîner du jour : " + sql.profitDinerJour()+ "€");
+		System.out.println("Profit réalisé sur tous les déjeuners : " + sql.profitDejeunerAlltime()+ "€");
+		System.out.println("Profit réalisé sur tous les dîners : " + sql.profitDinerAlltime()+ "€");
+		System.out.println("Temps de préparation moyen des plats : " + sql.tempsPreparationMoyen()+ "secondes");
+		System.out.println("Temps de rotation moyen des clients : " + sql.tempsRotationMoyen()+ "minutes");
 		System.out.println("Plats les plus populaires : ");
 		System.out.println("Nom du plat \t\t\t\t\t\t\t\t\t Nombre de vente");
 		sql.popularitePlats().forEach((nom, nombreVentes) -> {
