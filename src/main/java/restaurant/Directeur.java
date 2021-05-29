@@ -40,7 +40,7 @@ public class Directeur extends Personne {
 		case "assistant":
 			newPersonne = new Assistant(personne.getId(), personne.getNom(), personne.getIdentifiant());
 			break;
-
+			
 		case "serveur":
 			newPersonne = new Serveur(personne.getId(), personne.getNom(), personne.getIdentifiant());
 			break;
@@ -61,7 +61,9 @@ public class Directeur extends Personne {
 			newPersonne = null;
 			break;
 		}
+		Restaurant.getPersonnel().remove(personne);
 		personne = newPersonne;
+		Restaurant.getPersonnel().add(personne);
 		return personne;
 	}
 

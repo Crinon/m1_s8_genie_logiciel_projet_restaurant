@@ -306,7 +306,10 @@ public class Main {
 
 	// Permet de supprimer le dernier étage du restaurant
 	public static void supprimerDernierEtage() throws ClassNotFoundException, SQLException, IOException {
-
+		if(Restaurant.getEtages().size() == 0) {
+			System.out.println("Le restaurant ne possède aucun niveau.");
+			return;
+		}
 		// Affichage menu
 		System.out.println("----------------------------------" + "\n--------Supprimer un étage--------"
 				+ "\nListe des étages : " + listingEtages() + "\n----------------------------------"
@@ -433,7 +436,9 @@ public class Main {
 		}
 
 		int numero = Main.choixUtilisateur(0, nbTables); // numero du menu
+		
 		if (numero != 0) {
+			numero-=1;
 			((Directeur) persConnectee).supprimerTable(trouverTable(numero),
 					trouverEtage(trouverTable(numero)).getTables());
 			System.out.println("Table supprimée");
@@ -459,11 +464,12 @@ public class Main {
 
 		int numero = Main.choixUtilisateur(0, nbTables); // numero du menu
 		if (numero != 0) {
+			numero -=1;
 			// Nouveau numero de la table
 			System.out.println("\nNouveau numéro de la table :");
 			int nouveauNumero = Main.choixUtilisateur(1, Restaurant.getNUMERO_MAX_TABLE());
 			((Directeur) persConnectee).modifierNumeroTable(trouverTable(numero), nouveauNumero);
-			System.out.println("Table " + (numero - 1) + " modifiée en " + nouveauNumero);
+			System.out.println("Table " + (numero) + " modifiée en " + nouveauNumero);
 		}
 	}
 
@@ -820,11 +826,11 @@ public class Main {
 				+ "\nVeuillez saisir le numéro de la personne à modifier, ou 0 pour revenir au menu");
 		// numéro
 		int numPersonne = choixUtilisateur(0, Restaurant.getPersonnel().size()-1);
+		
 		// Contrôle de l'entrée
 		
 		// Permet de revenir au menu (annuler)
 		if (numPersonne != 0) {
-
 			System.out.println(
 					"\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nVeuillez saisir le nouveau role de "
 							+ Restaurant.getPersonnel().get(numPersonne).getNom()
