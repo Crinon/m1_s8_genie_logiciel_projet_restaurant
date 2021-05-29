@@ -280,7 +280,7 @@ public class Sql {
 				executerDelete("DELETE FROM restaurant.tables WHERE etage = " + idDernierNiveau);
 				executerDelete("DELETE FROM restaurant.etage WHERE id = " + idDernierNiveau);
 			} else {
-				System.out.println(
+				System.err.println(
 						"Vous avez tenté de supprimer le dernier étage alors qu'il n'y en a aucun dans la base de données");
 			}
 		} catch (SQLException e) {
@@ -394,7 +394,6 @@ public class Sql {
 		try {
 			resultSet.next();
 			if (resultSet.getString("quantite") != null) {
-				System.out.println(ajout);
 				quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
 				nouvelleQuantite = quantiteActuelle + ajout;
 				executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
@@ -784,10 +783,6 @@ public class Sql {
 						"SELECT * FROM restaurant.tables WHERE id=" + resultset.getInt("tablereserve"));
 				resultsetTableReserve.next();
 				int idTable = resultsetTableReserve.getInt("id");
-				System.err.println("id de la table en cours : " + idTable);
-				System.err.println(Restaurant.getEtages().toString());
-				System.err.println(Restaurant.getToutesLesTables().toString());
-
 				// On récupère la table avec le bon id
 				Table tableReserve = Restaurant.getToutesLesTables().stream()
 						.filter(tableCurrent -> tableCurrent.getId() == idTable).collect(Collectors.toList()).get(0);

@@ -228,20 +228,6 @@ public class Directeur extends Personne {
 		return null;
 	}
 
-//	public void updateFactureAffectation(Affectation affectation, double nouveauPrix) {
-//		Sql sql;
-//		try {
-//			sql = new Sql();
-//			affectation.setFacture(nouveauPrix);
-//			sql.
-//			Affectation affectation = sql.creationAffectation(dateDebut, nbPersonne, table);
-//			Restaurant.getAffectations().add(affectation);
-//			return affectation;
-//		} catch (ClassNotFoundException | SQLException | IOException e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
 
 	public void supprimerReservation(Reservation asuppr) {
 		Sql sql = new Sql();
