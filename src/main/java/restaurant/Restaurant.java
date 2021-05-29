@@ -87,7 +87,6 @@ public final class Restaurant {
 		sql.initialiserEtages();
 		System.out.println("Chargement des tables par étage");
 		for (Etage etage : etages) {
-			System.err.println("etage init : " + etage.getId());
 			etage.initialiserTables();
 		}
 		System.out.println("Chargement du personnel");
