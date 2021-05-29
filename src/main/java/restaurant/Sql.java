@@ -91,7 +91,7 @@ public class Sql {
 	public Statement executerTests(String requete) {
 		try {
 			this.stmt = c.createStatement();
-			System.out.println("execute : " + requete);
+//			System.out.println("execute : " + requete);
 			stmt.execute(requete);
 			c.commit();
 		} catch (SQLException e) {
@@ -104,7 +104,7 @@ public class Sql {
 	public Statement executerInsert(String requete) {
 		try {
 			this.stmt = c.createStatement();
-			System.out.println("Insert : " + requete);
+//			System.out.println("Insert : " + requete);
 			stmt.executeUpdate(requete);
 			c.commit();
 			return stmt;
@@ -118,7 +118,7 @@ public class Sql {
 	public boolean executerDelete(String requete) {
 		try {
 			this.stmt = c.createStatement();
-			System.out.println("Delete : " + requete);
+//			System.out.println("Delete : " + requete);
 			stmt.executeUpdate(requete);
 			c.commit();
 			return true;
@@ -132,7 +132,7 @@ public class Sql {
 		try {
 			ResultSet res = null;
 			this.stmt = c.createStatement();
-			System.out.println("Select : " + requete);
+//			System.out.println("Select : " + requete);
 			res = stmt.executeQuery(requete);
 			c.commit();
 			return res;
@@ -145,7 +145,7 @@ public class Sql {
 	public boolean executerUpdate(String requete) {
 		try {
 			this.stmt = c.createStatement();
-			System.out.println("Update : " + requete);
+//			System.out.println("Update : " + requete);
 			stmt.executeUpdate(requete);
 			stmt.close();
 			c.commit();
@@ -396,9 +396,7 @@ public class Sql {
 			if (resultSet.getString("quantite") != null) {
 				System.out.println(ajout);
 				quantiteActuelle = Integer.parseInt(resultSet.getString("quantite"));
-				System.out.println("Quantité actuelle : " + quantiteActuelle);
 				nouvelleQuantite = quantiteActuelle + ajout;
-				System.out.println("Quantité nouvelle : " + nouvelleQuantite);
 				executerUpdate("UPDATE restaurant.ingredient SET quantite=" + nouvelleQuantite + " WHERE id = "
 						+ ingredient.getId());
 				for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
@@ -437,7 +435,6 @@ public class Sql {
 		// en cours
 		try {
 			while (resultSet.next()) {
-				System.err.println("table trouve : " + resultSet.getString("id"));
 				etage.addTable(new Table(Integer.parseInt(resultSet.getString("id")),
 						Integer.parseInt(resultSet.getString("numero")),
 						Integer.parseInt(resultSet.getString("capacite")),
