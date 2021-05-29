@@ -344,41 +344,50 @@ public class Main {
 	}
 
 	private static void modifierCarte() {
-		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
-				+ "\n----------------------------------");
-		String choix = "1";
-		while (Integer.parseInt(choix) != 0) {
-			System.out.println("Voulez vous ajouter ou supprimer un plat ?");
-			System.out.println("1: Ajouter un plat à la carte");
-			System.out.println("2: Supprimer un plat de la carte");
-			choix = scanner.nextLine();
-			List<Plat> carte = Restaurant.getPlats().stream().filter(plat -> plat.isDisponibleCarte())
-					.collect(Collectors.toList());
-			List<Plat> nonCarte = Restaurant.getPlats().stream().filter(plat -> !plat.isDisponibleCarte())
-					.collect(Collectors.toList());
-			String plat = "1";
-			switch (Integer.parseInt(choix)) {
-			case 1:
-				for (int i = 0; i < nonCarte.size(); i++) {
-					System.out.println(i + 1 + ": " + nonCarte.get(i).getNom());
-				}
-				plat = scanner.nextLine();
-				((Directeur) persConnectee).modifierCartePlat(nonCarte.get(Integer.parseInt(plat) - 1), true);
-				break;
+	    System.out.println("----------------------------------" + "\n-----Modifier la carte------"
+	        + "\n----------------------------------");
+	    String choix = "1";
+	    while (Integer.parseInt(choix) != 0) {
+	        System.out.println("Voulez vous ajouter ou supprimer un plat ?");
+	        System.out.println("1: Ajouter un plat à la carte");
+	        System.out.println("2: Supprimer un plat de la carte");
+	        choix = scanner.nextLine();
+	        List<Plat> carte = Restaurant.getPlats().stream().filter(plat -> plat.isDisponibleCarte())
+	            .collect(Collectors.toList());
+	        List<Plat> nonCarte = Restaurant.getPlats().stream().filter(plat -> !plat.isDisponibleCarte())
+	            .collect(Collectors.toList());
+	        String plat = "1";
+	        switch (Integer.parseInt(choix)) {
+	        case 1:
+	            if(carte.isEmpty()) {
+	            System.out.println("Pas de plats à ajouter");
+	            }
+	            else {
+	            for (int i = 0; i < nonCarte.size(); i++) {
+	            System.out.println(i + 1 + ": " + nonCarte.get(i).getNom());
+	            }
+	            plat = scanner.nextLine();
+	            ((Directeur) persConnectee).modifierCartePlat(nonCarte.get(Integer.parseInt(plat) - 1), true);}
+	        break;
 
-			case 2:
-				for (int i = 0; i < carte.size(); i++) {
-					System.out.println(i + 1 + ": " + carte.get(i).getNom());
-				}
-				plat = scanner.nextLine();
-				((Directeur) persConnectee).modifierCartePlat(carte.get(Integer.parseInt(plat) - 1), false);
-				break;
+	        case 2:
+	            if(carte.isEmpty()) {
+	            System.out.println("Pas de plats à supprimer");
+	            }
+	            else {
+	            for (int i = 0; i < carte.size(); i++) {
+	                System.out.println(i + 1 + ": " + carte.get(i).getNom());
+	            }
+	            plat = scanner.nextLine();
+	            ((Directeur) persConnectee).modifierCartePlat(carte.get(Integer.parseInt(plat) - 1), false);
+	            }
+	        break;
 
-			default:
-				break;
-			}
-		}
-	}
+	        default:
+	        break;
+	        }
+	    }
+	    }
 
 	// Permet de trouver un étage via une table
 	public static Etage trouverEtage(Table tab) {
@@ -744,19 +753,19 @@ public class Main {
 		}
 	}
 
-	private static void supprimerPlat() {
-		System.out.println("----------------------------------" + "\n-----Supprimer un plat------"
-				+ "\n----------------------------------");
-		String plat = "1";
-		while (Integer.parseInt(plat) != 0) {
-			System.out.println("Veuillez choisir un plat à supprimer");
-			for (int i = 0; i < Restaurant.getPlats().size(); i++) {
-				System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
-			}
-			plat = scanner.nextLine();
-			((Directeur) persConnectee).supprimerPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1));
-		}
+    private static void supprimerPlat() {
+	System.out.println("----------------------------------" + "\n-----Supprimer un plat------"
+		+ "\n----------------------------------");
+	String plat = "1";
+	while (Integer.parseInt(plat) != 0) {
+	    System.out.println("Veuillez choisir un plat à supprimer");
+	    for (int i = 0; i < Restaurant.getPlats().size(); i++) {
+		System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
+	    }
+	    plat = scanner.nextLine();
+	    ((Directeur) persConnectee).supprimerPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1));
 	}
+    }
 
 	// Modifier le rôle d'un membre du personnel
 	private static void supprimerPersonnel() {
