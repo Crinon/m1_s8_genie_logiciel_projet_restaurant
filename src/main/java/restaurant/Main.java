@@ -794,7 +794,7 @@ public class Main {
 		while (estNullOuVide(numPersonne) // vide
 				|| !uniquementChiffres(numPersonne) // pas que des chiffres
 				|| (uniquementChiffres(numPersonne)
-						&& (!valeurIntOk(Integer.parseInt(numPersonne), 0, Restaurant.getPersonnel().size() - 1) // personne
+						&& (!valeurIntOk(Integer.parseInt(numPersonne), 0, Restaurant.getPersonnel().size()) // personne
 								// n'existe
 								// pas
 								|| !numPersonne.equals("0"))) // valeur de retour
