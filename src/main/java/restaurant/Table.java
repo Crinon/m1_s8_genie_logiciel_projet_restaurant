@@ -2,77 +2,74 @@ package restaurant;
 
 public class Table {
 
-    private int		numero;
-    private int		capacite;
-    private EtatTable	etat;
-    private Reservation	reservation;
-    private Serveur	serveur	= null;
-    private int		id;
+	private int numero;
+	private int capacite;
+	private EtatTable etat;
+	private Reservation reservation;
+	private Serveur serveur = null;
+	private int id;
 
-    public Table(int id, int numero, int capacite, EtatTable etat) {
-	super();
-	this.id = id;
-	this.numero = numero;
-	this.capacite = capacite;
-	this.etat = etat;
-	this.reservation = null;
-    }
+	public Table(int id, int numero, int capacite, EtatTable etat) {
+		super();
+		this.id = id;
+		this.numero = numero;
+		this.capacite = capacite;
+		this.etat = etat;
+		this.reservation = null;
+	}
 
-
-    
-    @Override
+	@Override
 	public String toString() {
 		return "Table [numero=" + numero + ", capacite=" + capacite + ", etat=" + etat + ", reservation=" + reservation
 				+ ", serveur=" + serveur + ", id=" + id + "]";
 	}
 
-
 	public int getId() {
-	return id;
-    }
+		return id;
+	}
 
-    public void setId(int id) {
-	this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Reservation getReservation() {
-	return reservation;
-    }
+	public Reservation getReservation() {
+		return reservation;
+	}
 
-    public void setReservation(Reservation reservation) {
-	this.reservation = reservation;
-    }
+	public void setReservation(Reservation reservation) {
+		this.reservation = reservation;
+	}
 
-    public int getNumero() {
-	return numero;
-    }
+	public int getNumero() {
+		return numero;
+	}
 
-    public void setNumero(int numero) {
-	this.numero = numero;
-    }
+	public void setNumero(int numero) {
+		this.numero = numero;
+	}
 
-    public int getCapacite() {
-	return capacite;
-    }
+	public int getCapacite() {
+		return capacite;
+	}
 
-    public void setCapacite(int capacite) {
-	this.capacite = capacite;
-    }
+	public void setCapacite(int capacite) {
+		this.capacite = capacite;
+	}
 
-    public EtatTable getEtat() {
-	return etat;
-    }
+	public EtatTable getEtat() {
+		return etat;
+	}
 
-    public void setEtat(EtatTable etat) {
-	this.etat = etat;
-    }
+	public void setEtat(EtatTable etat) {
+		this.etat = etat;
+	}
 
-    public Serveur getServeur() {
-	return serveur;
-    }
+	public Serveur getServeur() {
+		return serveur;
+	}
 
-    public void setServeur(Serveur serveur) {
-	this.serveur = serveur;
-    }
+	public void setServeur(Serveur serveur) {
+		this.serveur = serveur;
+	}
 
 }

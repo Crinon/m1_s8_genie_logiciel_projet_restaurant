@@ -10,9 +10,8 @@ public class Cuisinier extends Personne {
 	public Cuisinier(int id, String nom, String identifiant) {
 		super(id, nom, identifiant);
 	}
-	
-	 // Menu principal du cuisinier
- 	
+
+	// Menu principal du cuisinier
 
 	// Il choisit parmis les plats pas encore en carte
 	public void ajouterCarte(Plat plat) {

@@ -1,5 +1,5 @@
 package restaurant;
 
 public enum EtatTable {
-    Libre, Sale, Occupe, Reserve;
+	Libre, Sale, Occupe, Reserve;
 }

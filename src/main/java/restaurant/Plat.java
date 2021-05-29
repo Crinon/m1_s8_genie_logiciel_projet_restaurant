@@ -91,6 +91,6 @@ public class Plat {
 
 	@Override
 	public String toString() {
-		return type + "(" + categorie + "): " + nom + ", (" + prix + "€)" ;
+		return type + "(" + categorie + "): " + nom + ", (" + prix + "€)";
 	}
 }
