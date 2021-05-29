@@ -1059,7 +1059,6 @@ public class Main {
 			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
 			System.out.println("Commande " + commande.getId() + " prête");
 		}
-		
 	}
 	
 	
@@ -1075,7 +1074,6 @@ public class Main {
 			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
 			System.out.println("Commande " + commande.getId() + " servie");
 		}
-
 	}
 	
   	// Ajouter un membre au personnel
