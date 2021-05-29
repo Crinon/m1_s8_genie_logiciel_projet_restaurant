@@ -164,7 +164,7 @@ public class Main {
 		int i = 1; // numero de la table dans le menu (0 étant réservé au retour)
 
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
-			liste += "\n<Etage " + Restaurant.getEtages().get(etage).getNiveau() + " >";
+			liste += "\n<Etage " + (Restaurant.getEtages().get(etage).getNiveau()+1) + " >";
 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
 				liste += "\n" + i + " : table " + Restaurant.getEtages().get(etage).getTables().get(table).getNumero()
 						+ " avec une capacite de : "
