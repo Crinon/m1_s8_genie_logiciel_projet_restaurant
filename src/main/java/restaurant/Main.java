@@ -149,7 +149,6 @@ public class Main {
 	// Affiche la liste des tables
 	public static Serveur trouverServeur(int numServeur) {
 
-		System.out.println(Restaurant.getPersonnel().size());
 		int numero = 0;
 		for (int numPersonnel = 0; numPersonnel < Restaurant.getPersonnel().size(); numPersonnel++) { // 0 = directeur
 			if (Restaurant.getPersonnel().get(numPersonnel).getClass().getName().equals("restaurant.Serveur")) {
@@ -321,7 +320,7 @@ public class Main {
 
 	// Permet de trouver une table via son numéro
 	public static Table trouverTable(int numero) {
-		int nbTable = 1;
+		int nbTable = 0;
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
 				if (nbTable == numero) {
@@ -956,19 +955,18 @@ public class Main {
 		int numServeur = choixUtilisateur(0, nbServeurs());
 		if (numServeur != 0) {
 			System.out.println("Parmi :\n" + listingTables() + "\nVeuillez choisir le numero correspondant à la table");
-			int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
+			int numTable = choixUtilisateur(1, Restaurant.getToutesLesTables().size())-1;
 
 			Serveur serveur = trouverServeur(numServeur);
-			System.out.println("num du serveur " + numServeur + " correspond à " + serveur.getNom());
 			Table table = trouverTable(numTable);
 			switch (role) {
 			case "restaurant.Maitrehotel":
-				((Directeur) persConnectee).affecterTableServeur(serveur, table);
+				((Maitrehotel) persConnectee).affecterTableServeur(serveur, table);
 				System.out.println("Serveur " + serveur.getNom() + " affecté à la table numéro " + table.getNumero() + " ("
 						+ table.getCapacite() + " personnes)");
 				break;
 			case "restaurant.Directeur":
-				((Maitrehotel) persConnectee).affecterTableServeur(serveur, table);
+				((Directeur) persConnectee).affecterTableServeur(serveur, table);
 				System.out.println("Serveur " + serveur.getNom() + " affecté à la table numéro " + table.getNumero() + " ("
 						+ table.getCapacite() + " personnes)");
 				break;
@@ -1026,9 +1024,12 @@ public class Main {
 			int plat = choixUtilisateur(0, Restaurant.getPlats().size() - 1);
 
 			System.out.println("Veuillez choisir votre numéro de table : " + listingTables());
-			int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size() - 1);
+			int numTable = choixUtilisateur(1, Restaurant.getToutesLesTables().size()) - 1;
 			Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
-			if (aff != null) {
+			
+			//Si la table est occupée (et pas sale) on prend la commande
+			if (aff != null && trouverTable(numTable).getEtat().name().equals(EtatTable.Occupe.name())) {
+				
 				switch (role) {
 				
 				case "restaurant.Serveur":
@@ -1047,8 +1048,9 @@ public class Main {
 				}
 				
 			} else {
-				System.out.println("Mauvaise table sélectionnée");
+				System.out.println("Cette table n'est pas occupée");
 			}
+			
 
 		}
 	}
@@ -1056,11 +1058,12 @@ public class Main {
 	// Editer une facture (lorsque le client part -> table sale)
 	private static void editerFacture(String role) {
 		System.out.println("-----------------------------------" + "\n--------Editer une facture---------"
-				+ "\nVeuillez choisir votre numéro de table : " + listingTables() + " ou saisir "
-				+ Restaurant.getToutesLesTables().size() + " pour revenir au menu");
+				+ "\nVeuillez choisir votre numéro de table : " + listingTables()
+				+ "\nou saisir 0 pour revenir au menu");
 		int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
 
-		if (numTable != Restaurant.getToutesLesTables().size()) {
+		if (numTable != 0) {
+			numTable -=1;
 			Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
 			if (aff != null) { // Si l'affectation existe bien
 				
