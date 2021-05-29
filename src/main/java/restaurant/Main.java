@@ -109,7 +109,7 @@ public class Main {
 	public static int choixUtilisateur(int valeurChoixMin, int valeurChoixMax) {
 
 		if (valeurChoixMax == -1) {
-			System.out.println("Objet inexistant"");
+			System.out.println("Rien à sélectionner, retour au menu");
 			return 0;
 		}
 		String choix = "";
