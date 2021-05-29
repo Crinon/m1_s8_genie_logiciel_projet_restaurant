@@ -1028,82 +1028,6 @@ public class Main {
 		}
 	}
 
-	// Cuisiner un plat : modification de l'état du plat commandé
-	private static void cuisinerUnPlat() {
-
-		System.out.println("-----------------------------------" + "\n---------Cuisiner un plat----------"
-				+ "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n"
-				+ listingCommandes());
-
-		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) - 1;
-		if (numCommande != 0) {
-			Commande commande = Restaurant.getCommandes().get(numCommande);
-			// EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
-			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
-			System.out.println("Commande " + commande.getId() + " prête");
-		}
-
-	}
-
-	// Servir un plat : modification de l'état de la commande à "servie" (plat
-	// commandé)
-	private static void servirUnPlat() {
-		System.out.println("-----------------------------------" + "\n---------Servir un plat----------"
-				+ "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à servir :\n"
-				+ listingCommandes());
-
-		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) - 1;
-		if (numCommande != 0) {
-			Commande commande = Restaurant.getCommandes().get(numCommande);
-			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
-			System.out.println("Commande " + commande.getId() + " servie");
-		}
-
-	}
-
-	// Ajouter un membre au personnel
-	private static void ajouterPersonnelDirecteur() {
-
-		// Affichage
-		System.out.println("----------------------------------" + "\n-----Ajouter du personnel------"
-				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
-				+ "\nVeuillez saisir le nom de la personne à ajouter ou 0 pour annuler ");
-		// nom
-		String nom = scanner.nextLine();
-		// Contrôle de l'entrée
-		while (estNullOuVide(nom) // vide
-				|| (!uniquementLettres(nom) && !uniquementChiffres(nom)) // mélange de lettres/chiffres ou caractères
-				// spéciaux
-				|| (uniquementLettres(nom) && nom.length() > Restaurant.getTAILLE_MAX_NOM_PERSONNE()) // chaine et ne
-				// respecte pas la
-				// longueur
-				// maximale
-				|| (uniquementChiffres(nom) && !nom.equals("0"))) { // valeur de retour
-
-			System.out.println("Erreur, veuillez réessayer");
-			nom = scanner.nextLine();
-		}
-		// Si l'utilisateur ne veut pas annuler
-		if (!nom.equals("0")) {
-
-			System.out.println(
-					"\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nveuillez saisir le role de "
-							+ nom);
-			String role = scanner.nextLine();
-			// Contrôle de l'entrée
-			while (estNullOuVide(role) // vide
-					|| !uniquementLettres(role) // pas que des lettres
-					|| !estUnRole(role) // n'est pas un rôle
-			) {
-				System.out.println("Erreur, veuillez réessayer");
-				role = scanner.nextLine();
-			}
-
-			((Directeur) persConnectee).ajouterPersonnel(nom, role);
-			System.out.println(nom + " (" + role + ") ajouté");
-		}
-	}
-
 	// Menu principal du maitre d hotel
 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
 
@@ -1169,7 +1093,6 @@ public class Main {
 		default:
 			break;
 		}
-
 	}
 
 	// Menu principal du serveur
@@ -1194,14 +1117,81 @@ public class Main {
 		case 1:
 
 			break;
+		}
+	}
 
-		// TODO
-		case 2:
+	// Cuisiner un plat : modification de l'état du plat commandé
+	private static void cuisinerUnPlat() {
 
-			break;
+		System.out.println("-----------------------------------" + "\n---------Cuisiner un plat----------"
+				+ "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n"
+				+ listingCommandes());
 
-		default:
-			break;
+		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) - 1;
+		if (numCommande != 0) {
+			Commande commande = Restaurant.getCommandes().get(numCommande);
+			// EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
+			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
+			System.out.println("Commande " + commande.getId() + " prête");
+		}
+	}
+
+	// Servir un plat : modification de l'état de la commande à "servie" (plat
+	// commandé)
+	private static void servirUnPlat() {
+		System.out.println("-----------------------------------" + "\n---------Servir un plat----------"
+				+ "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à servir :\n"
+				+ listingCommandes());
+
+		int numCommande = choixUtilisateur(0, Restaurant.getCommandes().size()) - 1;
+		if (numCommande != 0) {
+			Commande commande = Restaurant.getCommandes().get(numCommande);
+			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
+			System.out.println("Commande " + commande.getId() + " servie");
+		}
+
+	}
+
+	// Ajouter un membre au personnel
+	private static void ajouterPersonnelDirecteur() {
+
+		// Affichage
+		System.out.println("----------------------------------" + "\n-----Ajouter du personnel------"
+				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
+				+ "\nVeuillez saisir le nom de la personne à ajouter ou 0 pour annuler ");
+		// nom
+		String nom = scanner.nextLine();
+		// Contrôle de l'entrée
+		while (estNullOuVide(nom) // vide
+				|| (!uniquementLettres(nom) && !uniquementChiffres(nom)) // mélange de lettres/chiffres ou caractères
+				// spéciaux
+				|| (uniquementLettres(nom) && nom.length() > Restaurant.getTAILLE_MAX_NOM_PERSONNE()) // chaine et ne
+				// respecte pas la
+				// longueur
+				// maximale
+				|| (uniquementChiffres(nom) && !nom.equals("0"))) { // valeur de retour
+
+			System.out.println("Erreur, veuillez réessayer");
+			nom = scanner.nextLine();
+		}
+		// Si l'utilisateur ne veut pas annuler
+		if (!nom.equals("0")) {
+
+			System.out.println(
+					"\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nveuillez saisir le role de "
+							+ nom);
+			String role = scanner.nextLine();
+			// Contrôle de l'entrée
+			while (estNullOuVide(role) // vide
+					|| !uniquementLettres(role) // pas que des lettres
+					|| !estUnRole(role) // n'est pas un rôle
+			) {
+				System.out.println("Erreur, veuillez réessayer");
+				role = scanner.nextLine();
+			}
+
+			((Directeur) persConnectee).ajouterPersonnel(nom, role);
+			System.out.println(nom + " (" + role + ") ajouté");
 		}
 	}
 
