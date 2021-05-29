@@ -638,7 +638,7 @@ public class Main {
 			break;
 		// Nettoyer table
   		case 22:
-
+  			nettoyerUneTable();
 			break;
 
   		case 23:
@@ -973,6 +973,28 @@ public class Main {
 		 }
     }
 	
+	
+	// Nettoyer une table
+	private static void nettoyerUneTable() {
+		
+		System.out.println("Parmi :\n"+ listingTables()
+		   + "\nVeuillez saisir le numero correspondant à la table à nettoyer, ou 0 pour retourner au menu");
+		int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
+		if (numTable != 0) {
+			numTable -=1; //Car on utilisait le 0 pour le retour, mais une table peut bien avoir le numéro 0
+			
+			Table table = trouverTable(numTable);
+			
+			if (table != null) {
+				((Directeur) persConnectee).modifierEtatTable(table, EtatTable.Libre);
+	           	System.out.println("Table nettoyée");
+			}else {
+				System.out.println("Mauvaise table sélectionnée");
+			}
+		}
+	}
+	
+	
 	// Prendre une commande
 	private static void prendreCommande() {
 		System.out.println("-----------------------------------"
@@ -1002,7 +1024,7 @@ public class Main {
     }
 	
 	
-	// Editer une facture
+	// Editer une facture (lorsque le client part -> table sale)
 	private static void editerFacture() {
 		System.out.println("-----------------------------------"
 				       + "\n--------Editer une facture---------"
@@ -1014,11 +1036,11 @@ public class Main {
         	Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
         	if (aff != null) { // Si l'affectation existe bien
         		((Directeur) persConnectee).creerFacture(aff);
+        		((Directeur) persConnectee).modifierEtatTable(trouverTable(numTable), EtatTable.Sale);
         		System.out.println("Facture éditée");
 			}else {
 				System.out.println("Actuellement pas d'affectation pour cet table ");
 			}
-
 		} 
 	}
 	
@@ -1034,7 +1056,8 @@ public class Main {
 		if (numCommande != 0) {
 			Commande commande = Restaurant.getCommandes().get(numCommande);
 			//EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
-			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE); 
+			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
+			System.out.println("Commande " + commande.getId() + " prête");
 		}
 		
 	}
@@ -1050,6 +1073,7 @@ public class Main {
 		if (numCommande != 0) {
 			Commande commande = Restaurant.getCommandes().get(numCommande);
 			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
+			System.out.println("Commande " + commande.getId() + " servie");
 		}
 
 	}
