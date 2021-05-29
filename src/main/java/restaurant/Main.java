@@ -1097,7 +1097,7 @@ public class Main {
 						+ "\n2: Editer une facture"
 						+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 2)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1131,7 +1131,7 @@ public class Main {
 					+ "\n3: Passer une commande à \"terminée\""
 					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 3)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1170,7 +1170,7 @@ public class Main {
 					+ "\n2: Prendre les commandes d'une table"
 					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 2)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1300,7 +1300,7 @@ public class Main {
 					+ "\n1: Nettoyer une table"
 					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 1)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
