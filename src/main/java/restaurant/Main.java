@@ -497,7 +497,7 @@ public class Main {
 			throws ClassNotFoundException, SQLException, IOException, ParseException {
 
 		// Affichage menu
-		System.out.println("----------------------------------" + "\n0 : Déconnexion" + "\n1 : Commander un ingredient"
+		System.out.println("----------------------------------" + "\n0 : Déconnexion" + "\n1 : Commander/Ajouter un ingredient"
 				+ "\n2 : Ajouter personnel" + "\n3 : Modifier personnel" + "\n4 : Supprimer personnel"
 				+ "\n5 : Ajouter etage" + "\n6 : Supprimer dernier etage" + "\n7 : Ajouter une table"
 				+ "\n8 : Modifier une table" + "\n9 : Supprimer une table" + "\n10: Ajouter un plat"
@@ -1028,6 +1028,7 @@ public class Main {
 		}
 	}
 
+	
 	// Menu principal du maitre d hotel
 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
 
@@ -1094,7 +1095,7 @@ public class Main {
 			break;
 		}
 	}
-
+	
 	// Menu principal du serveur
 	public static void menuPrincipalServeur() throws ClassNotFoundException, SQLException, IOException {
 
@@ -1118,7 +1119,8 @@ public class Main {
 
 			break;
 		}
-	}
+	};
+
 
 	// Cuisiner un plat : modification de l'état du plat commandé
 	private static void cuisinerUnPlat() {
@@ -1136,6 +1138,7 @@ public class Main {
 		}
 	}
 
+	
 	// Servir un plat : modification de l'état de la commande à "servie" (plat
 	// commandé)
 	private static void servirUnPlat() {
@@ -1149,12 +1152,11 @@ public class Main {
 			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.SERVIE);
 			System.out.println("Commande " + commande.getId() + " servie");
 		}
-
 	}
-
-	// Ajouter un membre au personnel
+	
+	
+			// Ajouter un membre au personnel
 	private static void ajouterPersonnel() {
-
 		// Affichage
 		System.out.println("----------------------------------" + "\n-----Ajouter du personnel------"
 				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
@@ -1194,7 +1196,7 @@ public class Main {
 			System.out.println(nom + " (" + role + ") ajouté");
 		}
 	}
-
+	
 	// Menu principal de l'assistant
 	public static void menuPrincipalAssistant() throws ClassNotFoundException, SQLException, IOException {
 
