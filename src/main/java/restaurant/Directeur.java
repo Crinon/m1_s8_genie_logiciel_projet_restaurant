@@ -252,7 +252,7 @@ public class Directeur extends Personne {
 		serveur.getTablesAffectees().add(table);
 		table.setServeur(serveur);
 	}
-	prendreCommande("restaurant.Serveur");
+
 	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
 		Sql sql = new Sql();
 		Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
