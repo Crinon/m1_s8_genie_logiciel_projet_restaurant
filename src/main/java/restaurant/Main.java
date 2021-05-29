@@ -231,7 +231,7 @@ public class Main {
 	}
 
 	// Permet de commander un ingrédient pour l'ajouter au stock
-	public static void commanderIngredientDirecteur() throws ClassNotFoundException, SQLException, IOException {
+	public static void commanderIngredient() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
 		System.out.println("----------------------------------" + "\n-----Commander un ingredient------"
@@ -339,7 +339,7 @@ public class Main {
 		return null;
 	}
 
-	private static void modifierCarteDirecteur() {
+	private static void modifierCarte() {
 		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
 				+ "\n----------------------------------");
 		String choix = "1";
@@ -404,7 +404,7 @@ public class Main {
 	}
 
 	// Permet de supprimer une table d'un étage
-	public static void supprimerTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+	public static void supprimerTable() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
 		System.out.println("----------------------------------" + "\n-----Supprimer une table--------"
@@ -429,7 +429,7 @@ public class Main {
 	}
 
 	// Permet de modifier le numéro d'une table
-	public static void modifierTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+	public static void modifierTable() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
 		System.out.println("----------------------------------" + "\n-------Modifier une table---------"
@@ -455,7 +455,7 @@ public class Main {
 	}
 
 	// Permet d'ajouter une table à un étage
-	public static void ajouterTableDirecteur() throws ClassNotFoundException, SQLException, IOException {
+	public static void ajouterTable() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
 		System.out.println("----------------------------------" + "\n-------Ajouter une table--------"
@@ -519,22 +519,22 @@ public class Main {
 
 		// Commander un ingredient
 		case 1:
-			commanderIngredientDirecteur();
+			commanderIngredient();
 			break;
 
 		// Ajouter personnel
 		case 2:
-			ajouterPersonnelDirecteur();
+			ajouterPersonnel();
 			break;
 
 		// Modifier le rôle d'un membre du personnel
 		case 3:
-			modifierPersonnelDirecteur();
+			modifierPersonnel();
 			break;
 
 		// Supprimer personnel
 		case 4:
-			supprimerPersonnelDirecteur();
+			supprimerPersonnel();
 			break;
 
 		// Ajouter etage
@@ -549,33 +549,33 @@ public class Main {
 
 		// Ajouter une table
 		case 7:
-			ajouterTableDirecteur();
+			ajouterTable();
 			break;
 
 		// Modifier le numéro d'une table
 		case 8:
-			modifierTableDirecteur();
+			modifierTable();
 			break;
 
 		// Supprimer une table
 		case 9:
-			supprimerTableDirecteur();
+			supprimerTable();
 			break;
 		// Ajouter un plat
 		case 10:
-			ajouterPlatDirecteur();
+			ajouterPlat();
 			break;
 
 		case 11:
-			modifierPlatDirecteur();
+			modifierPlat();
 			break;
 
 		case 12:
-			modifierCarteDirecteur();
+			modifierCarte();
 			break;
 
 		case 13:
-			supprimerPlatDirecteur();
+			supprimerPlat();
 			break;
 		// Ajouter une réservation
 		case 14:
@@ -662,7 +662,7 @@ public class Main {
 
 	}
 
-	private static void ajouterPlatDirecteur() {
+	private static void ajouterPlat() {
 		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
 				+ "\n----------------------------------");
 		System.out.println("Veuillez saisir le nom du plat");
@@ -701,7 +701,7 @@ public class Main {
 				Type.valueOf(type), Categorie.valueOf(categorie), recette);
 	}
 
-	private static void modifierPlatDirecteur() {
+	private static void modifierPlat() {
 		System.out.println("----------------------------------" + "\n-----Modifier un plat------"
 				+ "\n----------------------------------");
 		String plat = "1";
@@ -738,7 +738,7 @@ public class Main {
 		}
 	}
 
-	private static void supprimerPlatDirecteur() {
+	private static void supprimerPlat() {
 		System.out.println("----------------------------------" + "\n-----Supprimer un plat------"
 				+ "\n----------------------------------");
 		String plat = "1";
@@ -753,7 +753,7 @@ public class Main {
 	}
 
 	// Modifier le rôle d'un membre du personnel
-	private static void supprimerPersonnelDirecteur() {
+	private static void supprimerPersonnel() {
 		// Affichage
 		System.out.println("----------------------------------" + "\n-----Supprimer du personnel------"
 				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
@@ -783,7 +783,7 @@ public class Main {
 	}
 
 	// Modifier le rôle d'un membre du personnel
-	private static void modifierPersonnelDirecteur() {
+	private static void modifierPersonnel() {
 		// Affichage
 		System.out.println("----------------------------------" + "\n-----Modifier du personnel------"
 				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
@@ -1153,7 +1153,7 @@ public class Main {
 	}
 
 	// Ajouter un membre au personnel
-	private static void ajouterPersonnelDirecteur() {
+	private static void ajouterPersonnel() {
 
 		// Affichage
 		System.out.println("----------------------------------" + "\n-----Ajouter du personnel------"
