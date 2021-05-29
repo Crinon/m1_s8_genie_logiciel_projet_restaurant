@@ -149,7 +149,6 @@ public class Main {
 	// Affiche la liste des tables
 	public static Serveur trouverServeur(int numServeur) {
 
-		System.out.println(Restaurant.getPersonnel().size());
 		int numero = 0;
 		for (int numPersonnel = 0; numPersonnel < Restaurant.getPersonnel().size(); numPersonnel++) { // 0 = directeur
 			if (Restaurant.getPersonnel().get(numPersonnel).getClass().getName().equals("restaurant.Serveur")) {
@@ -206,7 +205,8 @@ public class Main {
 		String liste = "";
 		for (int i = 1; i < Restaurant.getPersonnel().size(); i++) { // On n'inclut pas le directeur
 			liste += "\n " + i + ":" + Restaurant.getPersonnel().get(i).getNom() + "; role : "
-					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11);
+					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11)
+					+ " (identifiant : " + Restaurant.getPersonnel().get(i).getIdentifiant() + ")";
 		}
 		return liste;
 	}
@@ -320,7 +320,7 @@ public class Main {
 
 	// Permet de trouver une table via son numéro
 	public static Table trouverTable(int numero) {
-		int nbTable = 1;
+		int nbTable = 0;
 		for (int etage = 0; etage < Restaurant.getEtages().size(); etage++) {
 			for (int table = 0; table < Restaurant.getEtages().get(etage).getTables().size(); table++) {
 				if (nbTable == numero) {
@@ -494,7 +494,7 @@ public class Main {
 	}
 
 	// Permet de vider la base de données pour réinitialiser le restaurant
-	private static void viderBddDirecteur() {
+	private static void viderBdd() {
 		Sql sql = new Sql();
 		sql.hardResetPg();
 		System.exit(1);
@@ -578,7 +578,7 @@ public class Main {
 			break;
 		// Ajouter un plat
 		case 10:
-			ajouterPlat();
+			ajouterPlat("restaurant.Directeur");
 			break;
 		// Modifier un plat
 		case 11:
@@ -608,21 +608,21 @@ public class Main {
 
 		// Affecter un serveur à une table
 		case 17:
-			affecterServeurTable();
+			affecterServeurTable("restaurant.Directeur");
 			break;
 
 		// Prendre une commande
 		case 18:
-			prendreCommande();
+			prendreCommande("restaurant.Directeur");
 			break;
 
 		// Editer une facture
 		case 19:
-			editerFacture();
+			editerFacture("restaurant.Directeur");
 			break;
 		// Cuisiner un plat
 		case 20:
-			cuisinerUnPlat();
+			cuisinerUnPlat("restaurant.Directeur");
 			break;
 		// Servir un plat
 		case 21:
@@ -630,7 +630,7 @@ public class Main {
 			break;
 		// Nettoyer table
 		case 22:
-			nettoyerUneTable();
+			nettoyerUneTable("restaurant.Directeur");
 			break;
 
 		case 23:
@@ -639,7 +639,7 @@ public class Main {
 			break;
 		// Vider la BDD
 		case 24:
-			viderBddDirecteur();
+			viderBdd();
 			break;
 		// Vider la BDD
 		case 25:
@@ -677,7 +677,7 @@ public class Main {
 
 	}
 
-	private static void ajouterPlat() {
+	private static void ajouterPlat(String role) {
 		System.out.println("----------------------------------" + "\n-----Ajouter un plat------"
 				+ "\n----------------------------------");
 		System.out.println("Veuillez saisir le nom du plat");
@@ -693,27 +693,41 @@ public class Main {
 		String type = scanner.nextLine();
 		System.out.println("Veuillez saisir la catégorie du plat");
 		for (int i = 0; i < Categorie.values().length; i++) {
-			System.out.println(i + 1 + ": " + Type.values()[i].name());
+			System.out.println(i + 1 + ": " + Categorie.values()[i].name());
 		}
 		String categorie = scanner.nextLine();
 		String ingredient = "1";
 		HashMap<Ingredient, Integer> recette = new HashMap<Ingredient, Integer>();
-		while (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+		while (Integer.parseInt(ingredient) != Restaurant.getIngredients().size() + 1) {
 			System.out.println("Veuillez saisir les ingédients de la recette");
 			for (int i = 0; i < Restaurant.getIngredients().size(); i++) {
 				System.out.println(i + 1 + ": " + Restaurant.getIngredients().get(i).getNom());
 			}
-			System.out.println(Restaurant.getIngredients().size() + ": Valiser");
+			System.out.println(Restaurant.getIngredients().size() + 1 + ": Valider");
 			ingredient = scanner.nextLine();
-			if (Integer.parseInt(ingredient) != Restaurant.getIngredients().size()) {
+			if (Integer.parseInt(ingredient) != Restaurant.getIngredients().size() + 1) {
 				System.out.println("Veuillez saisir la quantité");
 				String quantite = scanner.nextLine();
-				recette.put(Restaurant.getIngredients().get(Integer.parseInt(ingredient) + 1),
+				recette.put(Restaurant.getIngredients().get(Integer.parseInt(ingredient) - 1),
 						Integer.parseInt(quantite));
 			}
 		}
-		((Directeur) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat), false,
-				Type.valueOf(type), Categorie.valueOf(categorie), recette);
+		switch (role) {
+		case "restaurant.Directeur":
+			((Directeur) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat),
+					false, Type.values()[Integer.parseInt(type) - 1],
+					Categorie.values()[Integer.parseInt(categorie) - 1], recette);
+			break;
+		case "restaurant.Cuisinier":
+			((Cuisinier) persConnectee).creerPlat(nomPlat, Double.parseDouble(prixPlat), Integer.parseInt(dureePlat),
+					false, Type.values()[Integer.parseInt(type) - 1],
+					Categorie.values()[Integer.parseInt(categorie) - 1], recette);
+			break;
+
+		default:
+			break;
+		}
+
 	}
 
 	private static void modifierPlat() {
@@ -723,7 +737,8 @@ public class Main {
 		while (Integer.parseInt(plat) != 0) {
 			System.out.println("Veuillez sélectionner un plat");
 			for (int i = 0; i < Restaurant.getPlats().size(); i++) {
-				System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
+				System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom() + " "
+						+ Restaurant.getPlats().get(i).getType() + " " + Restaurant.getPlats().get(i).getCategorie());
 			}
 			plat = scanner.nextLine();
 			System.out.println("Modifier le prix ou la durée de préparation ?");
@@ -753,19 +768,19 @@ public class Main {
 		}
 	}
 
-    private static void supprimerPlat() {
-	System.out.println("----------------------------------" + "\n-----Supprimer un plat------"
-		+ "\n----------------------------------");
-	String plat = "1";
-	while (Integer.parseInt(plat) != 0) {
-	    System.out.println("Veuillez choisir un plat à supprimer");
-	    for (int i = 0; i < Restaurant.getPlats().size(); i++) {
-		System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
-	    }
-	    plat = scanner.nextLine();
-	    ((Directeur) persConnectee).supprimerPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1));
+	private static void supprimerPlat() {
+		System.out.println("----------------------------------" + "\n-----Supprimer un plat------"
+				+ "\n----------------------------------");
+		String plat = "1";
+		while (Integer.parseInt(plat) != 0) {
+			System.out.println("Veuillez choisir un plat à supprimer");
+			for (int i = 0; i < Restaurant.getPlats().size(); i++) {
+				System.out.println(i + 1 + ": " + Restaurant.getPlats().get(i).getNom());
+			}
+			plat = scanner.nextLine();
+			((Directeur) persConnectee).supprimerPlat(Restaurant.getPlats().get(Integer.parseInt(plat) - 1));
+		}
 	}
-    }
 
 	// Modifier le rôle d'un membre du personnel
 	private static void supprimerPersonnel() {
@@ -948,25 +963,37 @@ public class Main {
 	}
 
 	// Affecter un serveur à une table
-	private static void affecterServeurTable() {
+	private static void affecterServeurTable(String role) {
 		System.out.println("-----------------------------------" + "\n--Affecter un serveur à une table--"
 				+ "\nVeuillez choisir le numero du serveur ou 0 pour revenir au menu\n" + listingServeurs());
 		int numServeur = choixUtilisateur(0, nbServeurs());
 		if (numServeur != 0) {
 			System.out.println("Parmi :\n" + listingTables() + "\nVeuillez choisir le numero correspondant à la table");
-			int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
+			int numTable = choixUtilisateur(1, Restaurant.getToutesLesTables().size())-1;
 
 			Serveur serveur = trouverServeur(numServeur);
-			System.out.println("num du serveur " + numServeur + " correspond à " + serveur.getNom());
 			Table table = trouverTable(numTable);
-			((Directeur) persConnectee).affecterTableServeur(serveur, table);
-			System.out.println("Serveur " + serveur.getNom() + " affecté à la table numéro " + table.getNumero() + " ("
-					+ table.getCapacite() + " personnes)");
+			switch (role) {
+			case "restaurant.Maitrehotel":
+				((Maitrehotel) persConnectee).affecterTableServeur(serveur, table);
+				System.out.println("Serveur " + serveur.getNom() + " affecté à la table numéro " + table.getNumero() + " ("
+						+ table.getCapacite() + " personnes)");
+				break;
+			case "restaurant.Directeur":
+				((Directeur) persConnectee).affecterTableServeur(serveur, table);
+				System.out.println("Serveur " + serveur.getNom() + " affecté à la table numéro " + table.getNumero() + " ("
+						+ table.getCapacite() + " personnes)");
+				break;
+
+			default:
+				break;
+			}
+			
 		}
 	}
 
 	// Nettoyer une table
-	private static void nettoyerUneTable() {
+	private static void nettoyerUneTable(String role) {
 
 		System.out.println("Parmi :\n" + listingTables()
 				+ "\nVeuillez saisir le numero correspondant à la table à nettoyer, ou 0 pour retourner au menu");
@@ -976,10 +1003,21 @@ public class Main {
 			// numéro 0
 
 			Table table = trouverTable(numTable);
-
+			
 			if (table != null) {
-				((Directeur) persConnectee).modifierEtatTable(table, EtatTable.Libre);
-				System.out.println("Table nettoyée");
+				switch (role) {
+				case "restaurant.Directeur":
+					((Directeur) persConnectee).modifierEtatTable(table, EtatTable.Libre);
+					System.out.println("Table nettoyée");
+					break;
+				case "restaurant.Assistant":
+					((Assistant) persConnectee).modifierEtatTable(table, EtatTable.Libre);
+					System.out.println("Table nettoyée");
+					break;
+
+				default:
+					break;
+				}
 			} else {
 				System.out.println("Mauvaise table sélectionnée");
 			}
@@ -987,7 +1025,7 @@ public class Main {
 	}
 
 	// Prendre une commande
-	private static void prendreCommande() {
+	private static void prendreCommande(String role) {
 		System.out.println("-----------------------------------" + "\n-------Prendre une commande--------"
 				+ "\nVeuillez choisir si c'est un enfant (1) ou non (2), ou 0 pour revenir au menu\n");
 		int choix = choixUtilisateur(0, 2);
@@ -1000,32 +1038,65 @@ public class Main {
 			int plat = choixUtilisateur(0, Restaurant.getPlats().size() - 1);
 
 			System.out.println("Veuillez choisir votre numéro de table : " + listingTables());
-			int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size() - 1);
+			int numTable = choixUtilisateur(1, Restaurant.getToutesLesTables().size()) - 1;
 			Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
-			if (aff != null) {
-				((Directeur) persConnectee).creationCommande(new Timestamp(new Date().getTime()), trouverPlat(plat),
-						estEnfant, aff);
-				System.out.println("Commande effectuée (" + plat + ")");
+			
+			//Si la table est occupée (et pas sale) on prend la commande
+			if (aff != null && trouverTable(numTable).getEtat().name().equals(EtatTable.Occupe.name())) {
+				
+				switch (role) {
+				
+				case "restaurant.Serveur":
+					((Serveur) persConnectee).creationCommande(new Timestamp(new Date().getTime()), trouverPlat(plat),
+							estEnfant, aff);
+					System.out.println("Commande effectuée (" + plat + ")");
+					break;
+				case "restaurant.Directeur":
+					((Directeur) persConnectee).creationCommande(new Timestamp(new Date().getTime()), trouverPlat(plat),
+							estEnfant, aff);
+					System.out.println("Commande effectuée (" + plat + ")");
+					break;
+
+				default:
+					break;
+				}
+				
 			} else {
-				System.out.println("Mauvaise table sélectionnée");
+				System.out.println("Cette table n'est pas occupée");
 			}
+			
 
 		}
 	}
 
 	// Editer une facture (lorsque le client part -> table sale)
-	private static void editerFacture() {
+	private static void editerFacture(String role) {
 		System.out.println("-----------------------------------" + "\n--------Editer une facture---------"
-				+ "\nVeuillez choisir votre numéro de table : " + listingTables() + " ou saisir "
-				+ Restaurant.getToutesLesTables().size() + " pour revenir au menu");
+				+ "\nVeuillez choisir votre numéro de table : " + listingTables()
+				+ "\nou saisir 0 pour revenir au menu");
 		int numTable = choixUtilisateur(0, Restaurant.getToutesLesTables().size());
 
-		if (numTable != Restaurant.getToutesLesTables().size()) {
+		if (numTable != 0) {
+			numTable -=1;
 			Affectation aff = trouverAffectation(numTable, new Timestamp(new Date().getTime()));
 			if (aff != null) { // Si l'affectation existe bien
-				((Directeur) persConnectee).creerFacture(aff);
-				((Directeur) persConnectee).modifierEtatTable(trouverTable(numTable), EtatTable.Sale);
-				System.out.println("Facture éditée");
+				
+				switch (role) {
+				case "restaurant.Maitrehotel":
+					((Maitrehotel) persConnectee).creerFacture(aff);
+					((Maitrehotel) persConnectee).modifierEtatTable(trouverTable(numTable), EtatTable.Sale);
+					System.out.println("Facture éditée");
+					break;
+				case "restaurant.Directeur":
+					((Directeur) persConnectee).creerFacture(aff);
+					((Directeur) persConnectee).modifierEtatTable(trouverTable(numTable), EtatTable.Sale);
+					System.out.println("Facture éditée");
+					break;
+
+				default:
+					break;
+				}
+
 			} else {
 				System.out.println("Actuellement pas d'affectation pour cet table ");
 			}
@@ -1037,11 +1108,13 @@ public class Main {
 	public static void menuPrincipalMaitredhotel() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
-		System.out.println(
-				"----------------------------------" + "\n0: Déconnexion" + "\n1: Affecter un serveur à une table"
-						+ "\n2: AJOUTER METHODES DU ROLE SERVEUR ?????" + "\n----------------------------------\n");
+		System.out.println("----------------------------------"
+						+ "\n0: Déconnexion"
+						+ "\n1: Affecter un serveur à une table"
+						+ "\n2: Editer une facture"
+						+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 2)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1051,12 +1124,12 @@ public class Main {
 
 		// Affecter un serveur à une table
 		case 1:
-			// TODO
+			affecterServeurTable("restaurant.Maitrehotel");
 			break;
 
-		//
+		//Editer une facture
 		case 2:
-			// TODO
+			editerFacture("restaurant.Maitrehotel");
 			break;
 
 		default:
@@ -1068,11 +1141,14 @@ public class Main {
 	public static void menuPrincipalCuisinier() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
-		System.out.println("----------------------------------" + "\n0: Déconnexion" + "\n1: Définir un plat"
-				+ "\n2: Consulter les commandes" + "\n3: Passer une commande à \"terminée\""
-				+ "\n----------------------------------\n");
+		System.out.println("----------------------------------"
+					+ "\n0: Déconnexion"
+					+ "\n1: Définir un plat"
+					+ "\n2: Consulter les commandes"
+					+ "\n3: Passer une commande à \"terminée\""
+					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 3)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1082,17 +1158,17 @@ public class Main {
 
 		// Définir un plat
 		case 1:
-			// TODO
+			ajouterPlat("restaurant.Cuisinier");
 			break;
 
 		// Consulter les commandes
 		case 2:
-			// TODO
+			consulterCommandes();
 			break;
 
-		// Passer une commande à "terminée"
+		// Cuisiner un plat
 		case 3:
-			// TODO
+			cuisinerUnPlat("restaurant.Cuisinier");
 			break;
 
 		default:
@@ -1106,11 +1182,12 @@ public class Main {
 		// Affichage menu
 		System.out.println("----------------------------------"
 				// Affichage des tables de son étage + couleurs (état) associées
-				// TODO
-				+ "\n0: Déconnexion" + "\n1: Voir l'état des tables" + "\n2: Prendre les commandes d'une table"
-				+ "\n3: Transmettre facture" + "\n----------------------------------\n");
+					+ "\n0: Déconnexion"
+					+ "\n1: Voir l'état des tables"
+					+ "\n2: Prendre les commandes d'une table"
+					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 2)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1118,16 +1195,24 @@ public class Main {
 			System.out.println("Déconnexion....\nVous avez été déconnecté.\n");
 			break;
 
-		// Affecter un serveur à une table
+		// Voir l'état des tables
 		case 1:
+			System.out.println(listingTables());
+			break;
+			
+		// Prendre les commandes d'une table
+		case 2:
+			prendreCommande("restaurant.Serveur");
+			break;
 
+		default:
 			break;
 		}
 	};
 
 
 	// Cuisiner un plat : modification de l'état du plat commandé
-	private static void cuisinerUnPlat() {
+	private static void cuisinerUnPlat(String role) {
 
 		System.out.println("-----------------------------------" + "\n---------Cuisiner un plat----------"
 				+ "\nVeuillez entrer 0 pour retourner au menu \nou le numéro de la commande à traiter :\n"
@@ -1137,9 +1222,31 @@ public class Main {
 		if (numCommande != 0) {
 			Commande commande = Restaurant.getCommandes().get(numCommande);
 			// EN_PREPARATION puis PRETE mais on n'attends pas via l'interface
-			((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
-			System.out.println("Commande " + commande.getId() + " prête");
+			
+			switch (role) {
+			case "restaurant.Directeur":
+				((Directeur) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
+				System.out.println("Commande " + commande.getId() + " prête");
+				break;
+			case "restaurant.Cuisinier":
+				((Cuisinier) persConnectee).modifierEtatCommande(commande, Etat.PRETE);
+				System.out.println("Commande " + commande.getId() + " prête");
+				break;
+
+			default:
+				break;
+			}
+			
 		}
+	}
+	
+	// Consulter les commandes passées
+	private static void consulterCommandes() {
+
+		System.out.println("-----------------------------------"
+					   + "\n------Consulter les commandes------"
+				+ "\nCommandes :\n"
+				+ listingCommandes());
 	}
 
 	
@@ -1205,10 +1312,12 @@ public class Main {
 	public static void menuPrincipalAssistant() throws ClassNotFoundException, SQLException, IOException {
 
 		// Affichage menu
-		System.out.println("----------------------------------" + "\n0: Déconnexion" + "\n1: Nettoyer une table"
-				+ "\n----------------------------------\n");
+		System.out.println("----------------------------------"
+					+ "\n0: Déconnexion"
+					+ "\n1: Nettoyer une table"
+					+ "\n----------------------------------\n");
 
-		switch (Main.choixUtilisateur(0, 7)) { // valeurChoixMin = 0
+		switch (Main.choixUtilisateur(0, 1)) { // valeurChoixMin = 0
 
 		// Déconnexion
 		case 0:
@@ -1218,7 +1327,7 @@ public class Main {
 
 		// Signaler table nettoyée
 		case 1:
-			// TODO
+			nettoyerUneTable("restaurant.Assistant");
 			break;
 
 		default:

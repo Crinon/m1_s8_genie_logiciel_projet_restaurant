@@ -1,6 +1,7 @@
 package restaurant;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Serveur extends Personne {
 
@@ -31,4 +32,14 @@ public class Serveur extends Personne {
 		this.tablesAffectees.remove(table);
 	}
 
+	public Commande creationCommande(Date dateCommande, Plat plat, boolean estEnfant, Affectation affectation) {
+		Sql sql = new Sql();
+		Commande commande = sql.creationCommande(dateCommande, plat, estEnfant, affectation);
+		affectation.getCommandes().add(commande);
+		Restaurant.getCommandes().add(commande);
+		sql.platDoitEtreIndisponible(commande.getPlat());
+		return commande;
+	}
+	
+	
 }

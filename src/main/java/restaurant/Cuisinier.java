@@ -1,5 +1,7 @@
 package restaurant;
 
+import java.util.HashMap;
+
 public class Cuisinier extends Personne {
 
 	/**
@@ -23,21 +25,21 @@ public class Cuisinier extends Personne {
 
 	}
 
-	public void preparerPlat(Commande commande) {
-		// Select * from commandes where pret is false order by estEnfant IS TRUE AND
-		// date desc
+	public Plat creerPlat(String nom, Double prixPlat, int tempsPrepa, boolean surCarte, Type type, Categorie categorie,
+			HashMap<Ingredient, Integer> ingredientQuantite) {
+		Sql sql;
+		sql = new Sql();
+		Plat plat = sql.insererPlat(nom, prixPlat, tempsPrepa, surCarte, type, categorie, ingredientQuantite);
+		Restaurant.getPlats().add(plat);
+		return plat;
 	}
-
-	public void definirPlat(double prix, int dureePreparation, boolean disponibleCarte, Type type,
-			Categorie categorie) {
-		// Insertion SQL
+	
+	public void modifierEtatCommande(Commande commande, Etat etat) {
+		Sql sql = new Sql();
+		sql.modifierEtatCommande(commande, etat);
+		commande.setEtat(etat);
 	}
-
-	public void cuisinerPlat(Plat plat) {
-		// Mise à jour état commande
-		// Etat.EN_PREPARATION
-		// Etat.PRETE
-		// Avertir le serveur
-	}
+	
+	
 
 }
