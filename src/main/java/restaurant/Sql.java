@@ -29,8 +29,6 @@ public class Sql {
 	private Statement stmt = null;
 	public final String propertiesFilename = "properties";
 	private Properties prop = new Properties();
-	public static final String hardResetPostgres = "DROP SCHEMA restaurant CASCADE;";
-
 	public static final String hardResetH2 = "ALTER TABLE restaurant.affectation SET REFERENTIAL_INTEGRITY FALSE;"
 			+ "TRUNCATE TABLE restaurant.affectation;\r\n"
 			+ "ALTER TABLE restaurant.assistant SET REFERENTIAL_INTEGRITY FALSE;"
@@ -820,9 +818,9 @@ public class Sql {
 	}
 
 	// Cette fonction drop le schéma restaurant et le reconstruit
-	public void hardResetPg(String database) {
-		executerUpdate(database);
-		System.err.println("Schema postgresql restaurant dropé");
+	public void hardResetPg() {
+		
+		System.err.println("DROP en cours du schéma restaurant dans postgre");
 		// Drop de schéma avant de re-générer de la base de données
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream("restaurant.sql");
 		ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -832,7 +830,24 @@ public class Sql {
 				result.write(buffer, 0, length);
 			}
 			String rebuild = result.toString("UTF-8");
-			executerUpdate(rebuild);
+			try {
+				this.stmt = c.createStatement();
+				if (this.stmt.execute(rebuild)) {
+					stmt.close();
+					c.commit();
+					//ResultSet Available
+					ResultSet rs = this.stmt.getResultSet();
+					rs.next();
+					int result1 = rs.getInt(1);
+				}else{
+					//Update count or no result available
+					int result1 = this.stmt.getUpdateCount();
+					stmt.close();
+					c.commit();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

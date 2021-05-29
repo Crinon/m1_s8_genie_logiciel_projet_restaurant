@@ -485,15 +485,17 @@ public class Main {
 	}
 
 	// Permet de vider la base de données pour réinitialiser le restaurant
-	public static void viderBddDirecteur() {
+	private static void viderBddDirecteur() {
 		Sql sql = new Sql();
-		sql.hardResetPg(Sql.hardResetPostgres);
+		sql.hardResetPg();
+		System.exit(1);
 	}
 
 	private static void viderBddDirecteurAvecJeudonnees() {
 		Sql sql = new Sql();
-		sql.hardResetPg(Sql.hardResetPostgres);
+		sql.hardResetPg();
 		sql.insererJeuDonnees();
+		System.exit(1);
 	}
 
 	// Menu principal du directeur
@@ -510,7 +512,7 @@ public class Main {
 				+ "\n16: Affecter des clients à une table" + "\n17: Affecter un serveur à une table"
 				+ "\n18: Prendre une commande" + "\n19: Editer une facture" + "\n20: Cuisiner un plat"
 				+ "\n21: Servir un plat" + "\n22: Nettoyer table" + "\n23: Voir les statistiques"
-				+ "\n24: Vider la base de données" + "\n25: Vider la BDD et ajouter un jeu de données"
+				+ "\n24: Vider la base de données (ferme le programme)" + "\n25: Vider la BDD et ajouter un jeu de données (ferme le programme)"
 				+ "\n----------------------------------\n");
 
 		switch (Main.choixUtilisateur(0, 25)) { // valeurChoixMin = 0
