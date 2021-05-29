@@ -789,27 +789,16 @@ public class Main {
 				+ "\nListe du personnel : " + listingPersonnel() + "\n----------------------------------"
 				+ "\nVeuillez saisir le numéro de la personne à modifier, ou 0 pour revenir au menu");
 		// numéro
-		String numPersonne = scanner.nextLine();
+		int numPersonne = choixUtilisateur(0, Restaurant.getPersonnel().size()-1);
 		// Contrôle de l'entrée
-		while (estNullOuVide(numPersonne) // vide
-				|| !uniquementChiffres(numPersonne) // pas que des chiffres
-				|| (uniquementChiffres(numPersonne)
-						&& (!valeurIntOk(Integer.parseInt(numPersonne), 0, Restaurant.getPersonnel().size()) // personne
-								// n'existe
-								// pas
-								|| !numPersonne.equals("0"))) // valeur de retour
-		) {
-
-			System.out.println("Erreur, veuillez réessayer");
-			numPersonne = scanner.nextLine();
-		}
+		
 		// Permet de revenir au menu (annuler)
-		if (!numPersonne.equals("0")) {
+		if (numPersonne != 0) {
 
 			System.out.println(
 					"\nParmi assistant, serveur, maitrehotel, directeur, cuisinier;\nVeuillez saisir le nouveau role de "
-							+ Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)).getNom()
-							+ " qui est actuellement " + Restaurant.getPersonnel().get(Integer.parseInt(numPersonne))
+							+ Restaurant.getPersonnel().get(numPersonne).getNom()
+							+ " qui est actuellement " + Restaurant.getPersonnel().get(numPersonne)
 									.getClass().getName().substring(11));
 			String role = scanner.nextLine();
 			// Contrôle de l'entrée
@@ -821,7 +810,7 @@ public class Main {
 				role = scanner.nextLine();
 			}
 
-			((Directeur) persConnectee).modifierPersonnel(Restaurant.getPersonnel().get(Integer.parseInt(numPersonne)),
+			((Directeur) persConnectee).modifierPersonnel(Restaurant.getPersonnel().get(numPersonne),
 					role);
 			System.out.println("Rôle modifié");
 
