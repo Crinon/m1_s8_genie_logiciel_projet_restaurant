@@ -206,7 +206,8 @@ public class Main {
 		String liste = "";
 		for (int i = 1; i < Restaurant.getPersonnel().size(); i++) { // On n'inclut pas le directeur
 			liste += "\n " + i + ":" + Restaurant.getPersonnel().get(i).getNom() + "; role : "
-					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11);
+					+ Restaurant.getPersonnel().get(i).getClass().getName().substring(11)
+					+ " (identifiant : " + Restaurant.getPersonnel().get(i).getIdentifiant() + ")";
 		}
 		return liste;
 	}
