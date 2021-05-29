@@ -920,11 +920,12 @@ public class Main {
     // Supprimer une réservation
     private static void supprimerReservation() {
 
-	System.out.println("----------------------------------" + "\n---Supprimer une réservation -----");
-	for (int i = 1; i < Restaurant.getReservationsJour().size(); i++) {
-	    System.out.println(i + " : Table numero " + Restaurant.getReservationsJour().get(i).getTable().getNumero()
-		    + " réservée le " + Restaurant.getReservationsJour().get(i).getDateReservation() + " pour "
-		    + Restaurant.getReservationsJour().get(i).getTable().getCapacite() + " personnes");
+		System.out.println("----------------------------------" + "\n---Supprimer une réservation -----");
+		for (int i = 1; i < Restaurant.getReservationsJour().size(); i++) {
+		    System.out.println(i + " : Table numero " + Restaurant.getReservationsJour().get(i).getTable().getNumero()
+			    + " réservée le " + Restaurant.getReservationsJour().get(i).getDateReservation() + " pour "
+			    + Restaurant.getReservationsJour().get(i).getTable().getCapacite() + " personnes");
+		}
 	}
 
 
