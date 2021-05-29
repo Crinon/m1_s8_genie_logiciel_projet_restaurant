@@ -108,6 +108,9 @@ public class Main {
 	// Méthode qui permet de vérifier l'entrée pour un choix de l'utilisateur
 	public static int choixUtilisateur(int valeurChoixMin, int valeurChoixMax) {
 
+		if (valeurChoixMax == -1) {
+			return 0;
+		}
 		String choix = "";
 
 		while (estNullOuVide(choix) || !uniquementChiffres(choix)
